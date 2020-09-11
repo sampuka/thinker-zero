@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.6)
+project( boardtest )
+file( GLOB SRCS ../src/*.cpp ../src/*.hpp )
+add_executable( ${PROJECT_NAME} ${SRCS} )
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -O0")
