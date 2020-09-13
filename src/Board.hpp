@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -76,6 +77,14 @@ public:
     Move(std::uint8_t fx_, std::uint8_t fy_, std::uint8_t tx_, std::uint8_t ty_, Piece promo_ = Piece::None)
         : fx(fx_), fy(fy_), tx(tx_), ty(ty_), promo(promo_)
     {}
+
+    Move(std::string s)
+    {
+        fx = static_cast<std::uint8_t>(s.at(0)-'a');
+        fy = static_cast<std::uint8_t>(s.at(1)-'1');
+        tx = static_cast<std::uint8_t>(s.at(2)-'a');
+        ty = static_cast<std::uint8_t>(s.at(3)-'1');
+    }
 
     Move(const Move &m)
         : fx(m.fx), fy(m.fy), tx(m.tx), ty(m.ty), promo(m.promo)
@@ -167,8 +176,8 @@ public:
         std::uint8_t x = static_cast<std::uint8_t>(x_);
         std::uint8_t y = static_cast<std::uint8_t>(y_);
 
-        Color color;
-        Piece piece;
+        Color color = Color::Empty;
+        Piece piece = Piece::None;
 
         for (std::uint8_t c = 0; c < 3; c++)
         {
@@ -212,7 +221,9 @@ public:
         colors.at(static_cast<std::uint8_t>(tile.color)).write(x, y, true);
 
         if (tile.piece != Piece::None)
+        {
             pieces.at(static_cast<std::uint8_t>(tile.piece)).write(x, y, true);
+        }
     }
 
     std::vector<Move> getMoves() const
