@@ -121,6 +121,10 @@ public:
     Board()
     {
         colors.at(static_cast<std::uint8_t>(Color::Empty)).board = ~0;
+        can_castle.at(0).at(0) = true;
+        can_castle.at(0).at(1) = true;
+        can_castle.at(1).at(0) = true;
+        can_castle.at(1).at(1) = true;
 
         // Setup standard board
         for (std::uint8_t i = 0; i < 8; i++)
@@ -150,7 +154,6 @@ public:
         setTile(7, 7, {Color::Black, Piece::Rook});
 
         turn = Color::White;
-        can_castle = {true, true};
     }
 
     Tile getTile(std::int8_t x_, std::int8_t y_) const
@@ -207,14 +210,36 @@ public:
         }
 
         colors.at(static_cast<std::uint8_t>(tile.color)).write(x, y, true);
-        pieces.at(static_cast<std::uint8_t>(tile.piece)).write(x, y, true);
+
+        if (tile.piece != Piece::None)
+            pieces.at(static_cast<std::uint8_t>(tile.piece)).write(x, y, true);
     }
 
-    std::vector<Move>& getMoves() const
+    std::vector<Move> getMoves() const
     {
         find_movelist();
 
         return movelist;
+    }
+
+    void performMove(Move move)
+    {
+        Tile from = getTile(move.fx, move.fy);
+        //Tile to = getTile(move.tx, move.ty);
+
+        if (move.promo == Piece::None)
+            setTile(move.tx, move.ty, from);
+        else
+            setTile(move.tx, move.ty, Tile{from.color, move.promo});
+
+        setTile(move.fx, move.fy, Tile{Color::Empty, Piece::None});
+
+        if (turn == Color::White)
+            turn = Color::Black;
+        else
+            turn = Color::White;
+
+        movelist_found = false;
     }
 
     void print() const
@@ -247,8 +272,14 @@ public:
             }
         }
 
+        if (turn == Color::White)
+            std::cout << "White to move\n";
+        else
+            std::cout << "Black to move\n";
+
         std::cout << s;
 
+        /*
         std::cout << "Colors (white/black/empty)\n";
 
         for (std::uint8_t c = 0; c < 3; c++)
@@ -264,6 +295,7 @@ public:
             pieces.at(p).print();
             std::cout << '\n';
         }
+        */
 
         std::cout << std::flush;
     }
@@ -298,7 +330,6 @@ private:
                 {
                     if (ty == 7 || ty == 0)
                     {
-                        std::cout << "." << std::endl;
                         moves.emplace_back(fx, fy, tx, ty, Piece::Knight);
                         moves.emplace_back(fx, fy, tx, ty, Piece::Bishop);
                         moves.emplace_back(fx, fy, tx, ty, Piece::Rook);
@@ -436,7 +467,7 @@ private:
     std::array<Bitboard, 6> pieces;
 
     Color turn = Color::White;
-    std::array<bool, 2> can_castle = {true, true};
+    std::array<std::array<bool, 2>, 2> can_castle;
 
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
