@@ -4,3 +4,4 @@ build/cmake_install.cmake
 build/Makefile
 
 build/boardtest
+build/random_engine
