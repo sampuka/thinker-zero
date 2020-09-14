@@ -233,6 +233,27 @@ public:
         return movelist;
     }
 
+    bool canCaptureKing() const
+    {
+        find_movelist(false);
+
+        Color enemy = Color::White;
+        if (turn == Color::White)
+            enemy = Color::Black;
+
+        for (const Move &move : movelist)
+        {
+            Tile t = getTile(move.tx, move.ty);
+
+            if (t.color == enemy && t.piece == Piece::King)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void performMove(Move move)
     {
         Tile from = getTile(move.fx, move.fy);
@@ -251,6 +272,7 @@ public:
             turn = Color::White;
 
         movelist_found = false;
+        movelist.clear();
     }
 
     void print() const
@@ -312,7 +334,7 @@ public:
     }
 
 private:
-    void find_movelist() const
+    void find_movelist(bool clean_list = true) const
     {
         if (movelist_found)
             return;
@@ -393,14 +415,17 @@ private:
                         {
                             if (turn == Color::White)
                             {
-                                // If at starting pos
-                                if (y == 1)
-                                {
-                                    pawn_moves(x, y, x, y+2);
-                                }
-
                                 // Standard pawn move
-                                pawn_moves(x, y, x, y+1);
+                                if (getTile(x, y+1).color == Color::Empty)
+                                {
+                                    pawn_moves(x, y, x, y+1);
+
+                                    // If at starting pos
+                                    if (y == 1 && getTile(x, y+2).color == Color::Empty)
+                                    {
+                                        pawn_moves(x, y, x, y+2);
+                                    }
+                                }
 
                                 // Attacking moves
                                 {
@@ -421,14 +446,17 @@ private:
                             }
                             else
                             {
-                                // If at starting pos
-                                if (y == 6)
-                                {
-                                    pawn_moves(x, y, x, y-2);
-                                }
-
                                 // Standard pawn move
-                                pawn_moves(x, y, x, y-1);
+                                if (getTile(x, y-1).color == Color::Empty)
+                                {
+                                    pawn_moves(x, y, x, y-1);
+
+                                    // If at starting pos
+                                    if (y == 6 && getTile(x, y-2).color == Color::Empty)
+                                    {
+                                        pawn_moves(x, y, x, y-2);
+                                    }
+                                }
 
                                 // Attacking moves
                                 {
@@ -463,14 +491,33 @@ private:
 
                     default:
                         {
-                            std::cerr << "Unhandled piece type for finding move!" << std::endl;
+                            //std::cerr << "Unhandled piece type for finding move!" << std::endl;
                         }
                         break;
                 }
             }
         }
 
-        movelist = moves;
+        if (clean_list)
+        {
+            for (const Move &move : moves)
+            {
+                Board next(*this);
+
+                next.performMove(move);
+
+                if (!next.canCaptureKing())
+                {
+                    movelist.push_back(move);
+                }
+            }
+        }
+        else
+        {
+            movelist = moves;
+        }
+
+        //movelist = moves;
         movelist_found = true;
     }
 
