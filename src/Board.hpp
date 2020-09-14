@@ -409,6 +409,32 @@ private:
                     }
                 };
 
+                // Quick method for iterating over bishop moves
+                const auto bm = [](std::uint8_t d, std::uint8_t n)
+                {
+                    switch (d)
+                    {
+                        case 0: return n ?  1 :  1; break;
+                        case 1: return n ?  1 : -1; break;
+                        case 2: return n ? -1 :  1; break;
+                        case 3: return n ? -1 : -1; break;
+                        default: return 1; break;
+                    }
+                };
+
+                // Quick method for iterating over rook moves
+                const auto rm = [](std::uint8_t d, std::uint8_t n)
+                {
+                    switch (d)
+                    {
+                        case 0: return n ?  1 :  0; break;
+                        case 1: return n ?  0 :  1; break;
+                        case 2: return n ? -1 :  0; break;
+                        case 3: return n ?  0 : -1; break;
+                        default: return 1; break;
+                    }
+                };
+
                 switch (tile.piece)
                 {
                     case Piece::Pawn:
@@ -489,9 +515,119 @@ private:
                         }
                         break;
 
+                    case Piece::Bishop:
+                        {
+                            for (std::uint8_t d = 0; d < 4; d++)
+                            {
+                                for (std::uint8_t i = 1; ; i++)
+                                {
+                                    std::int8_t x_ = x+i*bm(d,0);
+                                    std::int8_t y_ = y+i*bm(d,1);
+
+                                    Tile t = getTile(x_, y_);
+
+                                    if (t.oob || t.color == turn)
+                                        break;
+
+                                    moves.emplace_back(x, y, x_, y_);
+
+                                    if (t.color == enemy)
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case Piece::Rook:
+                        {
+                            for (std::uint8_t d = 0; d < 4; d++)
+                            {
+                                for (std::uint8_t i = 1; ; i++)
+                                {
+                                    std::int8_t x_ = x+i*rm(d,0);
+                                    std::int8_t y_ = y+i*rm(d,1);
+
+                                    Tile t = getTile(x_, y_);
+
+                                    if (t.oob || t.color == turn)
+                                        break;
+
+                                    moves.emplace_back(x, y, x_, y_);
+
+                                    if (t.color == enemy)
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case Piece::Queen:
+                        {
+                            // Bishop moves
+                            for (std::uint8_t d = 0; d < 4; d++)
+                            {
+                                for (std::uint8_t i = 1; ; i++)
+                                {
+                                    std::int8_t x_ = x+i*bm(d,0);
+                                    std::int8_t y_ = y+i*bm(d,1);
+
+                                    Tile t = getTile(x_, y_);
+
+                                    if (t.oob || t.color == turn)
+                                        break;
+
+                                    moves.emplace_back(x, y, x_, y_);
+
+                                    if (t.color == enemy)
+                                        break;
+                                }
+                            }
+
+                            // Rook moves
+                            for (std::uint8_t d = 0; d < 4; d++)
+                            {
+                                for (std::uint8_t i = 1; ; i++)
+                                {
+                                    std::int8_t x_ = x+i*rm(d,0);
+                                    std::int8_t y_ = y+i*rm(d,1);
+
+                                    Tile t = getTile(x_, y_);
+
+                                    if (t.oob || t.color == turn)
+                                        break;
+
+                                    moves.emplace_back(x, y, x_, y_);
+
+                                    if (t.color == enemy)
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case Piece::King:
+                        {
+                            for (std::int8_t x_ = x-1; x_ <= x+1; x_++)
+                            {
+                                for (std::int8_t y_ = y-1; y_ <= y+1; y_++)
+                                {
+                                    if (x_ == x && y_ == y)
+                                        continue;
+
+                                    Tile t = getTile(x_, y_);
+
+                                    if (t.oob || t.color == turn)
+                                        continue;
+
+                                    moves.emplace_back(x, y, x_, y_);
+                                }
+                            }
+                        }
+                        break;
+
                     default:
                         {
-                            //std::cerr << "Unhandled piece type for finding move!" << std::endl;
+                            std::cerr << "Unhandled piece type for finding move!" << std::endl;
                         }
                         break;
                 }
