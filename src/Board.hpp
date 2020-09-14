@@ -84,6 +84,18 @@ public:
         fy = static_cast<std::uint8_t>(s.at(1)-'1');
         tx = static_cast<std::uint8_t>(s.at(2)-'a');
         ty = static_cast<std::uint8_t>(s.at(3)-'1');
+
+        if (s.size() == 5)
+        {
+            switch (s.at(4))
+            {
+                case 'k': promo = Piece::Knight; break;
+                case 'b': promo = Piece::Bishop; break;
+                case 'r': promo = Piece::Rook;   break;
+                case 'q': promo = Piece::Queen;  break;
+                default: break;
+            }
+        }
     }
 
     Move(const Move &m)
@@ -99,8 +111,15 @@ public:
         s += static_cast<char>('a'+tx);
         s += static_cast<char>('1'+ty);
 
-        if (promo != Piece::None)
-            s += static_cast<char>('0'+static_cast<std::uint8_t>(promo));
+        switch (promo)
+        {
+            case Piece::None: break;
+            case Piece::Knight: s += 'k'; break;
+            case Piece::Bishop: s += 'b'; break;
+            case Piece::Rook:   s += 'r'; break;
+            case Piece::Queen:  s += 'q'; break;
+            default: s += '?'; break;
+        }
 
         return s;
     }
@@ -492,7 +511,7 @@ private:
                                     }
 
                                     const Tile t2 = getTile(x+1, y+1);
-                                    if (t1.color == enemy && !t2.oob)
+                                    if (t2.color == enemy && !t2.oob)
                                     {
                                         pawn_moves(x, y, x+1, y+1);
                                     }
