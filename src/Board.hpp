@@ -266,6 +266,36 @@ public:
 
         setTile(move.fx, move.fy, Tile{Color::Empty, Piece::None});
 
+        // Castling move
+        if (from.piece == Piece::King && std::abs(move.tx - move.fx) >= 2)
+        {
+            // Kingside
+            if (move.tx > move.fx)
+            {
+                // Find kingside rook
+                std::uint8_t x = 7;
+
+                while (getTile(x, move.fy).piece != Piece::Rook)
+                    x--;
+
+                setTile(5, move.fy, Tile{from.color, Piece::Rook});
+                setTile(x, move.fy, Tile{Color::Empty, Piece::None});
+            }
+
+            // Queenside
+            if (move.tx < move.fx)
+            {
+                // Find kingside rook
+                std::uint8_t x = 0;
+
+                while (getTile(x, move.fy).piece != Piece::Rook)
+                    x++;
+
+                setTile(3, move.fy, Tile{from.color, Piece::Rook});
+                setTile(x, move.fy, Tile{Color::Empty, Piece::None});
+            }
+        }
+
         if (turn == Color::White)
             turn = Color::Black;
         else
