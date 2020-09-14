@@ -275,7 +275,7 @@ public:
         movelist.clear();
     }
 
-    void print() const
+    void print(std::ostream &os = std::cout) const
     {
         std::string s(10*11, ' ');
 
@@ -306,11 +306,11 @@ public:
         }
 
         if (turn == Color::White)
-            std::cout << "White to move\n";
+            os << "White to move\n";
         else
-            std::cout << "Black to move\n";
+            os << "Black to move\n";
 
-        std::cout << s;
+        os << s;
 
         /*
         std::cout << "Colors (white/black/empty)\n";

@@ -70,6 +70,8 @@ protected:
 
                 for (std::uint32_t i = 3; i < tokens.size(); i++)
                     board.performMove(Move(tokens.at(i)));
+
+                board.print(log);
             }
 
             else if (tokens.at(0) == "go")
