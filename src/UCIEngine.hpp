@@ -72,6 +72,11 @@ protected:
                     board.performMove(Move(tokens.at(i)));
 
                 board.print(log);
+
+                std::vector<Move> moves = board.getMoves();
+
+                for (const Move &move : moves)
+                    log << move.longform() << std::endl;
             }
 
             else if (tokens.at(0) == "go")
