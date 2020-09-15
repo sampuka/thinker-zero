@@ -182,6 +182,9 @@ public:
         setTile(7, 7, {Color::Black, Piece::Rook});
 
         turn = Color::White;
+
+        rook_starts = {0, 7};
+        king_start = 4;
     }
 
     Tile getTile(std::int8_t x_, std::int8_t y_) const
@@ -304,7 +307,7 @@ public:
             // Queenside
             if (move.tx < move.fx)
             {
-                // Find kingside rook
+                // Find queenside rook
                 std::uint8_t x = 0;
 
                 while (getTile(x, move.fy).piece != Piece::Rook)
@@ -312,6 +315,27 @@ public:
 
                 setTile(3, move.fy, Tile{from.color, Piece::Rook});
                 setTile(x, move.fy, Tile{Color::Empty, Piece::None});
+            }
+        }
+
+        // Handle castling priviledges if king move
+        if (from.piece == Piece::King)
+        {
+            can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
+            can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
+        }
+
+        // Handle castling priviledges if rook move
+        if (from.piece == Piece::Rook)
+        {
+            if (move.fx == rook_starts.at(0))
+            {
+                can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
+            }
+
+            if (move.fx == rook_starts.at(1))
+            {
+                can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
             }
         }
 
@@ -379,7 +403,9 @@ public:
         }
         */
 
-        std::cout << std::flush;
+        os << "Can castle: " << std::to_string(can_castle.at(0).at(0)) << std::to_string(can_castle.at(0).at(1)) << std::to_string(can_castle.at(1).at(0)) << std::to_string(can_castle.at(1).at(1)) << '\n';
+
+        os << std::flush;
     }
 
 private:
@@ -671,6 +697,44 @@ private:
                                     moves.emplace_back(x, y, x_, y_);
                                 }
                             }
+
+                            // Queen side castling
+                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(0))
+                            {
+                                bool clear = true;
+
+                                for (std::uint8_t x_ = rook_starts.at(0)+1; x_ < king_start; x_++)
+                                {
+                                    if (getTile(x_, y).color != Color::Empty)
+                                    {
+                                        clear = false;
+                                        break;
+                                    }
+                                }
+
+                                if (clear)
+                                {
+                                    Board next(*this);
+                                    next.performMove(Move{x, y, 2, y}); // I think this line is problematic for chess960
+
+                                    std::vector<Move> next_moves = next.getMoves();
+
+                                    for (const Move &move : next_moves)
+                                    {
+                                        if (move.ty == y && (move.tx >= rook_starts.at(0) && move.tx <= king_start))
+                                        {
+                                            clear = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (clear)
+                                    {
+                                        moves.emplace_back(x, y, 2, y);
+                                        //std::cout << "CAN QUEENSIDE CASTLE :)" << std::endl;
+                                    }
+                                }
+                            }
                         }
                         break;
 
@@ -711,6 +775,8 @@ private:
 
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle;
+    std::array<std::uint8_t, 2> rook_starts;
+    std::uint8_t king_start;
 
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
