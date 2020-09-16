@@ -182,9 +182,6 @@ public:
         setTile(7, 7, {Color::Black, Piece::Rook});
 
         turn = Color::White;
-
-        rook_starts = {0, 7};
-        king_start = 4;
     }
 
     Tile getTile(std::int8_t x_, std::int8_t y_) const
@@ -294,27 +291,15 @@ public:
             // Kingside
             if (move.tx > move.fx)
             {
-                // Find kingside rook
-                std::uint8_t x = 7;
-
-                while (getTile(x, move.fy).piece != Piece::Rook)
-                    x--;
-
                 setTile(5, move.fy, Tile{from.color, Piece::Rook});
-                setTile(x, move.fy, Tile{Color::Empty, Piece::None});
+                setTile(7, move.fy, Tile{Color::Empty, Piece::None});
             }
 
             // Queenside
             if (move.tx < move.fx)
             {
-                // Find queenside rook
-                std::uint8_t x = 0;
-
-                while (getTile(x, move.fy).piece != Piece::Rook)
-                    x++;
-
                 setTile(3, move.fy, Tile{from.color, Piece::Rook});
-                setTile(x, move.fy, Tile{Color::Empty, Piece::None});
+                setTile(0, move.fy, Tile{Color::Empty, Piece::None});
             }
         }
 
@@ -326,14 +311,16 @@ public:
         }
 
         // Handle castling priviledges if rook move
-        if (from.piece == Piece::Rook)
+        if (from.piece == Piece::Rook && move.fy &&
+                ((turn == Color::White && move.fy == 0) ||
+                 (turn == Color::Black && move.fy == 7)))
         {
-            if (move.fx == rook_starts.at(0))
+            if (move.fx == 0)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
             }
 
-            if (move.fx == rook_starts.at(1))
+            if (move.fx == 7)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
             }
@@ -698,12 +685,12 @@ private:
                                 }
                             }
 
-                            // Queen side castling
+                            // Queenside castling
                             if (can_castle.at(static_cast<std::uint8_t>(turn)).at(0))
                             {
                                 bool clear = true;
 
-                                for (std::uint8_t x_ = rook_starts.at(0)+1; x_ < king_start; x_++)
+                                for (std::uint8_t x_ = 1; x_ <= 3; x_++)
                                 {
                                     if (getTile(x_, y).color != Color::Empty)
                                     {
@@ -715,13 +702,13 @@ private:
                                 if (clear)
                                 {
                                     Board next(*this);
-                                    next.performMove(Move{x, y, 2, y}); // I think this line is problematic for chess960
+                                    next.performMove(Move{x, y, 2, y});
 
                                     std::vector<Move> next_moves = next.getMoves();
 
                                     for (const Move &move : next_moves)
                                     {
-                                        if (move.ty == y && (move.tx >= rook_starts.at(0) && move.tx <= king_start))
+                                        if (move.ty == y && (move.tx >= 2 && move.tx <= 4))
                                         {
                                             clear = false;
                                             break;
@@ -731,7 +718,43 @@ private:
                                     if (clear)
                                     {
                                         moves.emplace_back(x, y, 2, y);
-                                        //std::cout << "CAN QUEENSIDE CASTLE :)" << std::endl;
+                                    }
+                                }
+                            }
+
+                            // Kingside castling
+                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(1))
+                            {
+                                bool clear = true;
+
+                                for (std::uint8_t x_ = 6; x_ >= 5; x_--)
+                                {
+                                    if (getTile(x_, y).color != Color::Empty)
+                                    {
+                                        clear = false;
+                                        break;
+                                    }
+                                }
+
+                                if (clear)
+                                {
+                                    Board next(*this);
+                                    next.performMove(Move{x, y, 6, y});
+
+                                    std::vector<Move> next_moves = next.getMoves();
+
+                                    for (const Move &move : next_moves)
+                                    {
+                                        if (move.ty == y && (move.tx >= 4 && move.tx <= 6))
+                                        {
+                                            clear = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (clear)
+                                    {
+                                        moves.emplace_back(x, y, 6, y);
                                     }
                                 }
                             }
@@ -775,8 +798,6 @@ private:
 
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle;
-    std::array<std::uint8_t, 2> rook_starts;
-    std::uint8_t king_start;
 
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
