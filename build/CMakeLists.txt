@@ -4,8 +4,8 @@ project(ai4_engines)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(BOARDTEST_SRCS ../src/Board.hpp ../src/boardtest.cpp)
-add_executable(boardtest ${BOARDTEST_SRCS})
+set(PERFT_SRCS ../src/Board.hpp ../src/perft.cpp)
+add_executable(perft ${PERFT_SRCS})
 
 set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/RandomEngine.hpp ../src/random_engine.cpp)
 add_executable(random_engine ${RANDOM_SRCS})

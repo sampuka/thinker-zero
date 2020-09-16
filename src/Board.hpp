@@ -245,7 +245,7 @@ public:
         }
     }
 
-    std::vector<Move> getMoves() const
+    std::vector<Move>& getMoves() const
     {
         find_movelist();
 
@@ -801,6 +801,63 @@ private:
 
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
+};
+
+class BoardTree
+{
+public:
+    BoardTree(const Board &parent_board)
+        : board(parent_board)
+    {
+    }
+
+    BoardTree(const Board &parent_board, const Move &parent_move)
+        : board(parent_board), move(parent_move)
+    {
+        board.performMove(move);
+    }
+
+    void expand()
+    {
+        if (expanded)
+            return;
+
+        std::vector<Move> &moves = board.getMoves();
+
+        nodes.reserve(moves.size());
+
+        for (const Move &m : moves)
+        {
+            nodes.emplace_back(board, m);
+        }
+
+        expanded = true;
+    }
+
+    std::uint64_t depth(std::uint8_t d)
+    {
+        if (d == 0)
+            return 1;
+
+        expand();
+
+        std::uint64_t n = 0;
+        for (BoardTree &b : nodes)
+            n += b.depth(d-1);
+
+        nodes.clear();
+        expanded = false;
+
+        return n;
+    }
+
+private:
+    std::vector<BoardTree> nodes;
+    mutable bool expanded = false;
+
+    Board board;
+    Move move = Move(0, 0, 0, 0);
+
 };
 
 #endif
