@@ -856,7 +856,7 @@ public:
 
 private:
     std::vector<BoardTree> nodes;
-    mutable bool expanded = false;
+    bool expanded = false;
 
     Board board;
     Move move = Move(0, 0, 0, 0);
