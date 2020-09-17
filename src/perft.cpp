@@ -7,7 +7,7 @@ int main()
 {
     Board base;
 
-    for (int i = 1; i < 18; i++)
+    for (int i = 1; i <= 5; i++)
     {
         BoardTree tree(base);
 
