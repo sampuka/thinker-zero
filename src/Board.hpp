@@ -326,6 +326,24 @@ public:
             }
         }
 
+        // En passant
+        if (from.piece == Piece::Pawn &&
+                move.fx != move.tx &&
+                move.tx == ep_x)
+        {
+            setTile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
+        }
+
+        // En passantable move
+        if (from.piece == Piece::Pawn && std::abs(move.ty - move.fy) == 2)
+        {
+            ep_x = move.fx;
+        }
+        else
+        {
+            ep_x = 9;
+        }
+
         if (turn == Color::White)
             turn = Color::Black;
         else
@@ -518,19 +536,19 @@ private:
                                 // Attacking moves
                                 {
                                     const Tile t1 = getTile(x-1, y+1);
-                                    if (t1.color == enemy && !t1.oob)
+                                    if ((t1.color == enemy && !t1.oob) ||
+                                        (y == 4 && ep_x == x-1)) // En passant
                                     {
                                         pawn_moves(x, y, x-1, y+1);
                                     }
 
                                     const Tile t2 = getTile(x+1, y+1);
-                                    if (t2.color == enemy && !t2.oob)
+                                    if ((t2.color == enemy && !t2.oob) ||
+                                        (y == 4 && ep_x == x+1)) // En passant
                                     {
                                         pawn_moves(x, y, x+1, y+1);
                                     }
                                 }
-
-                                // En passant !!! Todo
                             }
                             else
                             {
@@ -549,19 +567,19 @@ private:
                                 // Attacking moves
                                 {
                                     const Tile t1 = getTile(x-1, y-1);
-                                    if (t1.color == enemy && !t1.oob)
+                                    if ((t1.color == enemy && !t1.oob) ||
+                                        (y == 3 && ep_x == x-1)) // En passant
                                     {
                                         pawn_moves(x, y, x-1, y-1);
                                     }
 
                                     const Tile t2 = getTile(x+1, y-1);
-                                    if (t2.color == enemy && !t2.oob)
+                                    if ((t2.color == enemy && !t2.oob) ||
+                                        (y == 3 && ep_x == x+1)) // En passant
                                     {
                                         pawn_moves(x, y, x+1, y-1);
                                     }
                                 }
-
-                                // En passant !!! Todo
                             }
                         }
                         break;
@@ -798,6 +816,7 @@ private:
 
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle;
+    std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
 
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
@@ -840,9 +859,6 @@ public:
             return 1;
 
         expand();
-
-        if (nodes.size() == 0)
-            return 1;
 
         std::uint64_t n = 0;
         for (BoardTree &b : nodes)
