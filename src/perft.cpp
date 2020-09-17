@@ -3,11 +3,16 @@
 
 #include "Board.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
+    int goal = 6;
+
+    if (argc == 2)
+        goal = std::atoi(argv[1]);
+
     Board base;
 
-    for (int i = 1; i <= 5; i++)
+    for (int i = 1; i <= goal; i++)
     {
         BoardTree tree(base);
 
