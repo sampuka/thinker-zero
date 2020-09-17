@@ -3,5 +3,5 @@ build/CMakeCache.txt
 build/cmake_install.cmake
 build/Makefile
 
-build/boardtest
+build/perft
 build/random_engine
