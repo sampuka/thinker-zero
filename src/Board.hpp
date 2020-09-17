@@ -841,6 +841,9 @@ public:
 
         expand();
 
+        if (nodes.size() == 0)
+            return 1;
+
         std::uint64_t n = 0;
         for (BoardTree &b : nodes)
             n += b.depth(d-1);
