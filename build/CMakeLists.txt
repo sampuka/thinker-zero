@@ -11,4 +11,4 @@ set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/RandomEngine.hpp ..
 add_executable(random_engine ${RANDOM_SRCS})
 target_link_libraries(random_engine PRIVATE Threads::Threads)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -g -lpthread")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -Og -lpthread")
