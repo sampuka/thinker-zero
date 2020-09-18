@@ -265,7 +265,7 @@ public:
         }
         else
         {
-            ep_x = tokens.at(3).at(0) - '0';
+            ep_x = tokens.at(3).at(0) - 'a';
         }
     }
 
@@ -329,9 +329,9 @@ public:
         }
     }
 
-    std::vector<Move>& getMoves() const
+    std::vector<Move>& getMoves(bool allow_pseudolegal = false) const
     {
-        find_movelist();
+        find_movelist(allow_pseudolegal);
 
         return movelist;
     }
@@ -410,13 +410,23 @@ public:
             }
         }
 
+        // Handle castling if rook is captured
+        if (move.tx == 7 && move.ty == 0)
+            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0) = false;
+        if (move.tx == 0 && move.ty == 0)
+            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1) = false;
+        if (move.tx == 7 && move.ty == 7)
+            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(0) = false;
+        if (move.tx == 0 && move.ty == 7)
+            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(1) = false;
+
         // En passant
         if (from.piece == Piece::Pawn &&
                 move.fx != move.tx &&
                 move.tx == ep_x)
         {
             if ((turn == Color::White && move.ty == 5) ||
-                (turn == Color::White && move.ty == 2))
+                (turn == Color::Black && move.ty == 2))
             setTile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
         }
 
@@ -584,13 +594,32 @@ private:
                 // Quick method for iterating over bishop moves
                 const auto bm = [](std::uint8_t d, std::uint8_t n)
                 {
-                    switch (d)
+                    if (n == 0)
                     {
-                        case 0: return n ?  1 :  1; break;
-                        case 1: return n ?  1 : -1; break;
-                        case 2: return n ? -1 :  1; break;
-                        case 3: return n ? -1 : -1; break;
-                        default: return 1; break;
+                        switch (d)
+                        {
+                            case 0: return  1; break;
+                            case 1: return  1; break;
+                            case 2: return -1; break;
+                            case 3: return -1; break;
+                            default: std::cout << "??" << std::endl; return 1; break;
+                        }
+                    }
+                    else if (n == 1)
+                    {
+                        switch (d)
+                        {
+                            case 0: return  1; break;
+                            case 1: return -1; break;
+                            case 2: return  1; break;
+                            case 3: return -1; break;
+                            default: std::cout << "??" << std::endl; return 1; break;
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "!?!" << std::endl;
+                        return 1;
                     }
                 };
 
@@ -698,13 +727,22 @@ private:
 
                                     Tile t = getTile(x_, y_);
 
+                                    //if (turn == Color::White)
+                                        //std::cout << "\n. " << std::to_string(x_) << " " << std::to_string(y_);
+
                                     if (t.oob || t.color == turn)
                                         break;
+
+                                    //if (turn == Color::White)
+                                        //std::cout << '!';
 
                                     moves.emplace_back(x, y, x_, y_);
 
                                     if (t.color == enemy)
                                         break;
+
+                                    //if (turn == Color::White)
+                                        //std::cout << '?';
                                 }
                             }
                         }
@@ -813,11 +851,13 @@ private:
                                 {
                                     Board next(*this);
                                     next.performMove(Move{x, y, 6, y});
+                                    next.setTile(x, y, Tile{turn, Piece::King});
 
-                                    std::vector<Move> next_moves = next.getMoves();
+                                    std::vector<Move> next_moves = next.getMoves(true);
 
                                     for (const Move &move : next_moves)
                                     {
+                                        //std::cout << move.longform() << ' ' << std::to_string(move.tx) << ' ' << std::to_string(move.ty) << std::endl;
                                         if (move.ty == y && (move.tx >= 4 && move.tx <= 6))
                                         {
                                             clear = false;
@@ -827,6 +867,7 @@ private:
 
                                     if (clear)
                                     {
+                                        //std::cout << "!!" << std::endl;
                                         moves.emplace_back(x, y, 6, y);
                                     }
                                 }
@@ -850,8 +891,9 @@ private:
                                 {
                                     Board next(*this);
                                     next.performMove(Move{x, y, 2, y});
+                                    next.setTile(x, y, Tile{turn, Piece::King});
 
-                                    std::vector<Move> next_moves = next.getMoves();
+                                    std::vector<Move> next_moves = next.getMoves(true);
 
                                     for (const Move &move : next_moves)
                                     {
@@ -891,6 +933,10 @@ private:
                 if (!next.canCaptureKing())
                 {
                     movelist.push_back(move);
+                }
+                else
+                {
+                    //std::cout << "Removed " << move.longform() << std::endl;
                 }
             }
         }
