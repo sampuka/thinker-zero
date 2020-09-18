@@ -82,14 +82,39 @@ protected:
 
             else if (tokens.at(0) == "go")
             {
-                thinking = true;
-                think_thread = std::thread(&UCIEngine::think, this);
+                if (tokens.at(1) == "perft")
+                {
+                    board.print();
+                    std::uint8_t d = std::stoi(tokens.at(2)) - 1;
+                    std::uint64_t total = 0;
+                    std::vector<Move> moves = board.getMoves();
+                    std::vector<BoardTree> trees;
+                    trees.reserve(moves.size());
 
-                while (thinking)
-                    ;
-                think_thread.join();
+                    for (std::uint16_t i = 0; i < moves.size(); i++)
+                    {
+                        const Move &m = moves.at(i);
+                        trees.emplace_back(board, m);
 
-                send_cmd("bestmove " + bestmove.longform());
+                        std::uint64_t n = trees.at(i).depth(d);
+                        total += n;
+
+                        std::cout << m.longform() << ": " << n << '\n';
+                    }
+
+                    std::cout << "Total = " << total << std::endl;
+                }
+                else
+                {
+                    thinking = true;
+                    think_thread = std::thread(&UCIEngine::think, this);
+
+                    while (thinking)
+                        ;
+                    think_thread.join();
+
+                    send_cmd("bestmove " + bestmove.longform());
+                }
             }
         }
     }
