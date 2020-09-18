@@ -66,12 +66,16 @@ protected:
             else if (tokens.at(0) == "position")
             {
                 if (tokens.at(1) == "startpos")
+                {
                     board = Board();
-                else
-                    log << "not startpos???" << std::endl;
 
-                for (std::uint32_t i = 3; i < tokens.size(); i++)
-                    board.performMove(Move(tokens.at(i)));
+                    for (std::uint32_t i = 3; i < tokens.size(); i++)
+                        board.performMove(Move(tokens.at(i)));
+                }
+                else if (tokens.at(1) == "fen")
+                {
+                    board = Board(cmd.substr(13, cmd.size()-1));
+                }
 
                 board.print(log);
             }
