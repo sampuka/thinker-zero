@@ -4,6 +4,7 @@
 #include "Board.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -17,6 +18,7 @@ class UCIEngine
 public:
     UCIEngine()
     {
+        thinking = false;
         eng = std::mt19937(r());
         log.open("/tmp/UCI_Engine.log");
     }
@@ -72,11 +74,6 @@ protected:
                     board.performMove(Move(tokens.at(i)));
 
                 board.print(log);
-
-                std::vector<Move> moves = board.getMoves();
-
-                for (const Move &move : moves)
-                    log << move.longform() << std::endl;
             }
 
             else if (tokens.at(0) == "go")
@@ -88,7 +85,6 @@ protected:
                     ;
                 think_thread.join();
 
-                thinking = false;
                 send_cmd("bestmove " + bestmove.longform());
             }
         }
@@ -103,7 +99,7 @@ protected:
     std::thread think_thread;
 
     Move bestmove = Move(0, 0, 0, 0);
-    bool thinking = false;
+    std::atomic<bool> thinking;
 
     std::random_device r;
     std::mt19937 eng;
