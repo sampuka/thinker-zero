@@ -247,9 +247,21 @@ public:
             turn = Color::Black;
         }
 
-        for (std::uint8_t i = 0; i < 4; i++)
+        can_castle.at(0).at(0) = false;
+        can_castle.at(0).at(1) = false;
+        can_castle.at(1).at(0) = false;
+        can_castle.at(1).at(1) = false;
+
+        for (char c : tokens.at(2))
         {
-            can_castle.at(i/2).at(i%2) = tokens.at(2).at(i) != '-';
+            if (c == 'K')
+                can_castle.at(0).at(0) = true;
+            if (c == 'Q')
+                can_castle.at(0).at(1) = true;
+            if (c == 'k')
+                can_castle.at(1).at(0) = true;
+            if (c == 'q')
+                can_castle.at(1).at(1) = true;
         }
 
         if (tokens.at(3).at(0) == '-')
