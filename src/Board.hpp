@@ -155,7 +155,7 @@ public:
         {
             switch (s.at(4))
             {
-                case 'k': promo = Piece::Knight; break;
+                case 'n': promo = Piece::Knight; break;
                 case 'b': promo = Piece::Bishop; break;
                 case 'r': promo = Piece::Rook;   break;
                 case 'q': promo = Piece::Queen;  break;
@@ -180,7 +180,7 @@ public:
         switch (promo)
         {
             case Piece::None: break;
-            case Piece::Knight: s += 'k'; break;
+            case Piece::Knight: s += 'n'; break;
             case Piece::Bishop: s += 'b'; break;
             case Piece::Rook:   s += 'r'; break;
             case Piece::Queen:  s += 'q'; break;
