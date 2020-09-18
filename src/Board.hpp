@@ -331,7 +331,7 @@ public:
 
     bool canCaptureKing() const
     {
-        find_movelist(false);
+        find_movelist(true);
 
         Color enemy = Color::White;
         if (turn == Color::White)
@@ -499,7 +499,7 @@ public:
     }
 
 private:
-    void find_movelist(bool clean_list = true) const
+    void find_movelist(bool allow_pseudolegal = false) const
     {
         if (movelist_found)
             return;
@@ -508,7 +508,7 @@ private:
         if (turn == Color::White)
             enemy = Color::Black;
 
-        std::vector<Move> moves; // This will include illegal moves
+        std::vector<Move> moves; // This will include pseudolegal moves
 
         // For every tile ...
         for (std::uint8_t x = 0; x < 8; x++)
@@ -788,43 +788,6 @@ private:
                                 }
                             }
 
-                            // Queenside castling
-                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(1))
-                            {
-                                bool clear = true;
-
-                                for (std::uint8_t x_ = 1; x_ <= 3; x_++)
-                                {
-                                    if (getTile(x_, y).color != Color::Empty)
-                                    {
-                                        clear = false;
-                                        break;
-                                    }
-                                }
-
-                                if (clear)
-                                {
-                                    Board next(*this);
-                                    next.performMove(Move{x, y, 2, y});
-
-                                    std::vector<Move> next_moves = next.getMoves();
-
-                                    for (const Move &move : next_moves)
-                                    {
-                                        if (move.ty == y && (move.tx >= 2 && move.tx <= 4))
-                                        {
-                                            clear = false;
-                                            break;
-                                        }
-                                    }
-
-                                    if (clear)
-                                    {
-                                        moves.emplace_back(x, y, 2, y);
-                                    }
-                                }
-                            }
-
                             // Kingside castling
                             if (can_castle.at(static_cast<std::uint8_t>(turn)).at(0))
                             {
@@ -861,6 +824,43 @@ private:
                                     }
                                 }
                             }
+
+                            // Queenside castling
+                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(1))
+                            {
+                                bool clear = true;
+
+                                for (std::uint8_t x_ = 1; x_ <= 3; x_++)
+                                {
+                                    if (getTile(x_, y).color != Color::Empty)
+                                    {
+                                        clear = false;
+                                        break;
+                                    }
+                                }
+
+                                if (clear)
+                                {
+                                    Board next(*this);
+                                    next.performMove(Move{x, y, 2, y});
+
+                                    std::vector<Move> next_moves = next.getMoves();
+
+                                    for (const Move &move : next_moves)
+                                    {
+                                        if (move.ty == y && (move.tx >= 2 && move.tx <= 4))
+                                        {
+                                            clear = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (clear)
+                                    {
+                                        moves.emplace_back(x, y, 2, y);
+                                    }
+                                }
+                            }
                         }
                         break;
 
@@ -873,7 +873,7 @@ private:
             }
         }
 
-        if (clean_list)
+        if (!allow_pseudolegal)
         {
             for (const Move &move : moves)
             {
@@ -900,7 +900,7 @@ private:
     std::array<Bitboard, 6> pieces;
 
     Color turn = Color::White;
-    std::array<std::array<bool, 2>, 2> can_castle;
+    std::array<std::array<bool, 2>, 2> can_castle; // KQkq
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
 
     mutable bool movelist_found = false;
