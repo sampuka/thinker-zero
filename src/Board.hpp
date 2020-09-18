@@ -4,6 +4,8 @@
 #include <array>
 #include <cstdint>
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -24,6 +26,70 @@ enum class Color
     Black,
     Empty
 };
+
+class Tile
+{
+public:
+    Tile(Color color_, Piece piece_, bool oob_ = false)
+        : color(color_), piece(piece_), oob(oob_)
+    {}
+
+    const Color color;
+    const Piece piece;
+    const bool oob; // Out of bounds
+};
+
+Tile charToTile(char c)
+{
+    switch (c)
+    {
+        case 'p': return Tile{Color::Black, Piece::Pawn};
+        case 'P': return Tile{Color::White, Piece::Pawn};
+        case 'n': return Tile{Color::Black, Piece::Knight};
+        case 'N': return Tile{Color::White, Piece::Knight};
+        case 'b': return Tile{Color::Black, Piece::Bishop};
+        case 'B': return Tile{Color::White, Piece::Bishop};
+        case 'r': return Tile{Color::Black, Piece::Rook};
+        case 'R': return Tile{Color::White, Piece::Rook};
+        case 'q': return Tile{Color::Black, Piece::Queen};
+        case 'Q': return Tile{Color::White, Piece::Queen};
+        case 'k': return Tile{Color::Black, Piece::King};
+        case 'K': return Tile{Color::White, Piece::King};
+        default: std::cout << "unhandled char in charToTile" << std::endl; return Tile{Color::Empty, Piece::None};
+    }
+}
+
+char tileToChar(Tile t)
+{
+    if (t.color == Color::Black)
+    {
+        switch (t.piece)
+        {
+            case Piece::Pawn:   return 'p';
+            case Piece::Knight: return 'n';
+            case Piece::Bishop: return 'b';
+            case Piece::Rook:   return 'r';
+            case Piece::Queen:  return 'q';
+            case Piece::King:   return 'k';
+            case Piece::None:   return '.';
+            default:            return '?';
+        }
+    }
+    else
+    {
+        switch (t.piece)
+        {
+            case Piece::Pawn:   return 'P';
+            case Piece::Knight: return 'N';
+            case Piece::Bishop: return 'B';
+            case Piece::Rook:   return 'R';
+            case Piece::Queen:  return 'Q';
+            case Piece::King:   return 'K';
+            case Piece::None:   return '.';
+            default:            return '?';
+        }
+    }
+}
 
 class Bitboard
 {
@@ -131,64 +197,78 @@ public:
     Piece promo = Piece::None;
 };
 
-class Tile
-{
-public:
-    Tile(Color color_, Piece piece_, bool oob_ = false)
-        : color(color_), piece(piece_), oob(oob_)
-    {}
-
-    const Color color;
-    const Piece piece;
-    const bool oob; // Out of bounds
-};
-
 class Board
 {
 public:
-    Board()
+    Board(std::string FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
     {
         colors.at(static_cast<std::uint8_t>(Color::Empty)).board = ~0;
-        can_castle.at(0).at(0) = true;
-        can_castle.at(0).at(1) = true;
-        can_castle.at(1).at(0) = true;
-        can_castle.at(1).at(1) = true;
 
-        // Setup standard board
-        for (std::uint8_t i = 0; i < 8; i++)
+        std::vector<std::string> tokens;
+
+        std::istringstream iss(FEN);
+        std::copy(std::istream_iterator<std::string>(iss),
+                std::istream_iterator<std::string>(),
+                std::back_inserter(tokens));
+
+        std::uint8_t x = 0;
+        std::uint8_t y = 7;
+
+        for (const char &c : tokens.at(0))
         {
-            setTile(i, 1, {Color::White, Piece::Pawn});
-            setTile(i, 6, {Color::Black, Piece::Pawn});
+            if (c > '0' && c <= '8')
+            {
+                x += c-'0';
+                continue;
+            }
+
+            if (c == '/')
+            {
+                y--;
+                x = 0;
+                continue;
+            }
+
+            if (charToTile(c).color == Color::Empty)
+            {
+                std::cout << c << " seen as empty" << std::endl;
+            }
+
+            setTile(x, y, charToTile(c));
+            x++;
         }
 
-        // White backrow
-        setTile(0, 0, {Color::White, Piece::Rook});
-        setTile(1, 0, {Color::White, Piece::Knight});
-        setTile(2, 0, {Color::White, Piece::Bishop});
-        setTile(3, 0, {Color::White, Piece::Queen});
-        setTile(4, 0, {Color::White, Piece::King});
-        setTile(5, 0, {Color::White, Piece::Bishop});
-        setTile(6, 0, {Color::White, Piece::Knight});
-        setTile(7, 0, {Color::White, Piece::Rook});
+        if (tokens.at(1).at(0) == 'w')
+        {
+            turn = Color::White;
+        }
+        else
+        {
+            turn = Color::Black;
+        }
 
-        // Black backrow
-        setTile(0, 7, {Color::Black, Piece::Rook});
-        setTile(1, 7, {Color::Black, Piece::Knight});
-        setTile(2, 7, {Color::Black, Piece::Bishop});
-        setTile(3, 7, {Color::Black, Piece::Queen});
-        setTile(4, 7, {Color::Black, Piece::King});
-        setTile(5, 7, {Color::Black, Piece::Bishop});
-        setTile(6, 7, {Color::Black, Piece::Knight});
-        setTile(7, 7, {Color::Black, Piece::Rook});
+        for (std::uint8_t i = 0; i < 4; i++)
+        {
+            if (tokens.at(2).at(i) != '-')
+            {
+                can_castle.at(i/2).at(i%2) = true;
+            }
+        }
 
-        turn = Color::White;
+        if (tokens.at(3).at(0) == '-')
+        {
+            ep_x = 9;
+        }
+        else
+        {
+            ep_x = tokens.at(3).at(0) - '0';
+        }
     }
 
     Tile getTile(std::int8_t x_, std::int8_t y_) const
     {
         if (x_ < 0 || x_ > 7 || y_ < 0 || y_ > 7)
         {
-            //std::cerr << "Get tile out of bounds (" << std::to_string(x_) << ", " << std::to_string(y_) << ")" << std::endl;
             return Tile{Color::Empty, Piece::None, true};
         }
 
@@ -368,20 +448,7 @@ public:
             {
                 std::uint8_t pos = ((8-y)*11)+x+1;
 
-                Tile tile = getTile(x, y);
-
-                if (tile.color == Color::White)
-                {
-                    s.at(pos) = '0'+static_cast<std::uint8_t>(tile.piece);
-                }
-                else if (tile.color == Color::Black)
-                {
-                    s.at(pos) = 'a'+static_cast<std::uint8_t>(tile.piece);
-                }
-                else
-                {
-                    s.at(pos) = '.';
-                }
+                s.at(pos) = tileToChar(getTile(x, y));
             }
         }
 
@@ -410,7 +477,11 @@ public:
         }
         */
 
-        os << "Can castle: " << std::to_string(can_castle.at(0).at(0)) << std::to_string(can_castle.at(0).at(1)) << std::to_string(can_castle.at(1).at(0)) << std::to_string(can_castle.at(1).at(1)) << '\n';
+        os << "Can castle: " <<
+            std::to_string(can_castle.at(0).at(0)) <<
+            std::to_string(can_castle.at(0).at(1)) <<
+            std::to_string(can_castle.at(1).at(0)) <<
+            std::to_string(can_castle.at(1).at(1)) << '\n';
 
         os << std::flush;
     }
