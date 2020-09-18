@@ -249,10 +249,7 @@ public:
 
         for (std::uint8_t i = 0; i < 4; i++)
         {
-            if (tokens.at(2).at(i) != '-')
-            {
-                can_castle.at(i/2).at(i%2) = true;
-            }
+            can_castle.at(i/2).at(i%2) = tokens.at(2).at(i) != '-';
         }
 
         if (tokens.at(3).at(0) == '-')
@@ -395,12 +392,12 @@ public:
                 ((turn == Color::White && move.fy == 0) ||
                  (turn == Color::Black && move.fy == 7)))
         {
-            if (move.fx == 0)
+            if (move.fx == 7)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
             }
 
-            if (move.fx == 7)
+            if (move.fx == 0)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
             }
@@ -477,13 +474,28 @@ public:
         }
         */
 
-        os << "Can castle: " <<
-            std::to_string(can_castle.at(0).at(0)) <<
-            std::to_string(can_castle.at(0).at(1)) <<
-            std::to_string(can_castle.at(1).at(0)) <<
-            std::to_string(can_castle.at(1).at(1)) << '\n';
+        os << "Can castle: ";
+        if (can_castle.at(0).at(0))
+            os << 'K';
+        else
+            os << '-';
 
-        os << std::flush;
+        if (can_castle.at(0).at(1))
+            os << 'Q';
+        else
+            os << '-';
+
+        if (can_castle.at(1).at(0))
+            os << 'k';
+        else
+            os << '-';
+
+        if (can_castle.at(1).at(1))
+            os << 'q';
+        else
+            os << '-';
+
+        os << std::endl;
     }
 
 private:
@@ -777,7 +789,7 @@ private:
                             }
 
                             // Queenside castling
-                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(0))
+                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(1))
                             {
                                 bool clear = true;
 
@@ -814,7 +826,7 @@ private:
                             }
 
                             // Kingside castling
-                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(1))
+                            if (can_castle.at(static_cast<std::uint8_t>(turn)).at(0))
                             {
                                 bool clear = true;
 
