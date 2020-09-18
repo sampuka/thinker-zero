@@ -5,3 +5,6 @@ build/Makefile
 
 build/perft
 build/random_engine
+
+build/perf.data
+build/perf.data.old
