@@ -229,11 +229,6 @@ public:
                 continue;
             }
 
-            if (charToTile(c).color == Color::Empty)
-            {
-                std::cout << c << " seen as empty" << std::endl;
-            }
-
             setTile(x, y, charToTile(c));
             x++;
         }
