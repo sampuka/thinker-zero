@@ -331,6 +331,8 @@ public:
                 move.fx != move.tx &&
                 move.tx == ep_x)
         {
+            if ((turn == Color::White && move.ty == 5) ||
+                (turn == Color::White && move.ty == 2))
             setTile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
         }
 
