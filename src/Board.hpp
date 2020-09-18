@@ -395,7 +395,7 @@ public:
         }
 
         // Handle castling priviledges if rook move
-        if (from.piece == Piece::Rook && move.fy &&
+        if (from.piece == Piece::Rook &&
                 ((turn == Color::White && move.fy == 0) ||
                  (turn == Color::Black && move.fy == 7)))
         {
