@@ -16,6 +16,7 @@ int main(int argc, char** argv)
     // Standard
     //Board base;
 
+    base.print();
     for (int i = 1; i <= goal; i++)
     {
         BoardTree tree(base);
