@@ -1,11 +1,73 @@
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <random>
 #include <string>
+#include <sstream>
 
 #include "Board.hpp"
 
-int main(int argc, char** argv)
+int main()
 {
+    std::ifstream testfile("hartmann.epd");
+    std::string delim = "; ";
+
+    std::string line;
+    while (std::getline(testfile, line))
+    {
+        size_t pos = 0;
+        std::string token;
+        std::string epd = "";
+        bool epd_found = false;
+
+        while (pos != std::string::npos)
+        {
+            pos = line.find(delim);
+            if (pos != std::string::npos)
+            {
+                token = line.substr(0, pos);
+                line.erase(0, pos + delim.length());
+            }
+            else
+            {
+                token = line;
+            }
+
+            if (!epd_found)
+            {
+                epd = token;
+                epd_found = true;
+                std::cout << epd << std::endl;
+            }
+            else
+            {
+                int d = token.at(1)-'0';
+                std::uint64_t target = std::stoi(token.substr(3, token.size()));
+
+
+                Board base(epd);
+                //base.print();
+
+                BoardTree tree(base);
+
+                std::uint64_t result = tree.depth(d);
+
+                if (result == target)
+                {
+                    std::cout << "D" << d << " hit. ";
+                }
+                else
+                {
+                    std::cout << "D" << d << " miss. ;
+                }
+                std::cout << std::flush;
+            }
+        }
+
+        std::cout << '\n' << std::endl;
+    }
+
+    /*
     int goal = 6;
     std::string pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
@@ -35,6 +97,7 @@ int main(int argc, char** argv)
 
         std::cout << "Perft " << i << " = " << tree.depth(i) << std::endl;
     }
+    */
 
     return 0;
 }
