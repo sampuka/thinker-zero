@@ -58,7 +58,7 @@ int main()
                 }
                 else
                 {
-                    std::cout << "D" << d << " miss. ;
+                    std::cout << "D" << d << " miss. ";
                 }
                 std::cout << std::flush;
             }
