@@ -7,7 +7,7 @@ find_package(Threads REQUIRED)
 set(PERFT_SRCS ../src/Board.hpp ../src/perft.cpp)
 add_executable(perft ${PERFT_SRCS})
 
-set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/RandomEngine.hpp ../src/random_engine.cpp)
+set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/random_engine.cpp)
 add_executable(random_engine ${RANDOM_SRCS})
 target_link_libraries(random_engine PRIVATE Threads::Threads)
 
