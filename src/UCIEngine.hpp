@@ -42,6 +42,9 @@ protected:
             std::string cmd;
             std::getline(std::cin, cmd);
 
+            if (cmd == "")
+                continue;
+
             log << "> " << cmd << std::endl;
 
             std::vector<std::string> tokens;
@@ -53,8 +56,8 @@ protected:
 
             if (tokens.at(0) == "uci")
             {
-                send_cmd("id name Random Engine");
-                send_cmd("id author Mathias Jensen");
+                send_cmd("id name " + engine_name);
+                send_cmd("id author " + engine_author);
                 send_cmd("uciok");
             }
 
@@ -63,18 +66,40 @@ protected:
                 send_cmd("readyok");
             }
 
+            else if (tokens.at(0) == "quit")
+            {
+                return;
+            }
+
             else if (tokens.at(0) == "position")
             {
+                std::uint32_t i = 1;
+
                 if (tokens.at(1) == "startpos")
                 {
                     board = Board();
-
-                    for (std::uint32_t i = 3; i < tokens.size(); i++)
-                        board.performMove(Move(tokens.at(i)));
+                    i++;
                 }
                 else if (tokens.at(1) == "fen")
                 {
-                    board = Board(cmd.substr(13, cmd.size()-1));
+                    std::string fen_string =
+                        tokens.at(2) + ' ' +
+                        tokens.at(3) + ' ' +
+                        tokens.at(4) + ' ' +
+                        tokens.at(5) + ' ' +
+                        tokens.at(6) + ' ' +
+                        tokens.at(7);
+
+                    board = Board(fen_string);
+                    i+=7;
+                }
+
+                if (i != tokens.size() && tokens.at(i) == "moves")
+                {
+                    while (++i < tokens.size())
+                    {
+                        board.performMove(Move(tokens.at(i)));
+                    }
                 }
 
                 board.print(log);
@@ -102,7 +127,7 @@ protected:
                         std::cout << m.longform() << ": " << n << '\n';
                     }
 
-                    std::cout << "Total = " << total << std::endl;
+                    std::cout << "Total: " << total << std::endl;
                 }
                 else
                 {
@@ -124,6 +149,9 @@ protected:
         log << "< " << s << std::endl;
         std::cout << s << std::endl;
     }
+
+    std::string engine_name = "Unspecified UCI engine";
+    std::string engine_author = "Unspecified author";
 
     std::thread think_thread;
 
