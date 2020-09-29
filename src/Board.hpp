@@ -500,6 +500,39 @@ public:
         movelist.clear();
     }
 
+    double basic_eval() const
+    {
+        double eval = 0;
+
+        for (std::uint8_t x = 0; x < 8; x++)
+        {
+            for (std::uint8_t y = 0; y < 8; y++)
+            {
+                Tile t = getTile(x, y);
+
+                double pv = 0;
+
+                switch (t.piece)
+                {
+                    case Piece::None:   pv = 0; break;
+                    case Piece::Pawn:   pv = 1; break;
+                    case Piece::Knight: pv = 3; break;
+                    case Piece::Bishop: pv = 3; break;
+                    case Piece::Rook:   pv = 5; break;
+                    case Piece::Queen:  pv = 9; break;
+                    default:            pv = 0; break;
+                }
+
+                if (t.color == Color::White)
+                    eval += pv;
+                else if (t.color == Color::Black)
+                    eval -= pv;
+            }
+        }
+
+        return eval;
+    }
+
     void print(std::ostream &os = std::cout) const
     {
         std::string s(10*11, ' ');
