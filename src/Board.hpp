@@ -390,16 +390,16 @@ public:
         return res;
     }
 
-    std::vector<Move>& getMoves(bool find_threat = false) const
+    std::vector<Move>& getMoves() const
     {
-        find_movelist(turn, find_threat);
+        find_movelist();
 
         return movelist;
     }
 
     Bitboard& getThreat() const
     {
-        find_movelist(turn, true);
+        find_movelist(true);
 
         return threat;
     }
@@ -413,7 +413,7 @@ public:
         threat.board = 0;
     }
 
-    Color getTurn()
+    Color getTurn() const
     {
         return turn;
     }
@@ -509,7 +509,7 @@ public:
 
     double basic_eval() const
     {
-        find_movelist(turn);
+        find_movelist();
 
         if (movelist.size() == 0)
         {
@@ -617,7 +617,7 @@ public:
     }
 
 private:
-    void find_movelist(Color player, bool find_threat = false) const
+    void find_movelist(bool find_threat = false) const
     {
         if (movelist_found)
             return;
@@ -625,6 +625,7 @@ private:
         if (find_threat && threat.board != 0)
             return;
 
+        Color player = getTurn();
         Color enemy = Color::White;
         if (player == Color::White)
             enemy = Color::Black;
