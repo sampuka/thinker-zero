@@ -508,9 +508,9 @@ public:
         if (movelist.size() == 0)
         {
             if (turn == Color::White)
-                return -std::numeric_limits<float>::infinity();
+                return -std::numeric_limits<double>::infinity();
             if (turn == Color::Black)
-                return std::numeric_limits<float>::infinity();
+                return std::numeric_limits<double>::infinity();
         }
 
         double eval = 0;
