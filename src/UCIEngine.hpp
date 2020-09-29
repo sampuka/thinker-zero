@@ -131,6 +131,30 @@ protected:
                 }
                 else
                 {
+                    std::uint8_t i = 0;
+                    while (++i < tokens.size())
+                    {
+                        if (tokens.at(i) == "wtime")
+                            w_time = std::stoi(tokens.at(++i));
+
+                        if (tokens.at(i) == "btime")
+                            b_time = std::stoi(tokens.at(++i));
+
+                        if (tokens.at(i) == "winc")
+                            w_inc = std::stoi(tokens.at(++i));
+
+                        if (tokens.at(i) == "binc")
+                            b_inc = std::stoi(tokens.at(++i));
+
+                        if (tokens.at(i) == "infinite")
+                        {
+                            i++;
+                            infinite = true;
+                        }
+                    }
+
+                    log << "wtime/btime/winc/binc = " << w_time << '/' << b_time << '/' << w_inc << '/' << b_inc << std::endl;
+
                     thinking = true;
                     think_thread = std::thread(&UCIEngine::think, this);
 
@@ -154,6 +178,13 @@ protected:
     std::string engine_author = "Unspecified author";
 
     std::thread think_thread;
+
+    // Current player times and increment [ms]
+    std::uint64_t w_time = 0;
+    std::uint64_t b_time = 0;
+    std::uint64_t w_inc = 0;
+    std::uint64_t b_inc = 0;
+    bool infinite = false;
 
     Move bestmove = Move(0, 0, 0, 0);
     std::atomic<bool> thinking;
