@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -502,6 +503,16 @@ public:
 
     double basic_eval() const
     {
+        find_movelist();
+
+        if (movelist.size() == 0)
+        {
+            if (turn == Color::White)
+                return -std::numeric_limits<float>::infinity();
+            if (turn == Color::Black)
+                return std::numeric_limits<float>::infinity();
+        }
+
         double eval = 0;
 
         for (std::uint8_t x = 0; x < 8; x++)
@@ -1036,12 +1047,13 @@ private:
     std::array<Bitboard, 3> colors;
     std::array<Bitboard, 6> pieces;
 
+    mutable bool movelist_found = false;
+    mutable std::vector<Move> movelist;
+
+public:
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle; // KQkq
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
-
-    mutable bool movelist_found = false;
-    mutable std::vector<Move> movelist;
 };
 
 class BoardTree
