@@ -5,6 +5,9 @@ class RandomEngine : public UCIEngine
 public:
     RandomEngine()
     {
+        engine_name = "Random Engine";
+        engine_author = "Mathias Ebbensgaard Jensen";
+
         start();
     }
 
