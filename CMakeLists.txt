@@ -11,4 +11,8 @@ set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/random_engine.cpp)
 add_executable(random_engine ${RANDOM_SRCS})
 target_link_libraries(random_engine PRIVATE Threads::Threads)
 
+set(MALY_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/maly_engine.cpp)
+add_executable(maly_engine ${MALY_SRCS})
+target_link_libraries(maly_engine PRIVATE Threads::Threads)
+
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -O3 -lpthread")
