@@ -404,25 +404,18 @@ public:
         return threat;
     }
 
-    bool canCaptureKing() const
+    void setTurn(Color color)
     {
-        find_movelist(turn, true);
+        turn = color;
 
-        Color enemy = Color::White;
-        if (turn == Color::White)
-            enemy = Color::Black;
+        movelist.clear();
+        movelist_found = false;
+        threat.board = 0;
+    }
 
-        for (const Move &move : movelist)
-        {
-            Tile t = getTile(move.tx, move.ty);
-
-            if (t.color == enemy && t.piece == Piece::King)
-            {
-                return true;
-            }
-        }
-
-        return false;
+    Color getTurn()
+    {
+        return turn;
     }
 
     void performMove(Move move)
@@ -508,14 +501,10 @@ public:
             ep_x = 9;
         }
 
-        if (turn == Color::White)
-            turn = Color::Black;
+        if (getTurn() == Color::White)
+            setTurn(Color::Black);
         else
-            turn = Color::White;
-
-        threat.board = 0;
-        movelist_found = false;
-        movelist.clear();
+            setTurn(Color::White);
     }
 
     double basic_eval() const
@@ -1150,7 +1139,6 @@ private:
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
 
-public:
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle; // KQkq
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
