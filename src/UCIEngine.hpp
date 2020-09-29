@@ -49,9 +49,7 @@ protected:
 
     void start()
     {
-        std::cout << "rx starting" << std::endl;
         rx_thread = std::thread(&UCIEngine::rx_loop, this);
-        std::cout << "rx started" << std::endl;
         state_loop();
     }
 
