@@ -9,7 +9,7 @@
 
 int main()
 {
-    std::ifstream testfile("hartmann.epd");
+    std::ifstream testfile("../hartmann.epd");
     std::string delim = "; ";
 
     std::string line;
