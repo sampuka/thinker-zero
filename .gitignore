@@ -1,11 +1,3 @@
-build/CMakeFiles/*
-build/CMakeCache.txt
-build/cmake_install.cmake
-build/Makefile
+build/
 
-build/perft
-build/random_engine
-
-build/perf.data
-build/perf.data.old
-build/hartmann.epd
+hartmann.epd
