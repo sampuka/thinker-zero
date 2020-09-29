@@ -259,6 +259,50 @@ public:
                 can_castle.at(1).at(1) = true;
         }
 
+        // Ensure castling ability
+        {
+            Tile t = getTile(7, 0);
+
+            if (t.color != Color::White || t.piece != Piece::Rook)
+                can_castle.at(0).at(0) = false;
+        }
+        {
+            Tile t = getTile(0, 0);
+
+            if (t.color != Color::White || t.piece != Piece::Rook)
+                can_castle.at(0).at(1) = false;
+        }
+        {
+            Tile t = getTile(7, 7);
+
+            if (t.color != Color::Black || t.piece != Piece::Rook)
+                can_castle.at(1).at(0) = false;
+        }
+        {
+            Tile t = getTile(0, 7);
+
+            if (t.color != Color::Black || t.piece != Piece::Rook)
+                can_castle.at(1).at(1) = false;
+        }
+        {
+            Tile t = getTile(4, 0);
+
+            if (t.color != Color::White || t.piece != Piece::King)
+            {
+                can_castle.at(0).at(0) = false;
+                can_castle.at(0).at(1) = false;
+            }
+        }
+        {
+            Tile t = getTile(4, 7);
+
+            if (t.color != Color::Black || t.piece != Piece::King)
+            {
+                can_castle.at(1).at(0) = false;
+                can_castle.at(1).at(1) = false;
+            }
+        }
+
         if (tokens.at(3).at(0) == '-')
         {
             ep_x = 9;
@@ -267,6 +311,32 @@ public:
         {
             ep_x = tokens.at(3).at(0) - 'a';
         }
+    }
+
+    Color getColor(std::uint8_t x, std::uint8_t y) const
+    {
+        for (std::uint8_t c = 0; c < 3; c++)
+        {
+            if (colors.at(c).read(x, y))
+            {
+                return static_cast<Color>(c);
+            }
+        }
+
+        return Color::Empty;
+    }
+
+    Piece getPiece(std::uint8_t x, std::uint8_t y) const
+    {
+        for (std::uint8_t p = 0; p < 6; p++)
+        {
+            if (pieces.at(p).read(x, y))
+            {
+                return static_cast<Piece>(p);
+            }
+        }
+
+        return Piece::None;
     }
 
     Tile getTile(std::int8_t x_, std::int8_t y_) const
@@ -279,26 +349,7 @@ public:
         std::uint8_t x = static_cast<std::uint8_t>(x_);
         std::uint8_t y = static_cast<std::uint8_t>(y_);
 
-        Color color = Color::Empty;
-        Piece piece = Piece::None;
-
-        for (std::uint8_t c = 0; c < 3; c++)
-        {
-            if (colors.at(c).read(x, y))
-            {
-                color = static_cast<Color>(c);
-            }
-        }
-
-        for (std::uint8_t p = 0; p < 6; p++)
-        {
-            if (pieces.at(p).read(x, y))
-            {
-                piece = static_cast<Piece>(p);
-            }
-        }
-
-        return Tile{color, piece};
+        return Tile{getColor(x, y), getPiece(x, y)};
     }
 
     void setTile(std::int8_t x_, std::int8_t y_, Tile tile)
