@@ -5,9 +5,11 @@
 
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <mutex>
 #include <random>
 #include <sstream>
 #include <string>
@@ -28,13 +30,32 @@ public:
 protected:
     Board board;
 
+    std::string engine_name = "Unspecified UCI engine";
+    std::string engine_author = "Unspecified author";
+
+    // Current player times and increment [ms]
+    std::uint64_t w_time = 0;
+    std::uint64_t b_time = 0;
+    std::uint64_t w_inc = 0;
+    std::uint64_t b_inc = 0;
+    bool infinite = false;
+
+    Move bestmove = Move(0, 0, 0, 0);
+    std::atomic<bool> thinking;
+
+    std::mt19937 eng;
+
     std::ofstream log;
 
     void start()
     {
-        rx_loop();
+        std::cout << "rx starting" << std::endl;
+        rx_thread = std::thread(&UCIEngine::rx_loop, this);
+        std::cout << "rx started" << std::endl;
+        state_loop();
     }
 
+private:
     void rx_loop()
     {
         while (1)
@@ -54,113 +75,140 @@ protected:
                     std::istream_iterator<std::string>(),
                     std::back_inserter(tokens));
 
-            if (tokens.at(0) == "uci")
-            {
-                send_cmd("id name " + engine_name);
-                send_cmd("id author " + engine_author);
-                send_cmd("uciok");
-            }
+            rx_buffer_mutex.lock();
+            rx_buffer.push_back(tokens);
+            rx_buffer_mutex.unlock();
+        }
+    }
 
-            else if (tokens.at(0) == "isready")
-            {
-                send_cmd("readyok");
-            }
+    void state_loop()
+    {
+        while (1)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-            else if (tokens.at(0) == "quit")
+            while (rx_buffer.size() != 0)
             {
-                return;
-            }
+                rx_buffer_mutex.lock();
+                std::vector<std::string> tokens = rx_buffer.at(0);
+                rx_buffer.erase(rx_buffer.begin());
+                rx_buffer_mutex.unlock();
 
-            else if (tokens.at(0) == "position")
-            {
-                std::uint32_t i = 1;
-
-                if (tokens.at(1) == "startpos")
+                if (tokens.at(0) == "uci")
                 {
-                    board = Board();
-                    i++;
-                }
-                else if (tokens.at(1) == "fen")
-                {
-                    std::string fen_string =
-                        tokens.at(2) + ' ' +
-                        tokens.at(3) + ' ' +
-                        tokens.at(4) + ' ' +
-                        tokens.at(5) + ' ' +
-                        tokens.at(6) + ' ' +
-                        tokens.at(7);
-
-                    board = Board(fen_string);
-                    i+=7;
+                    send_cmd("id name " + engine_name);
+                    send_cmd("id author " + engine_author);
+                    send_cmd("uciok");
                 }
 
-                if (i != tokens.size() && tokens.at(i) == "moves")
+                else if (tokens.at(0) == "isready")
                 {
-                    while (++i < tokens.size())
+                    send_cmd("readyok");
+                }
+
+                else if (tokens.at(0) == "quit")
+                {
+                    return;
+                }
+
+                else if (tokens.at(0) == "position")
+                {
+                    std::uint32_t i = 1;
+
+                    if (tokens.at(1) == "startpos")
                     {
-                        board.performMove(Move(tokens.at(i)));
+                        board = Board();
+                        i++;
                     }
-                }
-
-                board.print(log);
-            }
-
-            else if (tokens.at(0) == "go")
-            {
-                if (tokens.at(1) == "perft")
-                {
-                    board.print();
-                    std::uint8_t d = std::stoi(tokens.at(2)) - 1;
-                    std::uint64_t total = 0;
-                    std::vector<Move> moves = board.getMoves();
-                    std::vector<BoardTree> trees;
-                    trees.reserve(moves.size());
-
-                    for (std::uint16_t i = 0; i < moves.size(); i++)
+                    else if (tokens.at(1) == "fen")
                     {
-                        const Move &m = moves.at(i);
-                        trees.emplace_back(board, m);
+                        std::string fen_string =
+                            tokens.at(2) + ' ' +
+                            tokens.at(3) + ' ' +
+                            tokens.at(4) + ' ' +
+                            tokens.at(5) + ' ' +
+                            tokens.at(6) + ' ' +
+                            tokens.at(7);
 
-                        std::uint64_t n = trees.at(i).depth(d);
-                        total += n;
-
-                        std::cout << m.longform() << ": " << n << '\n';
+                        board = Board(fen_string);
+                        i+=7;
                     }
 
-                    std::cout << "Total: " << total << std::endl;
-                }
-                else
-                {
-                    std::uint8_t i = 0;
-                    while (++i < tokens.size())
+                    if (i != tokens.size() && tokens.at(i) == "moves")
                     {
-                        if (tokens.at(i) == "wtime")
-                            w_time = std::stoi(tokens.at(++i));
-
-                        if (tokens.at(i) == "btime")
-                            b_time = std::stoi(tokens.at(++i));
-
-                        if (tokens.at(i) == "winc")
-                            w_inc = std::stoi(tokens.at(++i));
-
-                        if (tokens.at(i) == "binc")
-                            b_inc = std::stoi(tokens.at(++i));
-
-                        if (tokens.at(i) == "infinite")
+                        while (++i < tokens.size())
                         {
-                            i++;
-                            infinite = true;
+                            board.performMove(Move(tokens.at(i)));
                         }
                     }
 
-                    log << "wtime/btime/winc/binc = " << w_time << '/' << b_time << '/' << w_inc << '/' << b_inc << std::endl;
+                    board.print(log);
+                }
 
-                    thinking = true;
-                    think_thread = std::thread(&UCIEngine::think, this);
+                else if (tokens.at(0) == "go")
+                {
+                    if (tokens.size() > 1 && tokens.at(1) == "perft")
+                    {
+                        board.print();
+                        std::uint8_t d = std::stoi(tokens.at(2)) - 1;
+                        std::uint64_t total = 0;
+                        std::vector<Move> moves = board.getMoves();
+                        std::vector<BoardTree> trees;
+                        trees.reserve(moves.size());
 
-                    while (thinking)
-                        ;
+                        for (std::uint16_t i = 0; i < moves.size(); i++)
+                        {
+                            const Move &m = moves.at(i);
+                            trees.emplace_back(board, m);
+
+                            std::uint64_t n = trees.at(i).depth(d);
+                            total += n;
+
+                            std::cout << m.longform() << ": " << n << '\n';
+                        }
+
+                        std::cout << "Total: " << total << std::endl;
+                    }
+                    else
+                    {
+                        std::uint8_t i = 0;
+                        while (++i < tokens.size())
+                        {
+                            if (tokens.at(i) == "wtime")
+                                w_time = std::stoi(tokens.at(++i));
+
+                            if (tokens.at(i) == "btime")
+                                b_time = std::stoi(tokens.at(++i));
+
+                            if (tokens.at(i) == "winc")
+                                w_inc = std::stoi(tokens.at(++i));
+
+                            if (tokens.at(i) == "binc")
+                                b_inc = std::stoi(tokens.at(++i));
+
+                            if (tokens.at(i) == "infinite")
+                            {
+                                i++;
+                                infinite = true;
+                            }
+                        }
+
+                        log << "wtime/btime/winc/binc = " << w_time << '/' << b_time << '/' << w_inc << '/' << b_inc << std::endl;
+
+                        thinking = true;
+                        think_state = true;
+                        think_thread = std::thread(&UCIEngine::think, this);
+                    }
+                }
+            }
+
+            // State machine ish
+            if (think_state)
+            {
+                if (!thinking)
+                {
                     think_thread.join();
+                    think_state = false;
 
                     send_cmd("bestmove " + bestmove.longform());
                 }
@@ -174,23 +222,14 @@ protected:
         std::cout << s << std::endl;
     }
 
-    std::string engine_name = "Unspecified UCI engine";
-    std::string engine_author = "Unspecified author";
+    std::vector<std::vector<std::string>> rx_buffer;
+    std::mutex rx_buffer_mutex;
 
+    std::thread rx_thread;
     std::thread think_thread;
-
-    // Current player times and increment [ms]
-    std::uint64_t w_time = 0;
-    std::uint64_t b_time = 0;
-    std::uint64_t w_inc = 0;
-    std::uint64_t b_inc = 0;
-    bool infinite = false;
-
-    Move bestmove = Move(0, 0, 0, 0);
-    std::atomic<bool> thinking;
+    bool think_state = false;
 
     std::random_device r;
-    std::mt19937 eng;
 };
 
 #endif
