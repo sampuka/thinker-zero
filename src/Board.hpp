@@ -507,12 +507,60 @@ public:
             setTurn(Color::White);
     }
 
+    bool is_checkmate() const
+    {
+        find_movelist();
+
+        if (movelist.size() != 0)
+            return false;
+
+        Board oppo(*this);
+
+        Color enemy_turn = Color::White;
+        if (turn == Color::White)
+            enemy_turn = Color::Black;
+
+        oppo.setTurn(enemy_turn);
+
+        Bitboard enemy_threat = oppo.getThreat();
+
+        if ((enemy_threat.board & getBitboard(turn, Piece::King).board) != 0)
+            return true;
+
+        return false;
+    }
+
+    bool is_stalemate() const
+    {
+        find_movelist();
+
+        if (movelist.size() != 0)
+            return false;
+
+        Board oppo(*this);
+
+        Color enemy_turn = Color::White;
+        if (turn == Color::White)
+            enemy_turn = Color::Black;
+
+        oppo.setTurn(enemy_turn);
+
+        Bitboard enemy_threat = oppo.getThreat();
+
+        if ((enemy_threat.board & getBitboard(turn, Piece::King).board) == 0)
+            return true;
+
+        return false;
+    }
+
     double basic_eval() const
     {
         find_movelist();
 
         if (movelist.size() == 0)
         {
+            if (is_stalemate())
+                return 0;
             if (turn == Color::White)
                 return -std::numeric_limits<double>::infinity();
             if (turn == Color::Black)
