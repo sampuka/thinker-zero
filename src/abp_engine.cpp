@@ -28,7 +28,7 @@ public:
         }
    
         // Find random move among moves
-        std::random_shuffle(moves.begin(), moves.end());
+        std::shuffle(moves.begin(), moves.end(), eng);
         Board test_board(board);
         test_board.performMove(moves.at(0));
         double bestvalue = test_board.basic_eval() * turn;
