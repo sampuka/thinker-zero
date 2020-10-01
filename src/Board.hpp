@@ -404,6 +404,23 @@ public:
         return threat;
     }
 
+    Bitboard& getEnemyThreat() const
+    {
+        if (enemy_threat.board != 0)
+            return enemy_threat;
+
+        Board oppo(*this);
+
+        Color enemy_turn = Color::White;
+        if (turn == Color::White)
+            enemy_turn = Color::Black;
+
+        oppo.setTurn(enemy_turn);
+        enemy_threat = oppo.getThreat();
+
+        return enemy_threat;
+    }
+
     void setTurn(Color color)
     {
         turn = color;
@@ -411,6 +428,7 @@ public:
         movelist.clear();
         movelist_found = false;
         threat.board = 0;
+        enemy_threat.board = 0;
     }
 
     Color getTurn() const
@@ -514,15 +532,7 @@ public:
         if (movelist.size() != 0)
             return false;
 
-        Board oppo(*this);
-
-        Color enemy_turn = Color::White;
-        if (turn == Color::White)
-            enemy_turn = Color::Black;
-
-        oppo.setTurn(enemy_turn);
-
-        Bitboard enemy_threat = oppo.getThreat();
+        getEnemyThreat();
 
         if ((enemy_threat.board & getBitboard(turn, Piece::King).board) != 0)
             return true;
@@ -537,15 +547,7 @@ public:
         if (movelist.size() != 0)
             return false;
 
-        Board oppo(*this);
-
-        Color enemy_turn = Color::White;
-        if (turn == Color::White)
-            enemy_turn = Color::Black;
-
-        oppo.setTurn(enemy_turn);
-
-        Bitboard enemy_threat = oppo.getThreat();
+        getEnemyThreat();
 
         if ((enemy_threat.board & getBitboard(turn, Piece::King).board) == 0)
             return true;
@@ -678,17 +680,13 @@ private:
         if (player == Color::White)
             enemy = Color::Black;
 
-        Bitboard enemy_threat;
-
         if (find_threat)
         {
             threat.board = 0;
         }
         else
         {
-            Board enemy_turn(*this);
-            enemy_turn.turn = enemy;
-            enemy_threat = enemy_turn.getThreat();
+            enemy_threat = getEnemyThreat();
         }
 
         std::vector<Move> moves; // This will include pseudolegal moves
@@ -1057,6 +1055,9 @@ private:
                                 }
                             }
 
+                            //King threatens his own square (important I suspect for checking if enemy threat has been found)
+                            threat.write(x, y, true);
+
                             // Castling moves don't threat
                             if (!find_threat)
                             {
@@ -1185,6 +1186,7 @@ private:
     std::array<Bitboard, 6> pieces;
 
     mutable Bitboard threat;
+    mutable Bitboard enemy_threat;
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
 
