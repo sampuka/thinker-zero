@@ -7,67 +7,71 @@
 
 #include "Board.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
-    std::ifstream testfile("../hartmann.epd");
-    std::string delim = "; ";
-
-    std::string line;
-    while (std::getline(testfile, line))
+    if (argc == 2 && std::string(argv[1]) == "suite")
     {
-        size_t pos = 0;
-        std::string token;
-        std::string epd = "";
-        bool epd_found = false;
+        std::ifstream testfile("../hartmann.epd");
+        std::string delim = "; ";
 
-        while (pos != std::string::npos)
+        std::string line;
+        while (std::getline(testfile, line))
         {
-            pos = line.find(delim);
-            if (pos != std::string::npos)
+            size_t pos = 0;
+            std::string token;
+            std::string epd = "";
+            bool epd_found = false;
+
+            while (pos != std::string::npos)
             {
-                token = line.substr(0, pos);
-                line.erase(0, pos + delim.length());
-            }
-            else
-            {
-                token = line;
-            }
-
-            if (!epd_found)
-            {
-                epd = token;
-                epd_found = true;
-                std::cout << epd << std::endl;
-            }
-            else
-            {
-                int d = token.at(1)-'0';
-                std::uint64_t target = std::stoi(token.substr(3, token.size()));
-
-
-                Board base(epd);
-                //base.print();
-
-                BoardTree tree(base);
-
-                std::uint64_t result = tree.depth(d);
-
-                if (result == target)
+                pos = line.find(delim);
+                if (pos != std::string::npos)
                 {
-                    std::cout << "D" << d << " hit. ";
+                    token = line.substr(0, pos);
+                    line.erase(0, pos + delim.length());
                 }
                 else
                 {
-                    std::cout << "D" << d << " miss. ";
+                    token = line;
                 }
-                std::cout << std::flush;
+
+                if (!epd_found)
+                {
+                    epd = token;
+                    epd_found = true;
+                    std::cout << epd << std::endl;
+                }
+                else
+                {
+                    int d = token.at(1)-'0';
+                    std::uint64_t target = std::stoi(token.substr(3, token.size()));
+
+
+                    Board base(epd);
+                    //base.print();
+
+                    BoardTree tree(base);
+
+                    std::uint64_t result = tree.depth(d);
+
+                    if (result == target)
+                    {
+                        std::cout << "D" << d << " hit. ";
+                    }
+                    else
+                    {
+                        std::cout << "D" << d << " miss. ";
+                    }
+                    std::cout << std::flush;
+                }
             }
+
+            std::cout << '\n' << std::endl;
         }
 
-        std::cout << '\n' << std::endl;
+        return 0;
     }
 
-    /*
     int goal = 6;
     std::string pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
@@ -97,7 +101,6 @@ int main()
 
         std::cout << "Perft " << i << " = " << tree.depth(i) << std::endl;
     }
-    */
 
     return 0;
 }
