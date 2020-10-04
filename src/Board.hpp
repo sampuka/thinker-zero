@@ -40,7 +40,7 @@ public:
     const bool oob; // Out of bounds
 };
 
-Tile charToTile(char c)
+Tile char_to_tile(char c)
 {
     switch (c)
     {
@@ -56,11 +56,11 @@ Tile charToTile(char c)
         case 'Q': return Tile{Color::White, Piece::Queen};
         case 'k': return Tile{Color::Black, Piece::King};
         case 'K': return Tile{Color::White, Piece::King};
-        default: std::cout << "unhandled char in charToTile" << std::endl; return Tile{Color::Empty, Piece::None};
+        default: std::cout << "unhandled char in char_to_tile" << std::endl; return Tile{Color::Empty, Piece::None};
     }
 }
 
-char tileToChar(Tile t)
+char tile_to_char(Tile t)
 {
     if (t.color == Color::Black)
     {
@@ -230,7 +230,7 @@ public:
                 continue;
             }
 
-            setTile(x, y, charToTile(c));
+            set_tile(x, y, char_to_tile(c));
             x++;
         }
 
@@ -262,31 +262,31 @@ public:
 
         // Ensure castling ability
         {
-            Tile t = getTile(7, 0);
+            Tile t = get_tile(7, 0);
 
             if (t.color != Color::White || t.piece != Piece::Rook)
                 can_castle.at(0).at(0) = false;
         }
         {
-            Tile t = getTile(0, 0);
+            Tile t = get_tile(0, 0);
 
             if (t.color != Color::White || t.piece != Piece::Rook)
                 can_castle.at(0).at(1) = false;
         }
         {
-            Tile t = getTile(7, 7);
+            Tile t = get_tile(7, 7);
 
             if (t.color != Color::Black || t.piece != Piece::Rook)
                 can_castle.at(1).at(0) = false;
         }
         {
-            Tile t = getTile(0, 7);
+            Tile t = get_tile(0, 7);
 
             if (t.color != Color::Black || t.piece != Piece::Rook)
                 can_castle.at(1).at(1) = false;
         }
         {
-            Tile t = getTile(4, 0);
+            Tile t = get_tile(4, 0);
 
             if (t.color != Color::White || t.piece != Piece::King)
             {
@@ -295,7 +295,7 @@ public:
             }
         }
         {
-            Tile t = getTile(4, 7);
+            Tile t = get_tile(4, 7);
 
             if (t.color != Color::Black || t.piece != Piece::King)
             {
@@ -314,7 +314,7 @@ public:
         }
     }
 
-    Color getColor(std::uint8_t x, std::uint8_t y) const
+    Color get_color(std::uint8_t x, std::uint8_t y) const
     {
         for (std::uint8_t c = 0; c < 3; c++)
         {
@@ -327,7 +327,7 @@ public:
         return Color::Empty;
     }
 
-    Piece getPiece(std::uint8_t x, std::uint8_t y) const
+    Piece get_piece(std::uint8_t x, std::uint8_t y) const
     {
         for (std::uint8_t p = 0; p < 6; p++)
         {
@@ -340,7 +340,7 @@ public:
         return Piece::None;
     }
 
-    Tile getTile(std::int8_t x_, std::int8_t y_) const
+    Tile get_tile(std::int8_t x_, std::int8_t y_) const
     {
         if (x_ < 0 || x_ > 7 || y_ < 0 || y_ > 7)
         {
@@ -350,10 +350,10 @@ public:
         std::uint8_t x = static_cast<std::uint8_t>(x_);
         std::uint8_t y = static_cast<std::uint8_t>(y_);
 
-        return Tile{getColor(x, y), getPiece(x, y)};
+        return Tile{get_color(x, y), get_piece(x, y)};
     }
 
-    void setTile(std::int8_t x_, std::int8_t y_, Tile tile)
+    void set_tile(std::int8_t x_, std::int8_t y_, Tile tile)
     {
         if (x_ < 0 || x_ > 7 || y_ < 0 || y_ > 7)
         {
@@ -381,7 +381,7 @@ public:
         }
     }
 
-    Bitboard getBitboard(Color color, Piece piece) const
+    Bitboard get_bitboard(Color color, Piece piece) const
     {
         Bitboard res;
         res.board =
@@ -390,21 +390,21 @@ public:
         return res;
     }
 
-    std::vector<Move>& getMoves() const
+    std::vector<Move>& get_moves() const
     {
         find_movelist();
 
         return movelist;
     }
 
-    Bitboard& getThreat() const
+    Bitboard& get_threat() const
     {
         find_movelist(true);
 
         return threat;
     }
 
-    Bitboard& getEnemyThreat() const
+    Bitboard& get_enemy_threat() const
     {
         if (enemy_threat.board != 0)
             return enemy_threat;
@@ -415,13 +415,13 @@ public:
         if (turn == Color::White)
             enemy_turn = Color::Black;
 
-        oppo.setTurn(enemy_turn);
-        enemy_threat = oppo.getThreat();
+        oppo.set_turn(enemy_turn);
+        enemy_threat = oppo.get_threat();
 
         return enemy_threat;
     }
 
-    void setTurn(Color color)
+    void set_turn(Color color)
     {
         turn = color;
 
@@ -431,22 +431,22 @@ public:
         enemy_threat.board = 0;
     }
 
-    Color getTurn() const
+    Color get_turn() const
     {
         return turn;
     }
 
-    void performMove(Move move)
+    void perform_move(Move move)
     {
-        Tile from = getTile(move.fx, move.fy);
-        //Tile to = getTile(move.tx, move.ty);
+        Tile from = get_tile(move.fx, move.fy);
+        //Tile to = get_tile(move.tx, move.ty);
 
         if (move.promo == Piece::None)
-            setTile(move.tx, move.ty, from);
+            set_tile(move.tx, move.ty, from);
         else
-            setTile(move.tx, move.ty, Tile{from.color, move.promo});
+            set_tile(move.tx, move.ty, Tile{from.color, move.promo});
 
-        setTile(move.fx, move.fy, Tile{Color::Empty, Piece::None});
+        set_tile(move.fx, move.fy, Tile{Color::Empty, Piece::None});
 
         // Castling move
         if (from.piece == Piece::King && std::abs(move.tx - move.fx) >= 2)
@@ -454,15 +454,15 @@ public:
             // Kingside
             if (move.tx > move.fx)
             {
-                setTile(5, move.fy, Tile{from.color, Piece::Rook});
-                setTile(7, move.fy, Tile{Color::Empty, Piece::None});
+                set_tile(5, move.fy, Tile{from.color, Piece::Rook});
+                set_tile(7, move.fy, Tile{Color::Empty, Piece::None});
             }
 
             // Queenside
             if (move.tx < move.fx)
             {
-                setTile(3, move.fy, Tile{from.color, Piece::Rook});
-                setTile(0, move.fy, Tile{Color::Empty, Piece::None});
+                set_tile(3, move.fy, Tile{from.color, Piece::Rook});
+                set_tile(0, move.fy, Tile{Color::Empty, Piece::None});
             }
         }
 
@@ -506,7 +506,7 @@ public:
         {
             if ((turn == Color::White && move.ty == 5) ||
                 (turn == Color::Black && move.ty == 2))
-            setTile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
+            set_tile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
         }
 
         // En passantable move
@@ -519,10 +519,10 @@ public:
             ep_x = 9;
         }
 
-        if (getTurn() == Color::White)
-            setTurn(Color::Black);
+        if (get_turn() == Color::White)
+            set_turn(Color::Black);
         else
-            setTurn(Color::White);
+            set_turn(Color::White);
     }
 
     bool is_checkmate() const
@@ -532,9 +532,9 @@ public:
         if (movelist.size() != 0)
             return false;
 
-        getEnemyThreat();
+        get_enemy_threat();
 
-        if ((enemy_threat.board & getBitboard(turn, Piece::King).board) != 0)
+        if ((enemy_threat.board & get_bitboard(turn, Piece::King).board) != 0)
             return true;
 
         return false;
@@ -547,9 +547,9 @@ public:
         if (movelist.size() != 0)
             return false;
 
-        getEnemyThreat();
+        get_enemy_threat();
 
-        if ((enemy_threat.board & getBitboard(turn, Piece::King).board) == 0)
+        if ((enemy_threat.board & get_bitboard(turn, Piece::King).board) == 0)
             return true;
 
         return false;
@@ -575,7 +575,7 @@ public:
         {
             for (std::uint8_t y = 0; y < 8; y++)
             {
-                Tile t = getTile(x, y);
+                Tile t = get_tile(x, y);
 
                 double pv = 0;
 
@@ -613,7 +613,7 @@ public:
             {
                 std::uint8_t pos = ((8-y)*11)+x+1;
 
-                s.at(pos) = tileToChar(getTile(x, y));
+                s.at(pos) = tile_to_char(get_tile(x, y));
             }
         }
 
@@ -675,7 +675,7 @@ private:
         if (find_threat && threat.board != 0)
             return;
 
-        Color player = getTurn();
+        Color player = get_turn();
         Color enemy = Color::White;
         if (player == Color::White)
             enemy = Color::Black;
@@ -686,7 +686,7 @@ private:
         }
         else
         {
-            enemy_threat = getEnemyThreat();
+            enemy_threat = get_enemy_threat();
         }
 
         std::vector<Move> moves; // This will include pseudolegal moves
@@ -696,7 +696,7 @@ private:
         {
             for (std::uint8_t y = 0; y < 8; y++)
             {
-                const Tile tile = getTile(x, y);
+                const Tile tile = get_tile(x, y);
 
                 // Check if the piece is correct color
                 if (player != tile.color)
@@ -810,12 +810,12 @@ private:
                             if (player == Color::White)
                             {
                                 // Standard pawn move
-                                if (getTile(x, y+1).color == Color::Empty)
+                                if (get_tile(x, y+1).color == Color::Empty)
                                 {
                                     pawn_moves(x, y, x, y+1);
 
                                     // If at starting pos
-                                    if (y == 1 && getTile(x, y+2).color == Color::Empty)
+                                    if (y == 1 && get_tile(x, y+2).color == Color::Empty)
                                     {
                                         pawn_moves(x, y, x, y+2);
                                     }
@@ -823,7 +823,7 @@ private:
 
                                 // Attacking moves
                                 {
-                                    const Tile t1 = getTile(x-1, y+1);
+                                    const Tile t1 = get_tile(x-1, y+1);
                                     if (!t1.oob)
                                     {
                                         threat.write(x-1, y+1, true);
@@ -835,7 +835,7 @@ private:
                                         }
                                     }
 
-                                    const Tile t2 = getTile(x+1, y+1);
+                                    const Tile t2 = get_tile(x+1, y+1);
                                     if (!t2.oob)
                                     {
                                         threat.write(x+1, y+1, true);
@@ -851,12 +851,12 @@ private:
                             else
                             {
                                 // Standard pawn move
-                                if (getTile(x, y-1).color == Color::Empty)
+                                if (get_tile(x, y-1).color == Color::Empty)
                                 {
                                     pawn_moves(x, y, x, y-1);
 
                                     // If at starting pos
-                                    if (y == 6 && getTile(x, y-2).color == Color::Empty)
+                                    if (y == 6 && get_tile(x, y-2).color == Color::Empty)
                                     {
                                         pawn_moves(x, y, x, y-2);
                                     }
@@ -864,7 +864,7 @@ private:
 
                                 // Attacking moves
                                 {
-                                    const Tile t1 = getTile(x-1, y-1);
+                                    const Tile t1 = get_tile(x-1, y-1);
                                     if (!t1.oob)
                                     {
                                         threat.write(x-1, y-1, true);
@@ -876,7 +876,7 @@ private:
                                         }
                                     }
 
-                                    const Tile t2 = getTile(x+1, y-1);
+                                    const Tile t2 = get_tile(x+1, y-1);
                                     if (!t2.oob)
                                     {
                                         threat.write(x+1, y-1, true);
@@ -899,7 +899,7 @@ private:
                                 std::int8_t x_ = x+km(i,0);
                                 std::int8_t y_ = y+km(i,1);
 
-                                Tile t = getTile(x_, y_);
+                                Tile t = get_tile(x_, y_);
                                 if (!t.oob)
                                 {
                                     threat.write(x_, y_, true);
@@ -922,7 +922,7 @@ private:
                                     std::int8_t x_ = x+i*bm(d,0);
                                     std::int8_t y_ = y+i*bm(d,1);
 
-                                    Tile t = getTile(x_, y_);
+                                    Tile t = get_tile(x_, y_);
 
                                     //if (player == Color::White)
                                         //std::cout << "\n. " << std::to_string(x_) << " " << std::to_string(y_);
@@ -959,7 +959,7 @@ private:
                                     std::int8_t x_ = x+i*rm(d,0);
                                     std::int8_t y_ = y+i*rm(d,1);
 
-                                    Tile t = getTile(x_, y_);
+                                    Tile t = get_tile(x_, y_);
 
                                     if (t.oob)
                                         break;
@@ -988,7 +988,7 @@ private:
                                     std::int8_t x_ = x+i*bm(d,0);
                                     std::int8_t y_ = y+i*bm(d,1);
 
-                                    Tile t = getTile(x_, y_);
+                                    Tile t = get_tile(x_, y_);
 
                                     if (t.oob)
                                         break;
@@ -1013,7 +1013,7 @@ private:
                                     std::int8_t x_ = x+i*rm(d,0);
                                     std::int8_t y_ = y+i*rm(d,1);
 
-                                    Tile t = getTile(x_, y_);
+                                    Tile t = get_tile(x_, y_);
 
                                     if (t.oob)
                                         break;
@@ -1041,7 +1041,7 @@ private:
                                     if (x_ == x && y_ == y)
                                         continue;
 
-                                    Tile t = getTile(x_, y_);
+                                    Tile t = get_tile(x_, y_);
 
                                     if (t.oob)
                                         continue;
@@ -1068,7 +1068,7 @@ private:
 
                                     for (std::uint8_t x_ = 6; x_ >= 5; x_--)
                                     {
-                                        if (getTile(x_, y).color != Color::Empty)
+                                        if (get_tile(x_, y).color != Color::Empty)
                                         {
                                             clear = false;
                                             break;
@@ -1096,7 +1096,7 @@ private:
 
                                     for (std::uint8_t x_ = 1; x_ <= 3; x_++)
                                     {
-                                        if (getTile(x_, y).color != Color::Empty)
+                                        if (get_tile(x_, y).color != Color::Empty)
                                         {
                                             clear = false;
                                             break;
@@ -1136,13 +1136,13 @@ private:
 
         if (!find_threat)
         {
-            Bitboard king_tile = getBitboard(player, Piece::King);
+            Bitboard king_tile = get_bitboard(player, Piece::King);
 
             bool under_threat = static_cast<bool>(enemy_threat.board & king_tile.board);
 
             for (const Move &move : moves)
             {
-                Piece from = getPiece(move.fx, move.fy);
+                Piece from = get_piece(move.fx, move.fy);
                 Bitboard tile_bb;
                 tile_bb.write(move.fx, move.fy, true);
 
@@ -1165,11 +1165,11 @@ private:
                 {
                     Board next(*this);
 
-                    next.performMove(move);
+                    next.perform_move(move);
 
-                    Bitboard next_threat = next.getThreat();
+                    Bitboard next_threat = next.get_threat();
 
-                    if ((next.getBitboard(player, Piece::King).board & next_threat.board) != 0)
+                    if ((next.get_bitboard(player, Piece::King).board & next_threat.board) != 0)
                     {
                         continue;
                     }
@@ -1206,7 +1206,7 @@ public:
     BoardTree(const Board &parent_board, const Move &parent_move)
         : board(parent_board), move(parent_move)
     {
-        board.performMove(move);
+        board.perform_move(move);
     }
 
     void expand()
@@ -1214,7 +1214,7 @@ public:
         if (expanded)
             return;
 
-        std::vector<Move> &moves = board.getMoves();
+        std::vector<Move> &moves = board.get_moves();
 
         nodes.reserve(moves.size());
 

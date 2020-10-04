@@ -13,7 +13,7 @@ public:
 
     void think() override
     {
-        std::vector<Move> moves = board.getMoves();
+        std::vector<Move> moves = board.get_moves();
 
         if (moves.size() == 0)
         {

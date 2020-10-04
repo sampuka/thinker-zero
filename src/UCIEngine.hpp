@@ -136,7 +136,7 @@ private:
                     {
                         while (++i < tokens.size())
                         {
-                            board.performMove(Move(tokens.at(i)));
+                            board.perform_move(Move(tokens.at(i)));
                         }
                     }
 
@@ -150,7 +150,7 @@ private:
                         board.print();
                         std::uint8_t d = std::stoi(tokens.at(2)) - 1;
                         std::uint64_t total = 0;
-                        std::vector<Move> moves = board.getMoves();
+                        std::vector<Move> moves = board.get_moves();
                         std::vector<BoardTree> trees;
                         trees.reserve(moves.size());
 

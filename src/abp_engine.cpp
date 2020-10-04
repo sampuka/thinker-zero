@@ -12,11 +12,11 @@ public:
     {
         // Default white 
         int turn = 1;
-        if(board.getTurn() == Color::Black)
+        if(board.get_turn() == Color::Black)
             turn = -1;
 
         // Get possible moves
-        std::vector<Move> moves = board.getMoves();
+        std::vector<Move> moves = board.get_moves();
         if (moves.size() == 0)
         {
             std::cerr << "No legal moves found!" << std::endl;
@@ -30,13 +30,13 @@ public:
         // Find random move among moves
         std::shuffle(moves.begin(), moves.end(), eng);
         Board test_board(board);
-        test_board.performMove(moves.at(0));
+        test_board.perform_move(moves.at(0));
         double bestvalue = test_board.basic_eval() * turn;
         bestmove = moves.at(0);     // Default first move in case rest fails
         for (const Move &move : moves)
         {
             test_board = board;
-            test_board.performMove(move);
+            test_board.perform_move(move);
             
             double eval = test_board.basic_eval() * turn;
             if(eval >= bestvalue)
