@@ -94,6 +94,7 @@ int main(int argc, char** argv)
 
     Board base(pos);
     base.print();
+    std::cout << "Eval: " << base.adv_eval() << std::endl;
 
     for (int i = 1; i <= goal; i++)
     {
