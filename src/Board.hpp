@@ -109,6 +109,19 @@ public:
             board &= (~(std::uint64_t{1} << (y*8+x)));
     }
 
+    std::uint8_t count() const
+    {
+        std::uint8_t c = 0;
+
+        for (std::uint8_t i = 0; i < 64; i++)
+        {
+            if (board & (std::uint64_t{1} << i))
+                c++;
+        }
+
+        return c;
+    }
+
     void print() const
     {
         std::string s(8*9, ' ');
@@ -593,6 +606,173 @@ public:
                 if (t.color == Color::White)
                     eval += pv;
                 else if (t.color == Color::Black)
+                    eval -= pv;
+            }
+        }
+
+        return eval;
+    }
+
+    // Created based on "Simplified Evalution Function" on Chess Programming Wiki
+    double adv_eval() const
+    {
+        // Piece values
+        constexpr std::array<double, 6> piece_values = {1.00, 3.20, 3.30, 5.00, 9.00, 20000};
+
+        // Pawn Piece-Square Table
+        constexpr std::array<double, 64> pawn_ps =
+        {
+             0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+             0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50,
+             0.10, 0.10, 0.20, 0.30, 0.30, 0.20, 0.10, 0.10,
+             0.05, 0.05, 0.10, 0.25, 0.25, 0.10, 0.05, 0.05,
+             0.00, 0.00, 0.00, 0.20, 0.20, 0.00, 0.00, 0.00,
+             0.05,-0.05,-0.10, 0.00, 0.00,-0.10,-0.05, 0.05,
+             0.05, 0.10, 0.10,-0.20,-0.20, 0.10, 0.10, 0.05,
+             0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00
+        };
+
+        // Knight Piece-Square Table
+        constexpr std::array<double, 64> knight_ps =
+        {
+            -0.50,-0.40,-0.30,-0.30,-0.30,-0.30,-0.40,-0.50,
+            -0.40,-0.20, 0.00, 0.00, 0.00, 0.00,-0.20,-0.40,
+            -0.30, 0.00, 0.10, 0.15, 0.15, 0.10, 0.00,-0.30,
+            -0.30, 0.05, 0.15, 0.20, 0.20, 0.15, 0.05,-0.30,
+            -0.30, 0.00, 0.15, 0.20, 0.20, 0.15, 0.00,-0.30,
+            -0.30, 0.05, 0.10, 0.15, 0.15, 0.10, 0.05,-0.30,
+            -0.40,-0.20, 0.00, 0.05, 0.05, 0.00,-0.20,-0.40,
+            -0.50,-0.40,-0.30,-0.30,-0.30,-0.30,-0.40,-0.50
+        };
+
+        // Bishop Piece-Square Table
+        constexpr std::array<double, 64> bishop_ps =
+        {
+            -0.20,-0.10,-0.10,-0.10,-0.10,-0.10,-0.10,-0.20,
+            -0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.10,
+            -0.10, 0.00, 0.05, 0.10, 0.10, 0.05, 0.00,-0.10,
+            -0.10, 0.05, 0.05, 0.10, 0.10, 0.05, 0.05,-0.10,
+            -0.10, 0.00, 0.10, 0.10, 0.10, 0.10, 0.00,-0.10,
+            -0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10,-0.10,
+            -0.10, 0.05, 0.00, 0.00, 0.00, 0.00, 0.05,-0.10,
+            -0.20,-0.10,-0.10,-0.10,-0.10,-0.10,-0.10,-0.20
+        };
+
+        // Rook Piece-Square Table
+        constexpr std::array<double, 64> rook_ps =
+        {
+             0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+             0.05, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.05,
+            -0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.05,
+            -0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.05,
+            -0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.05,
+            -0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.05,
+            -0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.05,
+             0.00, 0.00, 0.00, 0.05, 0.05, 0.00, 0.00, 0.00
+        };
+
+        // Queen Piece-Square Table
+        constexpr std::array<double, 64> queen_ps =
+        {
+            -0.20,-0.10,-0.10,-0.05,-0.05,-0.10,-0.10,-0.20,
+            -0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,-0.10,
+            -0.10, 0.00, 0.05, 0.05, 0.05, 0.05, 0.00,-0.10,
+            -0.05, 0.00, 0.05, 0.05, 0.05, 0.05, 0.00,-0.05,
+             0.00, 0.00, 0.05, 0.05, 0.05, 0.05, 0.00,-0.05,
+            -0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.00,-0.10,
+            -0.10, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00,-0.10,
+            -0.20,-0.10,-0.10,-0.05,-0.05,-0.10,-0.10,-0.20
+        };
+
+        // King middle-game Piece-Square Table
+        constexpr std::array<double, 64> king_middle_ps =
+        {
+            -0.30,-0.40,-0.40,-0.50,-0.50,-0.40,-0.40,-0.30,
+            -0.30,-0.40,-0.40,-0.50,-0.50,-0.40,-0.40,-0.30,
+            -0.30,-0.40,-0.40,-0.50,-0.50,-0.40,-0.40,-0.30,
+            -0.30,-0.40,-0.40,-0.50,-0.50,-0.40,-0.40,-0.30,
+            -0.20,-0.30,-0.30,-0.40,-0.40,-0.30,-0.30,-0.20,
+            -0.10,-0.20,-0.20,-0.20,-0.20,-0.20,-0.20,-0.10,
+             0.20, 0.20, 0.00, 0.00, 0.00, 0.00, 0.20, 0.20,
+             0.20, 0.30, 0.10, 0.00, 0.00, 0.10, 0.30, 0.20
+        };
+
+        // King end-game Piece-Square Table
+        constexpr std::array<double, 64> king_end_ps =
+        {
+            -0.50,-0.40,-0.30,-0.20,-0.20,-0.30,-0.40,-0.50,
+            -0.30,-0.20,-0.10, 0.00, 0.00,-0.10,-0.20,-0.30,
+            -0.30,-0.10, 0.20, 0.30, 0.30, 0.20,-0.10,-0.30,
+            -0.30,-0.10, 0.30, 0.40, 0.40, 0.30,-0.10,-0.30,
+            -0.30,-0.10, 0.30, 0.40, 0.40, 0.30,-0.10,-0.30,
+            -0.30,-0.10, 0.20, 0.30, 0.30, 0.20,-0.10,-0.30,
+            -0.30,-0.30, 0.00, 0.00, 0.00, 0.00,-0.30,-0.30,
+            -0.50,-0.30,-0.30,-0.30,-0.30,-0.30,-0.30,-0.50
+        };
+
+        // 0 is not middle game, 1 is end game, can interpolate between
+        double endgameness = 0;
+
+        {
+            Bitboard white_pieces;
+            Bitboard black_pieces;
+            white_pieces.board = colors.at(static_cast<std::uint8_t>(Color::White)).board - get_bitboard(Color::White, Piece::Pawn).board;
+            black_pieces.board = colors.at(static_cast<std::uint8_t>(Color::Black)).board - get_bitboard(Color::Black, Piece::Pawn).board;
+
+            if (
+                    ((get_bitboard(Color::White, Piece::Queen).board == 0) || (white_pieces.count() <= 1)) ||
+                    ((get_bitboard(Color::Black, Piece::Queen).board == 0) || (black_pieces.count() <= 1))
+               )
+            {
+                endgameness = 1;
+            }
+        }
+
+        find_movelist();
+
+        if (is_stalemate())
+            return 0;
+
+        if (is_checkmate())
+        {
+            if (turn == Color::White)
+                return -std::numeric_limits<double>::infinity();
+
+            if (turn == Color::Black)
+                return std::numeric_limits<double>::infinity();
+        }
+
+        double eval = 0;
+
+        for (std::uint8_t x = 0; x < 8; x++)
+        {
+            for (std::uint8_t y = 0; y < 8; y++)
+            {
+                Tile t = get_tile(x, y);
+
+                if (t.piece == Piece::None)
+                    continue;
+
+                std::uint8_t index = (7-y)*8+x; // For Piece-Square Tables for white
+                if (t.color == Color::Black)
+                    index = y*8+x; // For black (reflected, not rotated)
+
+                double pv = piece_values.at(static_cast<std::uint8_t>(t.piece));
+
+                switch (t.piece)
+                {
+                    case Piece::Pawn:   pv += pawn_ps.at(index); break;
+                    case Piece::Knight: pv += knight_ps.at(index); break;
+                    case Piece::Bishop: pv += bishop_ps.at(index); break;
+                    case Piece::Rook:   pv += rook_ps.at(index); break;
+                    case Piece::Queen:  pv += queen_ps.at(index); break;
+                    case Piece::King:   pv += endgameness*king_end_ps.at(index) + (1-endgameness)*king_middle_ps.at(index); break;
+                    default: break;
+                }
+
+                if (t.color == Color::White)
+                    eval += pv;
+                else
                     eval -= pv;
             }
         }
