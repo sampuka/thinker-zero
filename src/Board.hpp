@@ -587,9 +587,9 @@ public:
                 return 0;
             if (turn == Color::White)
                 //return -std::numeric_limits<double>::infinity();
-                return -200;
+                return -200.00;
             if (turn == Color::Black)
-                return 200;
+                return 200.00;
                 //return std::numeric_limits<double>::infinity();
         }
 
@@ -729,10 +729,10 @@ public:
         if (is_checkmate())
         {
             if (turn == Color::White)
-                return -std::numeric_limits<double>::infinity();
+                return -200.00;
 
             if (turn == Color::Black)
-                return std::numeric_limits<double>::infinity();
+                return 200.00;
         }
 
         double eval = 0;
