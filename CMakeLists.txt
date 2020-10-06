@@ -19,4 +19,5 @@ set(MINIMAX_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/minimax_engine.cpp
 add_executable(minimax_engine ${MINIMAX_SRCS})
 target_link_libraries(minimax_engine PRIVATE Threads::Threads)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -g -Og -lpthread")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -g -Og -lpthread")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic -O3 -lpthread")
