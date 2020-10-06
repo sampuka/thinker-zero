@@ -1434,13 +1434,15 @@ public:
     }
 
     double evaluation;
+    Move bestmove = Move(0, 0, 0, 0);
 
-private:
     std::vector<BoardTree> nodes;
-    bool expanded = false;
 
     Board board;
     Move move = Move(0, 0, 0, 0);
+
+private:
+    bool expanded = false;
 };
 
 #endif
