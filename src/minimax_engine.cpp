@@ -96,6 +96,7 @@ public:
         minimax(root);
 
         bestmove = root.bestmove;
+        evaluation = root.evaluation*turn;
 
         // End of function
         thinking = false;
