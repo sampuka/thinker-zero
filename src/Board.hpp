@@ -214,6 +214,15 @@ public:
 class Board
 {
 public:
+    Board(const Board &b) :
+        colors(b.colors),
+        pieces(b.pieces),
+        movelist_found(false),
+        turn(b.turn),
+        can_castle(b.can_castle),
+        ep_x(b.ep_x)
+    {}
+
     Board(std::string FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
     {
         colors.at(static_cast<std::uint8_t>(Color::Empty)).board = ~0;
@@ -1437,12 +1446,10 @@ public:
     Move bestmove = Move(0, 0, 0, 0);
 
     std::vector<BoardTree> nodes;
+    bool expanded = false;
 
     Board board;
     Move move = Move(0, 0, 0, 0);
-
-private:
-    bool expanded = false;
 };
 
 #endif
