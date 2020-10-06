@@ -47,31 +47,41 @@ public:
 
             std::vector<Move> movesTwo = test_board.get_moves();
 
-            Move worstmove = movesTwo.at(0);
-            double worstvalue = 1000000;
+            double eval = 0;
 
-            // Find best opponent move
-            for (const Move &moveTwo : movesTwo)
+            if (movesTwo.size() != 0)
             {
-                Board test_boardTwo = test_board;
-                test_boardTwo.perform_move(moveTwo);
+                Move worstmove = Move(0,0,0,0);
+                double worstvalue = 1000000;
 
-                double bad_eval = test_boardTwo.basic_eval() * turn;
-
-                foobar << "\t" << moveTwo.longform() << " " << bad_eval << " " << worstvalue << std::endl;
-                
-                if(bad_eval <= worstvalue)
+                // Find best opponent move
+                for (const Move &moveTwo : movesTwo)
                 {
-                    worstvalue = bad_eval;
-                    worstmove = moveTwo;
+                    Board test_boardTwo = test_board;
+                    test_boardTwo.perform_move(moveTwo);
+
+                    double bad_eval = test_boardTwo.basic_eval() * turn;
+
+                    foobar << "\t" << moveTwo.longform() << " " << bad_eval << " " << worstvalue << std::endl;
+
+                    if(bad_eval <= worstvalue)
+                    {
+                        worstvalue = bad_eval;
+                        worstmove = moveTwo;
+                    }
                 }
+
+                eval = worstvalue;
+            }
+            else
+            {
+                if (test_board.is_stalemate())
+                    eval = 0;
+                else if (test_board.is_checkmate())
+                    eval = 200*turn;
             }
 
-            foobar << "\t\t = " << worstvalue << std::endl;
-
-            test_board.perform_move(worstmove);
-            double eval = test_board.basic_eval() * turn;
-            std::cout << "Good eval: " << eval << std::endl;
+            foobar << "\t\t = " << eval << std::endl;
 
             if(eval >= bestvalue)
             {
