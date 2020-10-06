@@ -83,7 +83,7 @@ public:
             }
             else
             {
-                base.evaluation = base.board.basic_eval();
+                base.evaluation = base.board.adv_eval();
             }
 
             return;
