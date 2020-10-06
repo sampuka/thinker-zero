@@ -31,14 +31,14 @@ public:
         std::shuffle(moves.begin(), moves.end(), eng);
         Board test_board(board);
         test_board.perform_move(moves.at(0));
-        double bestvalue = test_board.basic_eval() * turn;
+        double bestvalue = test_board.adv_eval() * turn;
         bestmove = moves.at(0);     // Default first move in case rest fails
         for (const Move &move : moves)
         {
             test_board = board;
             test_board.perform_move(move);
 
-            double eval = test_board.basic_eval() * turn;
+            double eval = test_board.adv_eval() * turn;
             if(eval >= bestvalue)
             {
                 bestvalue = eval;
@@ -46,10 +46,12 @@ public:
             }
         }
         std::cout << "Best value: " << bestvalue << std::endl;
+        
+        // End of function
+        thinking = false;
     }
 
-    // End of function
-    thinking = false;
+
 };
 
 int main()
