@@ -1,5 +1,7 @@
 #include "UCIEngine.hpp"
 
+#include <functional>
+
 class MinimaxEngine : public UCIEngine
 {
 public:
@@ -27,26 +29,74 @@ public:
                 log << move.longform() << std::endl;
         }
 
-        // Find random move among moves
-        std::shuffle(moves.begin(), moves.end(), eng);
-        Board test_board(board);
-        test_board.perform_move(moves.at(0));
-        double bestvalue = test_board.adv_eval() * turn;
-        bestmove = moves.at(0);     // Default first move in case rest fails
-        for (const Move &move : moves)
-        {
-            test_board = board;
-            test_board.perform_move(move);
+        std::uniform_int_distribution<std::uint8_t> dist(0,1);
 
-            double eval = test_board.adv_eval() * turn;
-            if(eval >= bestvalue)
+        const std::function<void(BoardTree&)> minimax = [&](BoardTree &base)
+        {
+            if (base.expanded && (base.nodes.size() != 0))
             {
-                bestvalue = eval;
-                bestmove = move;
+                for (BoardTree &node : base.nodes)
+                {
+                    minimax(node);
+                }
+
+                if (base.board.get_turn() == Color::White)
+                {
+                    double eval = -1000000;
+                    Move best = Move(0, 0, 0, 0);
+
+                    for (const BoardTree &node : base.nodes)
+                    {
+                        if (
+                                (node.evaluation > eval) ||
+                                (node.evaluation == eval && dist(eng) == 1)
+                           )
+                        {
+                            eval = node.evaluation;
+                            best = node.move;
+                        }
+                    }
+
+                    base.evaluation = eval;
+                    base.bestmove = best;
+                }
+                else
+                {
+                    double eval = 1000000;
+                    Move best = Move(0, 0, 0, 0);
+
+                    for (const BoardTree &node : base.nodes)
+                    {
+                        if (
+                                (node.evaluation < eval) ||
+                                (node.evaluation == eval && dist(eng) == 1)
+                           )
+                        {
+                            eval = node.evaluation;
+                            best = node.move;
+                        }
+                    }
+
+                    base.evaluation = eval;
+                    base.bestmove = best;
+                }
             }
-        }
-        std::cout << "Best value: " << bestvalue << std::endl;
-        
+            else
+            {
+                base.evaluation = base.board.basic_eval();
+            }
+
+            return;
+        };
+
+        // Create tree structure
+        BoardTree root(board);
+        root.expand(4);
+
+        minimax(root);
+
+        bestmove = root.bestmove;
+
         // End of function
         thinking = false;
     }
