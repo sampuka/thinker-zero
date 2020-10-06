@@ -1,9 +1,9 @@
 #include "UCIEngine.hpp"
 
-class RandomEngine : public UCIEngine
+class MinimaxEngine : public UCIEngine
 {
 public:
-    RandomEngine()
+    MinimaxEngine()
     {
         start();
     }
@@ -50,13 +50,11 @@ public:
         // End of function
         thinking = false;
     }
-
-
 };
 
 int main()
 {
-    RandomEngine engine;
+    MinimaxEngine engine;
 
     return 0;
 }
