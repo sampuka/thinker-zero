@@ -41,6 +41,7 @@ protected:
     bool infinite = false;
 
     Move bestmove = Move(0, 0, 0, 0);
+    double evaluation = 0;
     std::atomic<bool> thinking;
 
     std::mt19937 eng;
@@ -209,6 +210,7 @@ private:
                     think_state = false;
 
                     send_cmd("bestmove " + bestmove.longform());
+                    send_cmd("info score cp " + std::to_string(static_cast<int>(evaluation*100)));
                 }
             }
         }
