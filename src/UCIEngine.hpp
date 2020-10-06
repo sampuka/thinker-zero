@@ -30,7 +30,7 @@ public:
 protected:
     Board board;
 
-    std::string engine_name = "Unspecified UCI engine";
+    std::string engine_name = "Unspecified engine";
     std::string engine_author = "Unspecified author";
 
     // Current player times and increment [ms]
