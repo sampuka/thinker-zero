@@ -31,34 +31,32 @@ public:
         std::shuffle(moves.begin(), moves.end(), eng);
         bestmove = moves.at(0);
 
-        // Test board
-        Board test_board(board);
-        Board test_boardTwo(board);
-
-        test_board.perform_move(moves.at(0));
+        std::ofstream foobar("/tmp/foobar.txt");
 
         // Initiate max values
-        double bestvalue = -1000000*turn;
-        double worstvalue = 1000000*turn;
+        double bestvalue = -1000000;
 
         for (const Move &moveOne : moves)
         {
-            test_board = board;
+            foobar << moveOne.longform() << " :" << std::endl;
+            Board test_board = board;
             test_board.perform_move(moveOne);
 
             std::vector<Move> movesTwo = test_board.get_moves();
 
             Move worstmove = movesTwo.at(0);
+            double worstvalue = 1000000;
 
             // Find best opponent move
             for (const Move &moveTwo : movesTwo)
             {
-                test_boardTwo = test_board;
+                Board test_boardTwo = test_board;
                 test_boardTwo.perform_move(moveTwo);
 
                 double bad_eval = test_boardTwo.basic_eval() * turn;
-                std::cout << "Bad eval: " << bad_eval << std::endl;
 
+                foobar << "\t" << moveTwo.longform() << " " << bad_eval << " " << worstvalue << std::endl;
+                
                 if(bad_eval <= worstvalue)
                 {
                     worstvalue = bad_eval;
@@ -66,8 +64,10 @@ public:
                 }
             }
 
+            foobar << "\t\t = " << worstvalue << std::endl;
+
             test_board.perform_move(worstmove);
-            double eval = test_boardTwo.basic_eval() * turn;
+            double eval = test_board.basic_eval() * turn;
             std::cout << "Good eval: " << eval << std::endl;
 
             if(eval >= bestvalue)
