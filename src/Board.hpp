@@ -557,7 +557,7 @@ public:
     {
         find_movelist();
 
-        if (movelist.size() != 0)
+        if ((movelist.size() != 0) || is_checkmate())
             return false;
 
         get_enemy_threat();
@@ -577,9 +577,11 @@ public:
             if (is_stalemate())
                 return 0;
             if (turn == Color::White)
-                return -std::numeric_limits<double>::infinity();
+                //return -std::numeric_limits<double>::infinity();
+                return -200;
             if (turn == Color::Black)
-                return std::numeric_limits<double>::infinity();
+                return 200;
+                //return std::numeric_limits<double>::infinity();
         }
 
         double eval = 0;
