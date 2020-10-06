@@ -1389,21 +1389,29 @@ public:
         board.perform_move(move);
     }
 
-    void expand()
+    void expand(std::uint8_t n = 1)
     {
-        if (expanded)
-            return;
-
         std::vector<Move> &moves = board.get_moves();
 
-        nodes.reserve(moves.size());
-
-        for (const Move &m : moves)
+        if (!expanded)
         {
-            nodes.emplace_back(board, m);
+            nodes.reserve(moves.size());
+
+            for (const Move &m : moves)
+            {
+                nodes.emplace_back(board, m);
+            }
+
+            expanded = true;
         }
 
-        expanded = true;
+        if (n != 1)
+        {
+            for (BoardTree &t : nodes)
+            {
+                t.expand(n-1);
+            }
+        }
     }
 
     std::uint64_t depth(std::uint8_t d)
@@ -1423,15 +1431,14 @@ public:
         return n;
     }
 
+    double evaluation;
+
 private:
     std::vector<BoardTree> nodes;
     bool expanded = false;
 
-    Bitboard threat;
-
     Board board;
     Move move = Move(0, 0, 0, 0);
-
 };
 
 #endif
