@@ -617,7 +617,7 @@ public:
     double adv_eval() const
     {
         // Piece values
-        constexpr std::array<double, 6> piece_values = {1.00, 3.20, 3.30, 5.00, 9.00, 20000};
+        constexpr std::array<double, 6> piece_values = {1.00, 3.20, 3.30, 5.00, 9.00, 200.00};
 
         // Pawn Piece-Square Table
         constexpr std::array<double, 64> pawn_ps =
@@ -710,6 +710,22 @@ public:
             -0.50,-0.30,-0.30,-0.30,-0.30,-0.30,-0.30,-0.50
         };
 
+        find_movelist();
+
+        if (is_stalemate())
+            return 0;
+
+        if (is_checkmate())
+        {
+            if (turn == Color::White)
+                return -std::numeric_limits<double>::infinity();
+
+            if (turn == Color::Black)
+                return std::numeric_limits<double>::infinity();
+        }
+
+        double eval = 0;
+
         // 0 is middle game, 1 is end game, can interpolate between
         double endgameness = 0;
 
@@ -727,22 +743,6 @@ public:
                 endgameness = 1;
             }
         }
-
-        find_movelist();
-
-        if (is_stalemate())
-            return 0;
-
-        if (is_checkmate())
-        {
-            if (turn == Color::White)
-                return -std::numeric_limits<double>::infinity();
-
-            if (turn == Color::Black)
-                return std::numeric_limits<double>::infinity();
-        }
-
-        double eval = 0;
 
         for (std::uint8_t x = 0; x < 8; x++)
         {
