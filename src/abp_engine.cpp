@@ -13,7 +13,7 @@ public:
 
     void think() override
     {
-        // Default white 
+        // Default white
         int turn = 1;
         if(board.get_turn() == Color::Black)
             turn = -1;
@@ -29,7 +29,7 @@ public:
             for (const Move &move : moves)
                 log << move.longform() << std::endl;
         }
-   
+
         // Find random move among moves
         std::shuffle(moves.begin(), moves.end(), eng);
         bestmove = moves.at(0);
@@ -78,7 +78,7 @@ public:
                 if (test_board.is_stalemate())
                     eval = 0;
                 else if (test_board.is_checkmate())
-                    eval = 200*turn;
+                    eval = 200;
             }
 
             foobar << "\t\t = " << eval << std::endl;
@@ -90,7 +90,7 @@ public:
             }
         }
         std::cout << "Best value: " << bestvalue << std::endl;
-        
+
         // End of function
         thinking = false;
     }
