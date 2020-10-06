@@ -1,10 +1,13 @@
 #include "UCIEngine.hpp"
 
-class RandomEngine : public UCIEngine
+class ABPEngine : public UCIEngine
 {
 public:
-    RandomEngine()
+    ABPEngine()
     {
+        engine_name = "ABP Engine";
+        engine_author = "Mathias Lyngbye and Martin Jakobsgaard";
+
         start();
     }
 
