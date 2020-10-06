@@ -1,6 +1,6 @@
 #!/bin/sh
 
-~/cutechess-cli/cutechess-cli \
+cutechess-cli \
     -engine cmd=../build/abp_engine \
     -engine cmd=../build/minimax_engine \
     -engine cmd=../build/random_engine \
