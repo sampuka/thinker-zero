@@ -710,7 +710,7 @@ public:
             -0.50,-0.30,-0.30,-0.30,-0.30,-0.30,-0.30,-0.50
         };
 
-        // 0 is not middle game, 1 is end game, can interpolate between
+        // 0 is middle game, 1 is end game, can interpolate between
         double endgameness = 0;
 
         {
