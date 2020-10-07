@@ -12,7 +12,7 @@ public:
         return board & (std::uint64_t{1} << (x + y*8));
     }
 
-    void write(std::uint8_t x, std::uint8_t y, bool value)
+    constexpr void write(std::uint8_t x, std::uint8_t y, bool value)
     {
         //board ^= (-value ^ board) & (1 << (x + y*8));
         if (value)
@@ -32,6 +32,36 @@ public:
         }
 
         return c;
+    }
+
+    std::uint8_t bitscan(std::uint8_t d) const
+    {
+        if ((d == 6) || (d == 7) || (d == 0) || (d == 1))
+            return bitscan_forward();
+        else
+            return bitscan_backward();
+    }
+
+    std::uint8_t bitscan_forward() const
+    {
+        for (std::uint8_t i = 0; i < 64; i++)
+        {
+            if (board & (std::uint64_t{1} << i))
+                return i;
+        }
+
+        return 0;
+    }
+
+    std::uint8_t bitscan_backward() const
+    {
+        for (std::uint8_t i = 63; i < 64; i--)
+        {
+            if (board & (std::uint64_t{1} << i))
+                return i;
+        }
+
+        return 0;
     }
 
     void print() const
