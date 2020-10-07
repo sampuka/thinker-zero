@@ -85,4 +85,39 @@ char tile_to_char(Tile t)
     }
 }
 
+// Quick method for iterating over knight moves
+constexpr std::uint8_t km(std::uint8_t i, std::uint8_t n)
+{
+    if (n == 0)
+    {
+        switch (i)
+        {
+            case 0: return -1; break;
+            case 1: return  1; break;
+            case 2: return  2; break;
+            case 3: return  2; break;
+            case 4: return  1; break;
+            case 5: return -1; break;
+            case 6: return -2; break;
+            case 7: return -2; break;
+            default: return 0; break;
+        }
+    }
+    else
+    {
+        switch (i)
+        {
+            case 0: return  2; break;
+            case 1: return  2; break;
+            case 2: return  1; break;
+            case 3: return -1; break;
+            case 4: return -2; break;
+            case 5: return -2; break;
+            case 6: return -1; break;
+            case 7: return  1; break;
+            default: return 0; break;
+        }
+    }
+}
+
 #endif
