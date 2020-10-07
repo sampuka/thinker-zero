@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-#include "Board.hpp"
+#include "BoardTree.hpp"
 
 int main(int argc, char** argv)
 {

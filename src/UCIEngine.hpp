@@ -2,6 +2,7 @@
 #define UCI_ENGINE_HPP
 
 #include "Board.hpp"
+#include "BoardTree.hpp"
 
 #include <algorithm>
 #include <atomic>
