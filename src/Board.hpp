@@ -4,6 +4,7 @@
 #include "utility.hpp"
 #include "Bitboard.hpp"
 #include "Move.hpp"
+#include "movegen_rays.hpp"
 
 #include <array>
 #include <cstdint>
@@ -213,6 +214,95 @@ public:
                 colors.at(static_cast<std::uint8_t>(color)).board &
                 pieces.at(static_cast<std::uint8_t>(piece)).board;
         return res;
+    }
+
+    std::array<Bitboard, 64>& ray_movegen()
+    {
+        Bitboard all_blockers;
+        all_blockers.board = ~colors.at(static_cast<std::uint8_t>(Color::Empty)).board;
+
+        for (std::uint8_t x = 0; x < 8; x++)
+        {
+            for (std::uint8_t y = 0; y < 8; y++)
+            {
+                const Tile tile = get_tile(x, y);
+
+                if (tile.color != turn)
+                    continue;
+
+                std::uint8_t index = y*8+x;
+                Bitboard &attacks = ray_movelist[index];
+
+                switch (tile.piece)
+                {
+                    case Piece::Knight:
+                    {
+                        attacks.board |= movegen_rays[8][index].board;
+                    }
+                    break;
+
+                    case Piece::Bishop:
+                        {
+                            for (std::uint8_t d = 0; d < 8; d+=2)
+                            {
+                                attacks.board |= movegen_rays[d][index].board;
+
+                                Bitboard blockers;
+                                blockers.board = movegen_rays[d][index].board & all_blockers.board;
+                                if (blockers.board != 0)
+                                {
+                                    std::uint8_t blocker_index = blockers.bitscan(d);
+
+                                    attacks.board &= ~movegen_rays[d][blocker_index].board;
+                                }
+                            }
+                        }
+                        break;
+
+                    case Piece::Rook:
+                        {
+                            for (std::uint8_t d = 1; d < 8; d+=2)
+                            {
+                                attacks.board |= movegen_rays[d][index].board;
+
+                                Bitboard blockers;
+                                blockers.board = movegen_rays[d][index].board & all_blockers.board;
+                                if (blockers.board != 0)
+                                {
+                                    std::uint8_t blocker_index = blockers.bitscan(d);
+
+                                    attacks.board &= ~movegen_rays[d][blocker_index].board;
+                                }
+                            }
+                        }
+                        break;
+
+                    case Piece::Queen:
+                        {
+                            for (std::uint8_t d = 0; d < 8; d++)
+                            {
+                                attacks.board |= movegen_rays[d][index].board;
+
+                                Bitboard blockers;
+                                blockers.board = movegen_rays[d][index].board & all_blockers.board;
+                                if (blockers.board != 0)
+                                {
+                                    std::uint8_t blocker_index = blockers.bitscan(d);
+
+                                    attacks.board &= ~movegen_rays[d][blocker_index].board;
+                                }
+                            }
+                        }
+                        break;
+
+                    default:
+                        break;
+
+                }
+            }
+        }
+
+        return ray_movelist;
     }
 
     std::vector<Move>& get_moves() const
@@ -1183,6 +1273,7 @@ private:
     mutable Bitboard enemy_threat;
     mutable bool movelist_found = false;
     mutable std::vector<Move> movelist;
+    mutable std::array<Bitboard, 64> ray_movelist;
 
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle; // KQkq
