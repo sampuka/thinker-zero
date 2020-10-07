@@ -9,6 +9,29 @@
 
 int main(int argc, char** argv)
 {
+    if (argc == 2 && std::string(argv[1]) == "movegen")
+    {
+        //movegen_rays[static_cast<std::uint8_t>(Ray::NE)][25].print();
+        //movegen_rays[static_cast<std::uint8_t>(Ray::N)][10].print();
+        //movegen_rays[static_cast<std::uint8_t>(Ray::E)][4].print();
+
+        Board test_board("8/8/1Q3p2/8/3B1N2/8/5R2/8 w - - 1 0");
+        test_board.print();
+
+        auto movelist = test_board.ray_movegen();
+
+        for (const auto &b : movelist)
+        {
+            if (b.board != 0)
+            {
+                b.print();
+                std::cout << '\n';
+            }
+        }
+
+        return 0;
+    }
+
     if (argc == 2 && std::string(argv[1]) == "suite")
     {
         std::ifstream testfile("../hartmann.epd");
