@@ -11,12 +11,13 @@ int main(int argc, char** argv)
 {
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
-        //movegen_rays[static_cast<std::uint8_t>(Ray::NE)][25].print(); std::cout << '\n';
-        //movegen_rays[static_cast<std::uint8_t>(Ray::N)][10].print(); std::cout << '\n';
-        //movegen_rays[static_cast<std::uint8_t>(Ray::E)][4].print(); std::cout << '\n';
-        //movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][32].print(); std::cout << '\n';
-        //movegen_rays[static_cast<std::uint8_t>(Ray::King)][10].print(); std::cout << '\n';
-
+        Bitboard b;
+        b.write(5, 0, true);
+        b.write(5, 1, true);
+        b.write(5, 6, true);
+        std::cout << std::to_string(b.bitscan_forward()) << std::endl;
+        std::cout << std::to_string(b.bitscan_backward()) << std::endl;
+        /*
         //Board test_board("8/1p6/1Q3b2/6P1/3B1N2/8/P4R2/7K w - - 1 0");
         //Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");
         Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
                 std::cout << '\n';
             }
         }
+        */
 
         return 0;
     }
