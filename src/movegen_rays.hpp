@@ -16,14 +16,17 @@ enum class Ray
     W,
     NW,
     N,
-    Knight
+    WhitePawnAttacks,
+    BlackPawnAttacks,
+    Knight,
+    King
 };
 
-constexpr std::array<std::array<Bitboard, 64>, 9> movegen_rays = []()
+constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 {
-    std::array<std::array<Bitboard, 64>, 9> rays;
+    std::array<std::array<Bitboard, 64>, 12> rays;
 
-    for (std::uint8_t _r = 0; _r < 9; _r++)
+    for (std::uint8_t _r = 0; _r < 12; _r++)
     {
         const Ray ray = static_cast<Ray>(_r);
 
@@ -106,15 +109,48 @@ constexpr std::array<std::array<Bitboard, 64>, 9> movegen_rays = []()
                     }
                     break;
 
+                case Ray::WhitePawnAttacks:
+                    if (y != 0 && y != 7)
+                    {
+                        if (x > 0)
+                            rays[_r][index].write(x-1, y+1, true);
+                        if (x < 7)
+                            rays[_r][index].write(x+1, y+1, true);
+                    }
+                    break;
+
+                case Ray::BlackPawnAttacks:
+                    if (y != 0 && y != 7)
+                    {
+                        if (x > 0)
+                            rays[_r][index].write(x-1, y-1, true);
+                        if (x < 7)
+                            rays[_r][index].write(x+1, y-1, true);
+                    }
+                    break;
+
                 case Ray::Knight:
                     for (std::uint8_t i = 0; i < 8; i++)
                     {
                         std::int8_t x_ = x+km(i,0);
                         std::int8_t y_ = y+km(i,1);
 
-                        if ((x_ > 0) && (y_ > 0) && (x_ < 8) && (y_ < 8))
+                        if ((x_ >= 0) && (y_ >= 0) && (x_ < 8) && (y_ < 8))
                         {
-                            rays[8][index].write(x_, y_, true);
+                            rays[_r][index].write(x_, y_, true);
+                        }
+                    }
+                    break;
+
+                case Ray::King:
+                    for (std::int8_t x_ = x-1; x_ <= x+1; x_++)
+                    {
+                        for (std::int8_t y_ = y-1; y_ <= y+1; y_++)
+                        {
+                            if ((x_ >= 0) && (y_ >= 0) && (x_ < 8) && (y_ < 8) && (!(x_ == x && y_ == y)))
+                            {
+                                rays[_r][index].write(x_, y_, true);
+                            }
                         }
                     }
                     break;
