@@ -44,24 +44,28 @@ public:
 
     std::uint8_t bitscan_forward() const
     {
-        for (std::uint8_t i = 0; i < 64; i++)
-        {
-            if (board & (std::uint64_t{1} << i))
-                return i;
-        }
+        std::uint64_t res=0;
 
-        return 0;
+        asm(
+         "bsf %1,%0\n"
+         : "=r"(res)
+         : "b"(board)
+         );
+
+        return res;
     }
 
     std::uint8_t bitscan_backward() const
     {
-        for (std::uint8_t i = 63; i < 64; i--)
-        {
-            if (board & (std::uint64_t{1} << i))
-                return i;
-        }
+        std::uint64_t res=0;
 
-        return 0;
+        asm(
+         "bsr %1,%0\n"
+         : "=r"(res)
+         : "b"(board)
+         );
+
+        return res;
     }
 
     void print() const
