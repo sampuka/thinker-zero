@@ -216,10 +216,16 @@ public:
         return res;
     }
 
-    std::array<Bitboard, 64>& ray_movegen()
+    std::array<Bitboard, 64>& ray_movegen(bool only_threat = false) const
     {
+        if (movelist_found)
+            return ray_movelist;
+
         Bitboard all_blockers;
         all_blockers.board = ~colors.at(static_cast<std::uint8_t>(Color::Empty)).board;
+
+        enemy_threat.board = 0;
+        std::uint8_t king_index = 0;
 
         for (std::uint8_t x = 0; x < 8; x++)
         {
@@ -227,19 +233,58 @@ public:
             {
                 const Tile tile = get_tile(x, y);
 
-                if (tile.color != turn)
-                    continue;
-
                 std::uint8_t index = y*8+x;
-                Bitboard &attacks = ray_movelist[index];
+
+                Bitboard attacks;
 
                 switch (tile.piece)
                 {
+                    case Piece::Pawn: // Only attacking moves
+                        {
+                            if (tile.color == turn)
+                            {
+                                Bitboard enemy_pieces;
+                                if (turn == Color::White)
+                                    enemy_pieces.board = colors[static_cast<std::uint8_t>(Color::Black)].board;
+                                else
+                                    enemy_pieces.board = colors[static_cast<std::uint8_t>(Color::White)].board;
+
+                                if (ep_x != 9)
+                                {
+                                    if (turn == Color::White)
+                                        enemy_pieces.write(ep_x, 5, true);
+                                    else
+                                        enemy_pieces.write(ep_x, 2, true);
+                                }
+
+                                if (turn == Color::White)
+                                {
+                                    attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::WhitePawnAttacks)][index].board & enemy_pieces.board;
+                                }
+                                else
+                                {
+                                    attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][index].board & enemy_pieces.board;
+                                }
+                            }
+                            else
+                            {
+                                if (tile.color == Color::White)
+                                {
+                                    attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::WhitePawnAttacks)][index].board;
+                                }
+                                else
+                                {
+                                    attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][index].board;
+                                }
+                            }
+                        }
+                        break;
+
                     case Piece::Knight:
-                    {
-                        attacks.board |= movegen_rays[8][index].board;
-                    }
-                    break;
+                        {
+                            attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::Knight)][index].board;
+                        }
+                        break;
 
                     case Piece::Bishop:
                         {
@@ -295,21 +340,219 @@ public:
                         }
                         break;
 
-                    default:
+                    case Piece::King:
+                        {
+                            attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::King)][index].board;
+                            king_index = index;
+                        }
                         break;
 
+                    default:
+                        break;
+                }
+
+                if (tile.color == turn)
+                    ray_movelist[index].board = attacks.board & (~colors[static_cast<std::uint8_t>(turn)].board);
+                else
+                    enemy_threat.board |= attacks.board;
+            }
+        }
+
+        // Pawn non-attacking moves
+        for (std::uint8_t x = 0; x < 8; x++)
+        {
+            for (std::uint8_t y = 0; y < 8; y++)
+            {
+                const Tile tile = get_tile(x, y);
+
+                std::uint8_t index = y*8+x;
+
+                if (tile.piece == Piece::Pawn && tile.color == turn)
+                {
+                    if (turn == Color::White)
+                    {
+                        if (!all_blockers.read(x, y+1))
+                        {
+                            ray_movelist[index].write(x, y+1, true);
+                            if (y == 1)
+                                ray_movelist[index].write(x, y+2, !all_blockers.read(x, y+2));
+                        }
+                    }
+                    else
+                    {
+                        if (!all_blockers.read(x, y-1))
+                        {
+                            ray_movelist[index].write(x, y-1, true);
+                            if (y == 6)
+                                ray_movelist[index].write(x, y-2, !all_blockers.read(x, y-2));
+                        }
+                    }
                 }
             }
         }
 
+        // Castling moves
+        if (turn == Color::White)
+        {
+            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0)) // King side
+            {
+                Bitboard must_be_clear;
+                must_be_clear.write(5, 0, true);
+                must_be_clear.write(6, 0, true);
+
+                if ((must_be_clear.board & all_blockers.board) == 0)
+                {
+                    ray_movelist[king_index].write(6, 0, true);
+                }
+            }
+
+            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1)) // Queen side
+            {
+                Bitboard must_be_clear;
+                must_be_clear.write(1, 0, true);
+                must_be_clear.write(2, 0, true);
+                must_be_clear.write(3, 0, true);
+
+                if ((must_be_clear.board & all_blockers.board) == 0)
+                {
+                    ray_movelist[king_index].write(2, 0, true);
+                }
+            }
+        }
+        else if (turn == Color::Black)
+        {
+            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0)) // King side
+            {
+                Bitboard must_be_clear;
+                must_be_clear.write(5, 7, true);
+                must_be_clear.write(6, 7, true);
+
+                if ((must_be_clear.board & all_blockers.board) == 0)
+                {
+                    ray_movelist[king_index].write(6, 7, true);
+                }
+            }
+
+            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1)) // Queen side
+            {
+                Bitboard must_be_clear;
+                must_be_clear.write(1, 7, true);
+                must_be_clear.write(2, 7, true);
+                must_be_clear.write(3, 7, true);
+
+                if ((must_be_clear.board & all_blockers.board) == 0)
+                {
+                    ray_movelist[king_index].write(2, 7, true);
+                }
+            }
+        }
+
+        if (!only_threat)
+        {
+            // Remove moves where king moves into enemy threat
+            ray_movelist[king_index].board &= ~enemy_threat.board;
+
+            bool in_check = enemy_threat.read(king_index%8, king_index/8);
+
+            for (std::uint8_t x = 0; x < 8; x++)
+            {
+                for (std::uint8_t y = 0; y < 8; y++)
+                {
+                    std::uint8_t index = y*8+x;
+                    if (ray_movelist[index].board == 0)
+                        continue;
+
+                    const Tile tile = get_tile(x, y);
+
+                    // Check all moves if the king is in check,
+                    // check moves whose tile is under threat (can be discovers),
+                    // check moves that can be en passant as en passant must always be checked
+                    if (in_check || enemy_threat.read(x, y) || (tile.piece == Piece::Pawn))
+                    {
+                        Bitboard moves = ray_movelist[index];
+
+                        while (moves.board != 0)
+                        {
+                            std::uint8_t to_index = moves.bitscan_forward();
+
+                            std::uint8_t to_x = to_index%8;
+                            std::uint8_t to_y = to_index/8;
+                            moves.write(to_x, to_y, false);
+
+                            // Don't check pawn moves not under threat and not en passant
+                            if ((!enemy_threat.read(x, y)) && tile.piece == Piece::Pawn && to_x == x)
+                                continue;
+
+                            Board next(*this);
+
+                            next.perform_move(Move(x, y, to_x, to_y));
+
+                            next.ray_movegen(true);
+                            Bitboard next_threat = next.get_threat();
+
+                            if ((next_threat.board & get_bitboard(turn, Piece::King).board) != 0)
+                            {
+                                ray_movelist[index].write(to_x, to_y, false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        movelist_found = true;
         return ray_movelist;
     }
 
-    std::vector<Move>& get_moves() const
+    std::vector<Move> get_moves() const
     {
-        find_movelist();
+        //find_movelist();
+        ray_movegen();
 
-        return movelist;
+        std::uint8_t move_count = 0;
+
+        for (std::uint8_t i = 0; i < 64; i++)
+        {
+            move_count += ray_movelist[i].count();
+        }
+
+        std::vector<Move> movelist_vec;
+        movelist_vec.reserve(move_count);
+
+        std::array<Bitboard, 64> ray_movelist_copy = ray_movelist;
+
+        for (std::uint8_t x = 0; x < 8; x++)
+        {
+            for (std::uint8_t y = 0; y < 8; y++)
+            {
+                std::uint8_t index = y*8+x;
+
+                while (ray_movelist_copy[index].board != 0)
+                {
+                    const Tile tile = get_tile(x, y);
+
+                    std::uint8_t to_index = ray_movelist_copy[index].bitscan_forward();
+
+                    std::uint8_t to_x = to_index%8;
+                    std::uint8_t to_y = to_index/8;
+                    ray_movelist_copy[index].write(to_x, to_y, false);
+
+                    if (tile.piece == Piece::Pawn && ((to_y == 0) || (to_y == 7)))
+                    {
+                        movelist_vec.emplace_back(x, y, to_x, to_y, Piece::Knight);
+                        movelist_vec.emplace_back(x, y, to_x, to_y, Piece::Bishop);
+                        movelist_vec.emplace_back(x, y, to_x, to_y, Piece::Rook);
+                        movelist_vec.emplace_back(x, y, to_x, to_y, Piece::Queen);
+                    }
+                    else
+                    {
+                        movelist_vec.emplace_back(x, y, to_x, to_y);
+                    }
+                }
+            }
+        }
+
+        return movelist_vec;
     }
 
     Bitboard& get_threat() const
