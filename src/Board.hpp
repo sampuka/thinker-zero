@@ -343,7 +343,8 @@ public:
                     case Piece::King:
                         {
                             attacks.board = movegen_rays[static_cast<std::uint8_t>(Ray::King)][index].board;
-                            king_index = index;
+                            if (tile.color == turn)
+                                king_index = index;
                         }
                         break;
 
@@ -352,9 +353,14 @@ public:
                 }
 
                 if (tile.color == turn)
+                {
                     ray_movelist[index].board = attacks.board & (~colors[static_cast<std::uint8_t>(turn)].board);
+                    threat.board |= attacks.board;
+                }
                 else
+                {
                     enemy_threat.board |= attacks.board;
+                }
             }
         }
 
@@ -400,7 +406,15 @@ public:
                 must_be_clear.write(5, 0, true);
                 must_be_clear.write(6, 0, true);
 
-                if ((must_be_clear.board & all_blockers.board) == 0)
+                Bitboard must_be_safe;
+                must_be_safe.write(4, 0, true);
+                must_be_safe.write(5, 0, true);
+                must_be_safe.write(6, 0, true);
+
+                if (
+                        (must_be_clear.board & all_blockers.board) == 0 &&
+                        (must_be_safe.board & enemy_threat.board) == 0
+                   )
                 {
                     ray_movelist[king_index].write(6, 0, true);
                 }
@@ -413,7 +427,16 @@ public:
                 must_be_clear.write(2, 0, true);
                 must_be_clear.write(3, 0, true);
 
-                if ((must_be_clear.board & all_blockers.board) == 0)
+                Bitboard must_be_safe;
+                must_be_safe.write(2, 0, true);
+                must_be_safe.write(3, 0, true);
+                must_be_safe.write(4, 0, true);
+
+                if (
+                        (must_be_clear.board & all_blockers.board) == 0 &&
+                        (must_be_safe.board & enemy_threat.board) == 0
+                   )
+
                 {
                     ray_movelist[king_index].write(2, 0, true);
                 }
@@ -421,26 +444,42 @@ public:
         }
         else if (turn == Color::Black)
         {
-            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0)) // King side
+            if (can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(0)) // King side
             {
                 Bitboard must_be_clear;
                 must_be_clear.write(5, 7, true);
                 must_be_clear.write(6, 7, true);
 
-                if ((must_be_clear.board & all_blockers.board) == 0)
+                Bitboard must_be_safe;
+                must_be_safe.write(4, 7, true);
+                must_be_safe.write(5, 7, true);
+                must_be_safe.write(6, 7, true);
+
+                if (
+                        (must_be_clear.board & all_blockers.board) == 0 &&
+                        (must_be_safe.board & enemy_threat.board) == 0
+                   )
                 {
                     ray_movelist[king_index].write(6, 7, true);
                 }
             }
 
-            if (can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1)) // Queen side
+            if (can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(1)) // Queen side
             {
                 Bitboard must_be_clear;
                 must_be_clear.write(1, 7, true);
                 must_be_clear.write(2, 7, true);
                 must_be_clear.write(3, 7, true);
 
-                if ((must_be_clear.board & all_blockers.board) == 0)
+                Bitboard must_be_safe;
+                must_be_safe.write(2, 7, true);
+                must_be_safe.write(3, 7, true);
+                must_be_safe.write(4, 7, true);
+
+                if (
+                        (must_be_clear.board & all_blockers.board) == 0 &&
+                        (must_be_safe.board & enemy_threat.board) == 0
+                   )
                 {
                     ray_movelist[king_index].write(2, 7, true);
                 }
@@ -480,7 +519,10 @@ public:
                             moves.write(to_x, to_y, false);
 
                             // Don't check pawn moves not under threat and not en passant
-                            if ((!enemy_threat.read(x, y)) && tile.piece == Piece::Pawn && to_x == x)
+                            if (
+                                    !in_check &&
+                                    ((!enemy_threat.read(x, y)) && tile.piece == Piece::Pawn && to_x == x)
+                               )
                                 continue;
 
                             Board next(*this);
@@ -490,7 +532,7 @@ public:
                             next.ray_movegen(true);
                             Bitboard next_threat = next.get_threat();
 
-                            if ((next_threat.board & get_bitboard(turn, Piece::King).board) != 0)
+                            if ((next_threat.board & next.get_bitboard(turn, Piece::King).board) != 0)
                             {
                                 ray_movelist[index].write(to_x, to_y, false);
                             }
