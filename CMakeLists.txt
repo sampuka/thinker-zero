@@ -20,4 +20,4 @@ add_executable(minimax_engine ${MINIMAX_SRCS})
 target_link_libraries(minimax_engine PRIVATE Threads::Threads)
 
 #set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -Og -lpthread")
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -O3 -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -O3 -lpthread")
