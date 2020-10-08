@@ -19,7 +19,7 @@ public:
 
     void expand(std::uint8_t n = 1)
     {
-        std::vector<Move> &moves = board.get_moves();
+        std::vector<Move> moves = board.get_moves();
 
         if (!expanded)
         {
