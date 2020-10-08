@@ -11,14 +11,19 @@ int main(int argc, char** argv)
 {
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
-        //movegen_rays[static_cast<std::uint8_t>(Ray::NE)][25].print();
-        //movegen_rays[static_cast<std::uint8_t>(Ray::N)][10].print();
-        //movegen_rays[static_cast<std::uint8_t>(Ray::E)][4].print();
+        //movegen_rays[static_cast<std::uint8_t>(Ray::NE)][25].print(); std::cout << '\n';
+        //movegen_rays[static_cast<std::uint8_t>(Ray::N)][10].print(); std::cout << '\n';
+        //movegen_rays[static_cast<std::uint8_t>(Ray::E)][4].print(); std::cout << '\n';
+        movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][32].print(); std::cout << '\n';
+        //movegen_rays[static_cast<std::uint8_t>(Ray::King)][10].print(); std::cout << '\n';
 
-        Board test_board("8/8/1Q3p2/8/3B1N2/8/5R2/8 w - - 1 0");
+        //Board test_board("8/1p6/1Q3b2/6P1/3B1N2/8/P4R2/7K w - - 1 0");
+        Board test_board;
         test_board.print();
 
         auto movelist = test_board.ray_movegen();
+        test_board.get_enemy_threat().print();
+        std::cout << '\n';
 
         for (const auto &b : movelist)
         {
