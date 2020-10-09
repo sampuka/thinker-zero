@@ -11,12 +11,12 @@ int main(int argc, char** argv)
 {
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
-        Bitboard b;
-        b.write(5, 0, true);
-        b.write(5, 1, true);
-        b.write(5, 6, true);
-        std::cout << std::to_string(b.bitscan_forward()) << std::endl;
-        std::cout << std::to_string(b.bitscan_backward()) << std::endl;
+        Bitboard b = 0;
+        bitboard_set(b, 5, 0);
+        bitboard_set(b, 5, 1);
+        bitboard_set(b, 5, 6);
+        std::cout << std::to_string(bitboard_bitscan_forward(b)) << std::endl;
+        std::cout << std::to_string(bitboard_bitscan_backward(b)) << std::endl;
         /*
         //Board test_board("8/1p6/1Q3b2/6P1/3B1N2/8/P4R2/7K w - - 1 0");
         //Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");

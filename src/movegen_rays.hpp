@@ -22,7 +22,7 @@ enum class Ray
     King
 };
 
-constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
+const std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 {
     std::array<std::array<Bitboard, 64>, 12> rays;
 
@@ -41,7 +41,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x++; y++;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x++; y++;
                     }
                     break;
@@ -50,7 +50,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x++;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x++;
                     }
                     break;
@@ -59,7 +59,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x++; y--;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x++; y--;
                     }
                     break;
@@ -68,7 +68,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     y--;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         y--;
                     }
                     break;
@@ -77,7 +77,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x--; y--;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x--; y--;
                     }
                     break;
@@ -86,7 +86,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x--;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x--;
                     }
                     break;
@@ -95,7 +95,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     x--; y++;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         x--; y++;
                     }
                     break;
@@ -104,7 +104,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     y++;
                     while ((x < 8) && (y < 8))
                     {
-                        rays[_r][index].write(x, y, true);
+                        bitboard_set(rays[_r][index], x, y);
                         y++;
                     }
                     break;
@@ -113,9 +113,9 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     if (y != 0 && y != 7)
                     {
                         if (x > 0)
-                            rays[_r][index].write(x-1, y+1, true);
+                            bitboard_set(rays[_r][index], x-1, y+1);
                         if (x < 7)
-                            rays[_r][index].write(x+1, y+1, true);
+                            bitboard_set(rays[_r][index], x+1, y+1);
                     }
                     break;
 
@@ -123,9 +123,9 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                     if (y != 0 && y != 7)
                     {
                         if (x > 0)
-                            rays[_r][index].write(x-1, y-1, true);
+                            bitboard_set(rays[_r][index], x-1, y-1);
                         if (x < 7)
-                            rays[_r][index].write(x+1, y-1, true);
+                            bitboard_set(rays[_r][index], x+1, y-1);
                     }
                     break;
 
@@ -137,7 +137,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 
                         if ((x_ >= 0) && (y_ >= 0) && (x_ < 8) && (y_ < 8))
                         {
-                            rays[_r][index].write(x_, y_, true);
+                            bitboard_set(rays[_r][index], x_, y_);
                         }
                     }
                     break;
@@ -149,7 +149,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
                         {
                             if ((x_ >= 0) && (y_ >= 0) && (x_ < 8) && (y_ < 8) && (!(x_ == x && y_ == y)))
                             {
-                                rays[_r][index].write(x_, y_, true);
+                                bitboard_set(rays[_r][index], x_, y_);
                             }
                         }
                     }
@@ -159,6 +159,17 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
     }
 
     return rays;
+}();
+
+// White king side castle clear squares
+const Bitboard wks_clear = []()
+{
+    return 0;
+}();
+
+const Bitboard wks_safe = []()
+{
+    return 0;
 }();
 
 #endif
