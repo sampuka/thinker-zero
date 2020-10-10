@@ -21,6 +21,8 @@ enum class Color
     Empty
 };
 
+using Square = std::uint8_t;
+
 class Tile
 {
 public:
