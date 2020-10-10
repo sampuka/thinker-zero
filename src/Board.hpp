@@ -212,10 +212,10 @@ public:
         return colors[static_cast<std::uint8_t>(color)] & pieces[static_cast<std::uint8_t>(piece)];
     }
 
-    std::array<Bitboard, 64>& ray_movegen(bool only_threat = false) const
+    void ray_movegen(bool only_threat = false) const
     {
         if (movelist_found)
-            return ray_movelist;
+            return;
 
         Bitboard all_blockers = ~colors[static_cast<std::uint8_t>(Color::Empty)];
 
@@ -397,18 +397,9 @@ public:
             {
                 if (can_castle[static_cast<std::uint8_t>(Color::White)][0]) // King side
                 {
-                    Bitboard must_be_clear = 0;
-                    bitboard_set(must_be_clear, 5, 0);
-                    bitboard_set(must_be_clear, 6, 0);
-
-                    Bitboard must_be_safe = 0;
-                    bitboard_set(must_be_safe, 4, 0);
-                    bitboard_set(must_be_safe, 5, 0);
-                    bitboard_set(must_be_safe, 6, 0);
-
                     if (
-                            (must_be_clear & all_blockers) == 0 &&
-                            (must_be_safe & enemy_threat) == 0
+                            (wks_clear & all_blockers) == 0 &&
+                            (wks_safe & enemy_threat) == 0
                        )
                     {
                         bitboard_set(ray_movelist[king_index], 6, 0);
@@ -417,21 +408,10 @@ public:
 
                 if (can_castle[static_cast<std::uint8_t>(Color::White)][1]) // Queen side
                 {
-                    Bitboard must_be_clear = 0;
-                    bitboard_set(must_be_clear, 1, 0);
-                    bitboard_set(must_be_clear, 2, 0);
-                    bitboard_set(must_be_clear, 3, 0);
-
-                    Bitboard must_be_safe = 0;
-                    bitboard_set(must_be_safe, 2, 0);
-                    bitboard_set(must_be_safe, 3, 0);
-                    bitboard_set(must_be_safe, 4, 0);
-
                     if (
-                            (must_be_clear & all_blockers) == 0 &&
-                            (must_be_safe & enemy_threat) == 0
+                            (wqs_clear & all_blockers) == 0 &&
+                            (wqs_safe & enemy_threat) == 0
                        )
-
                     {
                         bitboard_set(ray_movelist[king_index], 2, 0);
                     }
@@ -441,18 +421,9 @@ public:
             {
                 if (can_castle[static_cast<std::uint8_t>(Color::Black)][0]) // King side
                 {
-                    Bitboard must_be_clear = 0;
-                    bitboard_set(must_be_clear, 5, 7);
-                    bitboard_set(must_be_clear, 6, 7);
-
-                    Bitboard must_be_safe = 0;
-                    bitboard_set(must_be_safe, 4, 7);
-                    bitboard_set(must_be_safe, 5, 7);
-                    bitboard_set(must_be_safe, 6, 7);
-
                     if (
-                            (must_be_clear & all_blockers) == 0 &&
-                            (must_be_safe & enemy_threat) == 0
+                            (bks_clear & all_blockers) == 0 &&
+                            (bks_safe & enemy_threat) == 0
                        )
                     {
                         bitboard_set(ray_movelist[king_index], 6, 7);
@@ -461,19 +432,9 @@ public:
 
                 if (can_castle[static_cast<std::uint8_t>(Color::Black)][1]) // Queen side
                 {
-                    Bitboard must_be_clear = 0;
-                    bitboard_set(must_be_clear, 1, 7);
-                    bitboard_set(must_be_clear, 2, 7);
-                    bitboard_set(must_be_clear, 3, 7);
-
-                    Bitboard must_be_safe = 0;
-                    bitboard_set(must_be_safe, 2, 7);
-                    bitboard_set(must_be_safe, 3, 7);
-                    bitboard_set(must_be_safe, 4, 7);
-
                     if (
-                            (must_be_clear & all_blockers) == 0 &&
-                            (must_be_safe & enemy_threat) == 0
+                            (bqs_clear & all_blockers) == 0 &&
+                            (bqs_safe & enemy_threat) == 0
                        )
                     {
                         bitboard_set(ray_movelist[king_index], 2, 7);
@@ -585,7 +546,7 @@ public:
             movelist_found = true;
         }
 
-        return ray_movelist;
+        return;
     }
 
     std::vector<Move>& get_moves() const

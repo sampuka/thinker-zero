@@ -164,12 +164,88 @@ const std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 // White king side castle clear squares
 const Bitboard wks_clear = []()
 {
-    return 0;
+    Bitboard b = 0;
+    bitboard_set(b, 5, 0);
+    bitboard_set(b, 6, 0);
+
+    return b;
 }();
 
+// White king side castle safe squares
 const Bitboard wks_safe = []()
 {
-    return 0;
+    Bitboard b = 0;
+    bitboard_set(b, 4, 0);
+    bitboard_set(b, 5, 0);
+    bitboard_set(b, 6, 0);
+
+    return b;
 }();
+
+// White queen side castle clear squares
+const Bitboard wqs_clear = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 1, 0);
+    bitboard_set(b, 2, 0);
+    bitboard_set(b, 3, 0);
+
+    return b;
+}();
+
+// White queen side castle safe squares
+const Bitboard wqs_safe = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 2, 0);
+    bitboard_set(b, 3, 0);
+    bitboard_set(b, 4, 0);
+
+    return b;
+}();
+
+// Black king side castle clear squares
+const Bitboard bks_clear = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 5, 7);
+    bitboard_set(b, 6, 7);
+
+    return b;
+}();
+
+// Black king side castle safe squares
+const Bitboard bks_safe = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 4, 7);
+    bitboard_set(b, 5, 7);
+    bitboard_set(b, 6, 7);
+
+    return b;
+}();
+
+// Black queen side castle clear squares
+const Bitboard bqs_clear = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 1, 7);
+    bitboard_set(b, 2, 7);
+    bitboard_set(b, 3, 7);
+
+    return b;
+}();
+
+// Black queen side castle safe squares
+const Bitboard bqs_safe = []()
+{
+    Bitboard b = 0;
+    bitboard_set(b, 2, 7);
+    bitboard_set(b, 3, 7);
+    bitboard_set(b, 4, 7);
+
+    return b;
+}();
+
 
 #endif
