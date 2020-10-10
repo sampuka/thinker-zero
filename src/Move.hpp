@@ -6,10 +6,21 @@
 #include <cstdint>
 #include <string>
 
+enum class MoveType
+{
+    Quiet = 0,
+    Capture,
+    Evasion,
+    EnPassant,
+    Castling
+};
+
 class Move
 {
 public:
-    Move() = delete;
+    Move()
+        : fx(0), fy(0), tx(0), ty(0), promo(Piece::None)
+    {}
 
     // From x, from y, to x, to y
     Move(std::uint8_t fx_, std::uint8_t fy_, std::uint8_t tx_, std::uint8_t ty_, Piece promo_ = Piece::None)
@@ -42,6 +53,9 @@ public:
 
     std::string longform() const
     {
+        if (fx == 0 && fy == 0 && tx == 0 && ty == 0)
+            return "0000";
+
         std::string s;
 
         s += static_cast<char>('a'+fx);
