@@ -62,6 +62,21 @@ std::uint8_t bitboard_bitscan_forward(const Bitboard &board)
     return res;
 }
 
+std::uint8_t bitboard_bitscan_forward_pop(Bitboard &board)
+{
+    std::uint64_t res=0;
+
+    asm(
+            "bsf %1,%0\n"
+            : "=r"(res)
+            : "b"(board)
+       );
+
+    bitboard_unset(board, res);
+
+    return res;
+}
+
 std::uint8_t bitboard_bitscan_backward(const Bitboard &board)
 {
     std::uint64_t res=0;
@@ -71,6 +86,21 @@ std::uint8_t bitboard_bitscan_backward(const Bitboard &board)
             : "=r"(res)
             : "b"(board)
        );
+
+    return res;
+}
+
+std::uint8_t bitboard_bitscan_backward_pop(Bitboard &board)
+{
+    std::uint64_t res=0;
+
+    asm(
+            "bsr %1,%0\n"
+            : "=r"(res)
+            : "b"(board)
+       );
+
+    bitboard_unset(board, res);
 
     return res;
 }
