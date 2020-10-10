@@ -3,6 +3,7 @@
 
 #include "utility.hpp"
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -81,6 +82,24 @@ public:
     std::uint8_t tx = 0;
     std::uint8_t ty = 0;
     Piece promo = Piece::None;
+};
+
+class MoveList
+{
+public:
+    std::uint8_t size() const
+    {
+        return list_size;
+    }
+
+    void add_move(const Move &m)
+    {
+        list[list_size++] = m;
+    }
+
+private:
+    std::uint8_t list_size = 0;
+    std::array<Move, 256> list;
 };
 
 #endif
