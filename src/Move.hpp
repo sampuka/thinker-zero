@@ -92,9 +92,29 @@ public:
         return list_size;
     }
 
+    Move at(std::uint8_t i) const
+    {
+        return list[i];
+    }
+
     void add_move(const Move &m)
     {
         list[list_size++] = m;
+    }
+
+    void clear()
+    {
+        list_size = 0;
+    }
+
+    Move* begin()
+    {
+        return std::begin(list);
+    }
+
+    Move* end()
+    {
+        return std::begin(list)+list_size;
     }
 
 private:

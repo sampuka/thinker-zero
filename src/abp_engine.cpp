@@ -19,15 +19,17 @@ public:
             turn = -1;
 
         // Get possible moves
-        std::vector<Move> moves = board.get_moves();
+        MoveList& moves = board.get_moves();
+
         if (moves.size() == 0)
         {
             std::cerr << "No legal moves found!" << std::endl;
         }
         else
         {
-            for (const Move &move : moves)
-                log << move.longform() << std::endl;
+            std::uint8_t size = moves.size();
+            for (std::uint8_t i = 0; i < size; i++)
+                log << moves.at(i).longform() << std::endl;
         }
 
         // Find random move among moves
@@ -45,7 +47,7 @@ public:
             Board test_board = board;
             test_board.perform_move(moveOne);
 
-            std::vector<Move> movesTwo = test_board.get_moves();
+            MoveList& movesTwo = test_board.get_moves();
 
             double eval = 0;
 

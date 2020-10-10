@@ -19,15 +19,17 @@ public:
 
     void expand(std::uint8_t n = 1)
     {
-        std::vector<Move> &moves = board.get_moves();
+        MoveList& moves = board.get_moves();
 
         if (!expanded)
         {
             nodes.reserve(moves.size());
 
-            for (const Move &m : moves)
+            std::uint8_t size = moves.size();
+
+            for (std::uint8_t i = 0; i < size; i++)
             {
-                nodes.emplace_back(board, m);
+                nodes.emplace_back(board, moves.at(i));
             }
 
             expanded = true;

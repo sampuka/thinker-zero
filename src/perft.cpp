@@ -11,32 +11,39 @@ int main(int argc, char** argv)
 {
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
+        /*
         Bitboard b = 0;
         bitboard_set(b, 5, 0);
         bitboard_set(b, 5, 1);
         bitboard_set(b, 5, 6);
-        std::cout << std::to_string(bitboard_bitscan_forward(b)) << std::endl;
-        std::cout << std::to_string(bitboard_bitscan_backward(b)) << std::endl;
-        /*
-        //Board test_board("8/1p6/1Q3b2/6P1/3B1N2/8/P4R2/7K w - - 1 0");
+        //std::cout << std::to_string(bitboard_bitscan_forward(b)) << std::endl;
+        //std::cout << std::to_string(bitboard_bitscan_backward(b)) << std::endl;
+        */
+        //Board test_board("7r/1b6/1Q3b2/6P1/3B1N2/8/Pn4R1/k6K w - - 1 0");
+        Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");
         //Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");
-        Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
+        //Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
         //Board test_board;
         test_board.print();
 
-        auto movelist = test_board.ray_movegen();
-        test_board.get_enemy_threat().print();
+        MoveList& moves = test_board.get_moves();
+        std::cout << "Threat:" << std::endl;
+        bitboard_print(test_board.get_threat());
+        std::cout << "Enemy threat:" << std::endl;
+        bitboard_print(test_board.get_enemy_threat());
+        std::cout << "Checkers:" << std::endl;
+        std::cout << "Checker count: " << std::to_string(bitboard_count(test_board.get_checkers())) << std::endl;
+        bitboard_print(test_board.get_checkers());
+        std::cout << "Check blockers:" << std::endl;
+        bitboard_print(test_board.get_check_blockers());
+        std::cout << "Pinned:" << std::endl;
+        bitboard_print(test_board.get_pinned());
         std::cout << '\n';
 
-        for (const auto &b : movelist)
+        for (const Move& move : moves)
         {
-            if (b.board != 0)
-            {
-                b.print();
-                std::cout << '\n';
-            }
+            std::cout << move.longform() << std::endl;
         }
-        */
 
         return 0;
     }

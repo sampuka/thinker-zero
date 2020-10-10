@@ -17,7 +17,7 @@ public:
         if(board.get_turn() == Color::Black)
             turn = -1;
 
-        std::vector<Move> moves = board.get_moves();
+        MoveList& moves = board.get_moves();
 
         if (moves.size() == 0)
         {
@@ -25,7 +25,9 @@ public:
         }
         else
         {
-            for (const Move &move : moves)
+            //std::uint8_t size = moves.size();
+            //for (std::uint8_t i = 0; i < size; i++)
+            for (const Move& move : moves)
                 log << move.longform() << std::endl;
         }
 
@@ -43,7 +45,7 @@ public:
                 if (base.board.get_turn() == Color::White)
                 {
                     double eval = -1000000;
-                    Move best = Move(0, 0, 0, 0);
+                    Move best;
 
                     for (const BoardTree &node : base.nodes)
                     {
@@ -63,7 +65,7 @@ public:
                 else
                 {
                     double eval = 1000000;
-                    Move best = Move(0, 0, 0, 0);
+                    Move best;
 
                     for (const BoardTree &node : base.nodes)
                     {

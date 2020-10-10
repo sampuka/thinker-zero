@@ -3,6 +3,10 @@
 
 #include <iostream>
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 enum class Piece
 {
     Pawn = 0,
@@ -22,6 +26,28 @@ enum class Color
 };
 
 using Square = std::uint8_t;
+
+// Assume king and from are aligned
+bool is_aligned(Square king, Square from, Square to)
+{
+    std::int8_t x_sign = sgn((from%8)-(king%8));
+    std::int8_t y_sign = sgn((from/8)-(king/8));
+
+    std::int8_t x_diff = (to%8)-(king%8);
+    std::int8_t y_diff = (to/8)-(king/8);
+
+    if (x_sign == 0)
+    {
+        return x_diff == 0;
+    }
+
+    if (y_sign == 0)
+    {
+        return y_diff == 0;
+    }
+
+    return (x_diff / x_sign) == (y_diff / y_sign);
+}
 
 class Tile
 {
