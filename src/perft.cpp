@@ -20,8 +20,10 @@ int main(int argc, char** argv)
         //std::cout << std::to_string(bitboard_bitscan_backward(b)) << std::endl;
         */
         //Board test_board("7r/1b6/1Q3b2/6P1/3B1N2/8/Pn4R1/k6K w - - 1 0");
-        Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");
-        //Board test_board("8/8/8/8/8/8/6k1/4K2R w K - 0 1");
+        //Board test_board("8/8/8/8/8/8/7k/r3K1R1 w K - 0 1");
+        //Board test_board("r3k2r/p1ppqpb1/1n2pnp1/3PN3/1p2P3/2N2Q1p/PPPBbPPP/R2K3R w kq - 0 2");
+        //Board test_board("r6r/p1ppqkb1/bn2Pnp1/8/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQ - 0 2");
+        Board test_board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P4/PPPKPPPP/RNBQ1BNR w kq - 2 3");
         //Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
         //Board test_board;
         test_board.print();

@@ -792,9 +792,24 @@ private:
         }
         else // Generate evasive
         {
+            Bitboard target = colors[static_cast<std::uint8_t>(turn)];
+
             if (bitboard_count(checkers) > 1) // Only king moves
             {
-                Bitboard threat_moves = most_moves[king_square];
+                target = 0;
+                bitboard_set(target, king_square);
+            }
+
+            while (target)
+            {
+                const Square from_sq = bitboard_bitscan_forward_pop(target);
+
+                const std::uint8_t from_x = from_sq%8;
+                const std::uint8_t from_y = from_sq/8;
+
+                const Tile tile = get_tile(from_x, from_y);
+
+                Bitboard threat_moves = most_moves[from_sq];
 
                 while (threat_moves)
                 {
@@ -802,51 +817,54 @@ private:
                     const std::uint8_t to_x = to_sq%8;
                     const std::uint8_t to_y = to_sq/8;
 
-                    if (!bitboard_read(enemy_threat, to_sq))
+                    if (tile.piece == Piece::King)
                     {
-                        add_move(Move(king_square%8, king_square/8, to_x, to_y));
-                    }
-                }
-            }
-            else
-            {
-                Bitboard target = colors[static_cast<std::uint8_t>(turn)];
-
-                while (target)
-                {
-                    const Square from_sq = bitboard_bitscan_forward_pop(target);
-                    const std::uint8_t from_x = from_sq%8;
-                    const std::uint8_t from_y = from_sq/8;
-
-                    const Tile tile = get_tile(from_x, from_y);
-
-                    Bitboard threat_moves = most_moves[from_sq];
-
-                    while (threat_moves)
-                    {
-                        const Square to_sq = bitboard_bitscan_forward_pop(threat_moves);
-                        const std::uint8_t to_x = to_sq%8;
-                        const std::uint8_t to_y = to_sq/8;
-
-                        if (tile.piece == Piece::King)
+                        if (!bitboard_read(enemy_threat, to_sq))
                         {
-                            if (!bitboard_read(enemy_threat, to_sq))
+                            add_move(Move(king_square%8, king_square/8, to_x, to_y));
+                            /*
+                            if (bitboard_read(checkers, to_sq))
                             {
-                                add_move(Move(from_x, from_y, to_x, to_y));
+                                add_move(Move(king_square%8, king_square/8, to_x, to_y));
+                                continue;
                             }
+
+                            Bitboard chks = checkers;
+                            while (chks)
+                            {
+                                const Square chk_square = bitboard_bitscan_forward(chks);
+
+                                if (
+                                        is_aligned(to_sq, king_square, chk_square) &&
+                                        !(tile.piece == Piece::Pawn || tile.piece == Piece::Knight)
+                                   )
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    bitboard_unset(chks, chk_square);
+                                }
+                            }
+
+                            if (chks == 0)
+                            {
+                                add_move(Move(king_square%8, king_square/8, to_x, to_y));
+                            }
+                            */
                         }
-                        else
+                    }
+                    else
+                    {
+                        //std::cout << Move(from_x, from_y, to_x, to_y).longform() << ' ';
+                        //std::cout << bitboard_read(checkers | check_blockers, to_sq) << ' ' <<
+                        //    !bitboard_read(pinned, from_sq) << std::endl;
+                        if (
+                                bitboard_read(checkers | check_blockers, to_sq) &&
+                                !bitboard_read(pinned, from_sq)
+                           )
                         {
-                            //std::cout << Move(from_x, from_y, to_x, to_y).longform() << ' ';
-                            //std::cout << bitboard_read(checkers | check_blockers, to_sq) << ' ' <<
-                            //    !bitboard_read(pinned, from_sq) << std::endl;
-                            if (
-                                    bitboard_read(checkers | check_blockers, to_sq) &&
-                                    !bitboard_read(pinned, from_sq)
-                               )
-                            {
-                                add_move(Move(from_x, from_y, to_x, to_y));
-                            }
+                            add_move(Move(from_x, from_y, to_x, to_y));
                         }
                     }
                 }
@@ -895,158 +913,206 @@ private:
             switch (tile.piece)
             {
                 case Piece::Pawn:
-                {
-                    if (tile.color == Color::White)
                     {
-                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::WhitePawnAttacks)][from_square];
-                    }
-                    else
-                    {
-                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][from_square];
-                    }
-
-                    if (tile.color == turn)
-                    {
-                        Bitboard target = colors[static_cast<std::uint8_t>(their_color)];
-
-                        if (tile.color == turn && (ep_x != 9))
+                        if (tile.color == Color::White)
                         {
-                            if (turn == Color::White)
-                                bitboard_set(target, ep_x, 5);
-                            else
-                                bitboard_set(target, ep_x, 2);
+                            attacks = movegen_rays[static_cast<std::uint8_t>(Ray::WhitePawnAttacks)][from_square];
+                        }
+                        else
+                        {
+                            attacks = movegen_rays[static_cast<std::uint8_t>(Ray::BlackPawnAttacks)][from_square];
                         }
 
-                        attacks &= target;
+                        if (tile.color == turn)
+                        {
+                            Bitboard target = colors[static_cast<std::uint8_t>(their_color)];
+
+                            if (tile.color == turn && (ep_x != 9))
+                            {
+                                if (turn == Color::White)
+                                    bitboard_set(target, ep_x, 5);
+                                else
+                                    bitboard_set(target, ep_x, 2);
+                            }
+
+                            attacks &= target;
+                        }
                     }
-                }
-                break;
+                    break;
 
                 case Piece::Knight:
-                {
-                    attacks = movegen_rays[static_cast<std::uint8_t>(Ray::Knight)][from_square];
-                }
-                break;
+                    {
+                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::Knight)][from_square];
+                    }
+                    break;
 
                 case Piece::Bishop:
-                {
-                    for (std::uint8_t d = 0; d < 8; d+=2)
                     {
-                        attacks |= movegen_rays[d][from_square];
-
-                        Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
-
-                        if (blockers != 0)
+                        for (std::uint8_t d = 0; d < 8; d+=2)
                         {
-                            Square blocker_square = bitboard_bitscan(blockers, d);
-                            attacks &= ~movegen_rays[d][blocker_square];
-                        }
+                            attacks |= movegen_rays[d][from_square];
 
-                        if (bitboard_read(blockers, their_king_square))
-                        {
-                            Bitboard between =
-                                movegen_rays[d][from_square] &
-                                (~movegen_rays[d][their_king_square]);
-                            bitboard_unset(between, their_king_square);
+                            Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
 
-                            if (
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
-                               )
+                            if (blockers != 0)
                             {
                                 Square blocker_square = bitboard_bitscan(blockers, d);
-                                bitboard_set(pinned, blocker_square);
+                                attacks &= ~movegen_rays[d][blocker_square];
                             }
 
-                            if (bitboard_count(blockers) == 1)
-                                check_blockers |= between;
+                            if (bitboard_read(blockers, their_king_square))
+                            {
+                                Bitboard between =
+                                    movegen_rays[d][from_square] &
+                                    (~movegen_rays[d][their_king_square]);
+                                bitboard_unset(between, their_king_square);
+
+                                if (
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
+                                   )
+                                {
+                                    Square blocker_square = bitboard_bitscan(blockers, d);
+                                    bitboard_set(pinned, blocker_square);
+                                }
+
+                                if (bitboard_count(blockers & between) == 0)
+                                    check_blockers |= between;
+
+                                if (tile.color == their_color)
+                                {
+                                    // Extend threat beyond king
+                                    bitboard_unset(blockers, their_king_square);
+                                    if (blockers != 0)
+                                    {
+                                        Square blocker2 = bitboard_bitscan(blockers, d);
+
+                                        enemy_threat |= movegen_rays[d][from_square] & (~movegen_rays[d][blocker2]);
+                                    }
+                                    else
+                                    {
+                                        enemy_threat |= movegen_rays[d][from_square];
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                break;
+                    break;
 
                 case Piece::Rook:
-                {
-                    for (std::uint8_t d = 1; d < 8; d+=2)
                     {
-                        attacks |= movegen_rays[d][from_square];
-
-                        Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
-
-                        if (blockers != 0)
+                        for (std::uint8_t d = 1; d < 8; d+=2)
                         {
-                            Square blocker_square = bitboard_bitscan(blockers, d);
-                            attacks &= ~movegen_rays[d][blocker_square];
-                        }
+                            attacks |= movegen_rays[d][from_square];
 
-                        if (bitboard_read(blockers, their_king_square))
-                        {
-                            Bitboard between =
-                                movegen_rays[d][from_square] &
-                                (~movegen_rays[d][their_king_square]);
-                            bitboard_unset(between, their_king_square);
+                            Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
 
-                            if (
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
-                               )
+                            if (blockers != 0)
                             {
                                 Square blocker_square = bitboard_bitscan(blockers, d);
-                                bitboard_set(pinned, blocker_square);
+                                attacks &= ~movegen_rays[d][blocker_square];
                             }
 
-                            if (bitboard_count(blockers) == 1)
-                                check_blockers |= between;
+                            if (bitboard_read(blockers, their_king_square))
+                            {
+                                Bitboard between =
+                                    movegen_rays[d][from_square] &
+                                    (~movegen_rays[d][their_king_square]);
+                                bitboard_unset(between, their_king_square);
+
+                                if (
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
+                                   )
+                                {
+                                    Square blocker_square = bitboard_bitscan(blockers, d);
+                                    bitboard_set(pinned, blocker_square);
+                                }
+
+                                if (bitboard_count(blockers & between) == 0)
+                                    check_blockers |= between;
+
+                                if (tile.color == their_color)
+                                {
+                                    // Extend threat beyond king
+                                    bitboard_unset(blockers, their_king_square);
+                                    if (blockers != 0)
+                                    {
+                                        Square blocker2 = bitboard_bitscan(blockers, d);
+
+                                        enemy_threat |= movegen_rays[d][from_square] & (~movegen_rays[d][blocker2]);
+                                    }
+                                    else
+                                    {
+                                        enemy_threat |= movegen_rays[d][from_square];
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                break;
+                    break;
 
                 case Piece::Queen:
-                {
-                    for (std::uint8_t d = 0; d < 8; d++)
                     {
-                        attacks |= movegen_rays[d][from_square];
-
-                        Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
-
-                        if (blockers != 0)
+                        for (std::uint8_t d = 0; d < 8; d++)
                         {
-                            Square blocker_square = bitboard_bitscan(blockers, d);
-                            attacks &= ~movegen_rays[d][blocker_square];
-                        }
+                            attacks |= movegen_rays[d][from_square];
 
-                        if (bitboard_read(blockers, their_king_square))
-                        {
-                            Bitboard between =
-                                movegen_rays[d][from_square] &
-                                (~movegen_rays[d][their_king_square]);
-                            bitboard_unset(between, their_king_square);
+                            Bitboard blockers = movegen_rays[d][from_square] & all_blockers;
 
-                            if (
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
-                                    bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
-                               )
+                            if (blockers != 0)
                             {
                                 Square blocker_square = bitboard_bitscan(blockers, d);
-                                bitboard_set(pinned, blocker_square);
+                                attacks &= ~movegen_rays[d][blocker_square];
                             }
 
-                            if (bitboard_count(blockers) == 1)
-                                check_blockers |= between;
+                            if (bitboard_read(blockers, their_king_square))
+                            {
+                                Bitboard between =
+                                    movegen_rays[d][from_square] &
+                                    (~movegen_rays[d][their_king_square]);
+                                bitboard_unset(between, their_king_square);
+
+                                if (
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(them_color)])) == 1 &&
+                                        bitboard_count(between & (colors[static_cast<std::uint8_t>(tile.color)])) == 0
+                                   )
+                                {
+                                    Square blocker_square = bitboard_bitscan(blockers, d);
+                                    bitboard_set(pinned, blocker_square);
+                                }
+
+                                if (bitboard_count(blockers & between) == 0)
+                                    check_blockers |= between;
+
+                                if (tile.color == their_color)
+                                {
+                                    // Extend threat beyond king
+                                    bitboard_unset(blockers, their_king_square);
+                                    if (blockers != 0)
+                                    {
+                                        Square blocker2 = bitboard_bitscan(blockers, d);
+
+                                        enemy_threat |= movegen_rays[d][from_square] & (~movegen_rays[d][blocker2]);
+                                    }
+                                    else
+                                    {
+                                        enemy_threat |= movegen_rays[d][from_square];
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                break;
+                    break;
 
                 case Piece::King:
-                {
-                    attacks = movegen_rays[static_cast<std::uint8_t>(Ray::King)][from_square];
-                }
-                break;
+                    {
+                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::King)][from_square];
+                    }
+                    break;
 
                 default:
-                break;
+                    break;
             }
 
             most_moves[from_square] = attacks & (~colors[static_cast<std::uint8_t>(turn)]);
@@ -1064,7 +1130,7 @@ private:
                     bitboard_set(checkers, from_square);
                 }
             }
-        }
+            }
 
         // King threat
         std::array<Bitboard, 2> king_threats =
