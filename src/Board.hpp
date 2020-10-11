@@ -253,15 +253,20 @@ public:
         return pinned;
     }
 
-
     void set_turn(Color color)
     {
         turn = color;
 
-        movelist.clear();
-        movelist_found = false;
+        static_found = false;
         threat = 0;
         enemy_threat = 0;
+        checkers = 0;
+        check_blockers = 0;
+        pinned = 0;
+        most_moves = {0};
+
+        movelist.clear();
+        movelist_found = false;
     }
 
     Color get_turn() const
@@ -777,6 +782,7 @@ private:
                     const std::uint8_t to_x = to_sq%8;
                     const std::uint8_t to_y = to_sq/8;
 
+                    // Moving along pinned direction
                     if (
                             bitboard_read(pinned, from_sq) &&
                             (
@@ -785,6 +791,20 @@ private:
                             )
                        )
                         continue;
+
+                    // En Passant edgecase
+                    if (
+                            (tile.piece == Piece::Pawn) &&
+                            (from_x != to_x)
+                       )
+                    {
+                        // Just gonna buteforce-check for now
+                        Board next(*this);
+                        next.perform_move(Move(from_x, from_y, to_x, to_y));
+
+                        if (bitboard_read(next.get_threat(), king_square))
+                            continue;
+                    }
 
                     add_move(Move(from_x, from_y, to_x, to_y));
                 }
@@ -803,6 +823,9 @@ private:
             while (target)
             {
                 const Square from_sq = bitboard_bitscan_forward_pop(target);
+
+                if (bitboard_read(pinned, from_sq))
+                    continue;
 
                 const std::uint8_t from_x = from_sq%8;
                 const std::uint8_t from_y = from_sq/8;
@@ -856,12 +879,25 @@ private:
                     }
                     else
                     {
-                        //std::cout << Move(from_x, from_y, to_x, to_y).longform() << ' ';
-                        //std::cout << bitboard_read(checkers | check_blockers, to_sq) << ' ' <<
-                        //    !bitboard_read(pinned, from_sq) << std::endl;
                         if (
                                 bitboard_read(checkers | check_blockers, to_sq) &&
                                 !bitboard_read(pinned, from_sq)
+                           )
+                        {
+                            add_move(Move(from_x, from_y, to_x, to_y));
+                        }
+
+                        const Square chk = bitboard_bitscan_forward(checkers);
+                        const std::uint8_t chk_x = chk%8;
+                        const std::uint8_t chk_y = chk/8;
+
+                        if (
+                                ep_x != 9 &&
+                                tile.piece == Piece::Pawn &&
+                                from_x != to_x &&
+                                get_piece(chk_x, chk_y) == Piece::Pawn &&
+                                from_y == chk_y &&
+                                to_x == chk_x
                            )
                         {
                             add_move(Move(from_x, from_y, to_x, to_y));
