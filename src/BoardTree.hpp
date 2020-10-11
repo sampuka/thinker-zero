@@ -25,11 +25,9 @@ public:
         {
             nodes.reserve(moves.size());
 
-            std::uint8_t size = moves.size();
-
-            for (std::uint8_t i = 0; i < size; i++)
+            for (const Move &m : moves)
             {
-                nodes.emplace_back(board, moves.at(i));
+                nodes.emplace_back(board, m);
             }
 
             expanded = true;
