@@ -28,18 +28,11 @@ class Move
 {
 public:
     Move()
-        : data(0), fx(0), fy(0), tx(0), ty(0), promo(Piece::None)
+        : data(0)
     {}
-
-    /*
-    Move(const Move &m)
-        : data(m.data), fx(m.fx), fy(m.fy), tx(m.tx), ty(m.ty), promo(m.promo)
-    {}
-    */
 
     // From x, from y, to x, to y
-    Move(std::uint8_t fx_, std::uint8_t fy_, std::uint8_t tx_, std::uint8_t ty_, Piece promo_ = Piece::None)
-        : fx(fx_), fy(fy_), tx(tx_), ty(ty_), promo(promo_)
+    Move(std::uint8_t fx, std::uint8_t fy, std::uint8_t tx, std::uint8_t ty, Piece promo = Piece::None)
     {
         set_from(fy*8+fx);
         set_to(ty*8+tx);
@@ -50,41 +43,40 @@ public:
         set_promo(promo);
     }
 
-    Move(Square from, Square to, MoveSpecial type, Piece promo_ = Piece::None)
+    Move(Square from, Square to, MoveSpecial type, Piece promo = Piece::None)
     {
         set_from(from);
         set_to(to);
         set_type(type);
-        set_promo(promo_);
+        set_promo(promo);
     }
 
     Move(std::string s)
     {
-        fx = static_cast<std::uint8_t>(s.at(0)-'a');
-        fy = static_cast<std::uint8_t>(s.at(1)-'1');
-        tx = static_cast<std::uint8_t>(s.at(2)-'a');
-        ty = static_cast<std::uint8_t>(s.at(3)-'1');
+        std::uint8_t fx = static_cast<std::uint8_t>(s.at(0)-'a');
+        std::uint8_t fy = static_cast<std::uint8_t>(s.at(1)-'1');
+        std::uint8_t tx = static_cast<std::uint8_t>(s.at(2)-'a');
+        std::uint8_t ty = static_cast<std::uint8_t>(s.at(3)-'1');
 
         if (s.size() == 5)
         {
             switch (s.at(4))
             {
-                case 'n': promo = Piece::Knight; break;
-                case 'b': promo = Piece::Bishop; break;
-                case 'r': promo = Piece::Rook;   break;
-                case 'q': promo = Piece::Queen;  break;
+                case 'n': set_promo(Piece::Knight); break;
+                case 'b': set_promo(Piece::Bishop); break;
+                case 'r': set_promo(Piece::Rook);   break;
+                case 'q': set_promo(Piece::Queen);  break;
                 default: break;
             }
+            set_type(MoveSpecial::Promotion);
+        }
+        else
+        {
+            set_type(MoveSpecial::None);
         }
 
         set_from(fy*8+fx);
         set_to(ty*8+tx);
-
-        if (promo != Piece::None)
-            set_type(MoveSpecial::Promotion);
-        else
-            set_type(MoveSpecial::None);
-        set_promo(promo);
     }
 
     void set_from(Square from)
@@ -139,12 +131,11 @@ public:
 
     std::string longform() const
     {
-        if (fx == 0 && fy == 0 && tx == 0 && ty == 0)
+        if (get_from() == 0 && get_to() == 0)
             return "0000";
 
         std::string s;
 
-        /*
         s += static_cast<char>('a'+get_from()%8);
         s += static_cast<char>('1'+get_from()/8);
         s += static_cast<char>('a'+get_to()%8);
@@ -161,8 +152,8 @@ public:
                 default: s += '?'; break;
             }
         }
-        */
 
+        /*
         s += static_cast<char>('a'+fx);
         s += static_cast<char>('1'+fy);
         s += static_cast<char>('a'+tx);
@@ -177,6 +168,7 @@ public:
             case Piece::Queen:  s += 'q'; break;
             default: s += '?'; break;
         }
+        */
 
         return s;
     }
@@ -185,10 +177,9 @@ public:
     {
         std::string s;
 
-        if (fx == 0 && fy == 0 && tx == 0 && ty == 0)
+        if (get_from() == 0 && get_to() == 0)
             s = "0000";
 
-        /*
         s += static_cast<char>('a'+get_from()%8);
         s += static_cast<char>('1'+get_from()/8);
         s += static_cast<char>('a'+get_to()%8);
@@ -204,22 +195,6 @@ public:
                 case Piece::Queen:  s += 'q'; break;
                 default: s += '?'; break;
             }
-        }
-        */
-
-        s += static_cast<char>('a'+fx);
-        s += static_cast<char>('1'+fy);
-        s += static_cast<char>('a'+tx);
-        s += static_cast<char>('1'+ty);
-
-        switch (promo)
-        {
-            case Piece::None: break;
-            case Piece::Knight: s += 'n'; break;
-            case Piece::Bishop: s += 'b'; break;
-            case Piece::Rook:   s += 'r'; break;
-            case Piece::Queen:  s += 'q'; break;
-            default: s += '?'; break;
         }
 
         switch(get_type())
@@ -236,48 +211,41 @@ public:
     // Bit (0:5): from square
     // Bit (6:11) to square
     // Bit (12:13) promotion piece (0 = knight, 1 = bishop, 2 = rook, 3 = queen)
-    // Bit (14:15) move type (0 = promotion, 1 = en passant, 2 = castling)
+    // Bit (14:15) move type (0 = none, 1 = promotion, 2 = en passant, 3 = castling)
     std::uint16_t data = 0;
-
-private:
-    std::uint8_t fx = 0;
-    std::uint8_t fy = 0;
-    std::uint8_t tx = 0;
-    std::uint8_t ty = 0;
-    Piece promo = Piece::None;
 };
 
 class MoveList
 {
-    public:
-        std::uint8_t size() const
-        {
-            return list_size;
-        }
+public:
+    std::uint8_t size() const
+    {
+        return list_size;
+    }
 
-        Move at(std::uint8_t i) const
-        {
-            return list[i];
-        }
+    Move at(std::uint8_t i) const
+    {
+        return list[i];
+    }
 
-        void add_move(const Move &m)
-        {
-            list[list_size++] = m;
-        }
+    void add_move(const Move &m)
+    {
+        list[list_size++] = m;
+    }
 
-        void clear()
-        {
-            list_size = 0;
-        }
+    void clear()
+    {
+        list_size = 0;
+    }
 
-        Move* begin()
-        {
-            return std::begin(list);
-        }
+    Move* begin()
+    {
+        return std::begin(list);
+    }
 
-        Move* end()
-        {
-            return std::begin(list)+list_size;
+    Move* end()
+    {
+        return std::begin(list)+list_size;
     }
 
 private:

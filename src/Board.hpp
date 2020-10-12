@@ -1254,6 +1254,7 @@ private:
 
         if (tile.piece == Piece::Pawn && ((ty == 0) || (ty == 7)))
         {
+            m.set_type(MoveSpecial::Promotion);
             m.set_promo(Piece::Knight);
             movelist.add_move(m);
             m.set_promo(Piece::Bishop);
