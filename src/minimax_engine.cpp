@@ -17,7 +17,7 @@ public:
         if(board.get_turn() == Color::Black)
             turn = -1;
 
-        MoveList& moves = board.get_moves();
+        MoveList moves = board.get_moves();
 
         if (moves.size() == 0)
         {

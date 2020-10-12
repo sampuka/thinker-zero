@@ -19,7 +19,7 @@ public:
 
     void expand(std::uint8_t n = 1)
     {
-        MoveList& moves = board.get_moves();
+        MoveList moves = board.get_moves();
 
         if (!expanded)
         {

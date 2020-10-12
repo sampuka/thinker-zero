@@ -6,6 +6,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <tuple>
 
 enum class MoveType
 {
@@ -224,6 +225,14 @@ public:
 
     void add_move(const Move &m)
     {
+        if (list_size == 200)
+        {
+            std::cout << "movelist max size!!!!!!!!!" << std::endl;
+            for (const Move& mv : *this)
+            {
+                mv.print();
+            }
+        }
         list[list_size++] = m;
     }
 
@@ -244,7 +253,9 @@ public:
 
 private:
     std::uint8_t list_size = 0;
-    std::array<Move, 100> list;
+    std::array<Move, 200> list;
 };
+
+std::array<std::tuple<bool, MoveList, MoveList>, 200> g_movelists;
 
 #endif

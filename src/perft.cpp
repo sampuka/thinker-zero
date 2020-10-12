@@ -23,12 +23,13 @@ int main(int argc, char** argv)
         //Board test_board("8/8/8/8/8/8/7k/r3K1R1 w K - 0 1");
         //Board test_board("r3k2r/p1ppqpb1/1n2pnp1/3PN3/1p2P3/2N2Q1p/PPPBbPPP/R2K3R w kq - 0 2");
         //Board test_board("r6r/p1ppqkb1/bn2Pnp1/8/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQ - 0 2");
-        Board test_board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P4/PPPKPPPP/RNBQ1BNR w kq - 2 3");
+        //Board test_board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P4/PPPKPPPP/RNBQ1BNR w kq - 2 3");
+        Board test_board("r3k2r/p1ppqpb1/b3pnp1/3PN3/1p2P3/2N1nQ1p/PPPB1PPP/R2B1K1R w kq - 4 3 ");
         //Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
         //Board test_board;
         test_board.print();
 
-        MoveList& moves = test_board.get_moves();
+        MoveList moves = test_board.get_moves();
         std::cout << "Threat:" << std::endl;
         bitboard_print(test_board.get_threat());
         std::cout << "Enemy threat:" << std::endl;

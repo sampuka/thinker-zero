@@ -19,7 +19,7 @@ public:
             turn = -1;
 
         // Get possible moves
-        MoveList& moves = board.get_moves();
+        MoveList moves = board.get_moves();
 
         if (moves.size() == 0)
         {
@@ -47,7 +47,7 @@ public:
             Board test_board = board;
             test_board.perform_move(moveOne);
 
-            MoveList& movesTwo = test_board.get_moves();
+            MoveList movesTwo = test_board.get_moves();
 
             double eval = 0;
 
