@@ -250,7 +250,7 @@ public:
 
 private:
     std::uint8_t list_size = 0;
-    std::array<Move, 256> list;
+    std::array<Move, 100> list;
 };
 
 #endif
