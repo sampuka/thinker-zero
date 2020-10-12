@@ -152,11 +152,37 @@ public:
         return Color::Empty;
     }
 
+    Color get_color(Square sq) const
+    {
+        for (std::uint8_t c = 0; c < 3; c++)
+        {
+            if (bitboard_read(colors[c], sq))
+            {
+                return static_cast<Color>(c);
+            }
+        }
+
+        return Color::Empty;
+    }
+
     Piece get_piece(std::uint8_t x, std::uint8_t y) const
     {
         for (std::uint8_t p = 0; p < 6; p++)
         {
             if (bitboard_read(pieces[p], x, y))
+            {
+                return static_cast<Piece>(p);
+            }
+        }
+
+        return Piece::None;
+    }
+
+    Piece get_piece(Square sq) const
+    {
+        for (std::uint8_t p = 0; p < 6; p++)
+        {
+            if (bitboard_read(pieces[p], sq))
             {
                 return static_cast<Piece>(p);
             }
@@ -176,6 +202,11 @@ public:
         std::uint8_t y = static_cast<std::uint8_t>(y_);
 
         return Tile{get_color(x, y), get_piece(x, y)};
+    }
+
+    Tile get_tile(Square sq) const
+    {
+        return Tile{get_color(sq), get_piece(sq)};
     }
 
     void set_tile(std::int8_t x_, std::int8_t y_, Tile tile)
@@ -203,6 +234,26 @@ public:
         if (tile.piece != Piece::None)
         {
             bitboard_set(pieces[static_cast<std::uint8_t>(tile.piece)], x, y);
+        }
+    }
+
+    void set_tile(Square sq, Tile tile)
+    {
+        for (std::uint8_t c = 0; c < 3; c++)
+        {
+            bitboard_unset(colors[c], sq);
+        }
+
+        for (std::uint8_t p = 0; p < 6; p++)
+        {
+            bitboard_unset(pieces[p], sq);
+        }
+
+        bitboard_set(colors[static_cast<std::uint8_t>(tile.color)], sq);
+
+        if (tile.piece != Piece::None)
+        {
+            bitboard_set(pieces[static_cast<std::uint8_t>(tile.piece)], sq);
         }
     }
 
@@ -276,31 +327,38 @@ public:
 
     void perform_move(Move move)
     {
-        Tile from = get_tile(move.fx, move.fy);
+        //move.print();
+        const Tile from = get_tile(move.get_from());
+
+        const std::uint8_t fx = move.get_from()%8;
+        const std::uint8_t fy = move.get_from()/8;
+        const std::uint8_t tx = move.get_to()%8;
+        const std::uint8_t ty = move.get_to()/8;
+
         //Tile to = get_tile(move.tx, move.ty);
 
-        if (move.promo == Piece::None)
-            set_tile(move.tx, move.ty, from);
+        if (move.get_type() == MoveSpecial::Promotion)
+            set_tile(move.get_to(), Tile{from.color, move.get_promo()});
         else
-            set_tile(move.tx, move.ty, Tile{from.color, move.promo});
+            set_tile(move.get_to(), from);
 
-        set_tile(move.fx, move.fy, Tile{Color::Empty, Piece::None});
+        set_tile(move.get_from(), Tile{Color::Empty, Piece::None});
 
         // Castling move
-        if (from.piece == Piece::King && std::abs(move.tx - move.fx) >= 2)
+        if (from.piece == Piece::King && std::abs(tx - fx) >= 2)
         {
             // Kingside
-            if (move.tx > move.fx)
+            if (tx > fx)
             {
-                set_tile(5, move.fy, Tile{from.color, Piece::Rook});
-                set_tile(7, move.fy, Tile{Color::Empty, Piece::None});
+                set_tile(5, fy, Tile{from.color, Piece::Rook});
+                set_tile(7, fy, Tile{Color::Empty, Piece::None});
             }
 
             // Queenside
-            if (move.tx < move.fx)
+            if (tx < fx)
             {
-                set_tile(3, move.fy, Tile{from.color, Piece::Rook});
-                set_tile(0, move.fy, Tile{Color::Empty, Piece::None});
+                set_tile(3, fy, Tile{from.color, Piece::Rook});
+                set_tile(0, fy, Tile{Color::Empty, Piece::None});
             }
         }
 
@@ -313,44 +371,44 @@ public:
 
         // Handle castling priviledges if rook move
         if (from.piece == Piece::Rook &&
-                ((turn == Color::White && move.fy == 0) ||
-                 (turn == Color::Black && move.fy == 7)))
+                ((turn == Color::White && fy == 0) ||
+                 (turn == Color::Black && fy == 7)))
         {
-            if (move.fx == 7)
+            if (fx == 7)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
             }
 
-            if (move.fx == 0)
+            if (fx == 0)
             {
                 can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
             }
         }
 
         // Handle castling if rook is captured
-        if (move.tx == 7 && move.ty == 0)
+        if (tx == 7 && ty == 0)
             can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0) = false;
-        if (move.tx == 0 && move.ty == 0)
+        if (tx == 0 && ty == 0)
             can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1) = false;
-        if (move.tx == 7 && move.ty == 7)
+        if (tx == 7 && ty == 7)
             can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(0) = false;
-        if (move.tx == 0 && move.ty == 7)
+        if (tx == 0 && ty == 7)
             can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(1) = false;
 
         // En passant
         if (from.piece == Piece::Pawn &&
-                move.fx != move.tx &&
-                move.tx == ep_x)
+                fx != tx &&
+                tx == ep_x)
         {
-            if ((turn == Color::White && move.ty == 5) ||
-                (turn == Color::Black && move.ty == 2))
-            set_tile(ep_x, move.fy, Tile{Color::Empty, Piece::None});
+            if ((turn == Color::White && ty == 5) ||
+                (turn == Color::Black && ty == 2))
+            set_tile(ep_x, fy, Tile{Color::Empty, Piece::None});
         }
 
         // En passantable move
-        if (from.piece == Piece::Pawn && std::abs(move.ty - move.fy) == 2)
+        if (from.piece == Piece::Pawn && std::abs(ty - fy) == 2)
         {
-            ep_x = move.fx;
+            ep_x = fx;
         }
         else
         {
@@ -1191,17 +1249,18 @@ private:
 
     void add_move(Move m) const
     {
-        const Tile tile = get_tile(m.fx, m.fy);
+        const Tile tile = get_tile(m.get_from());
+        const std::uint8_t ty = m.get_to()/8;
 
-        if (tile.piece == Piece::Pawn && ((m.ty == 0) || (m.ty == 7)))
+        if (tile.piece == Piece::Pawn && ((ty == 0) || (ty == 7)))
         {
-            m.promo = Piece::Knight;
+            m.set_promo(Piece::Knight);
             movelist.add_move(m);
-            m.promo = Piece::Bishop;
+            m.set_promo(Piece::Bishop);
             movelist.add_move(m);
-            m.promo = Piece::Rook;
+            m.set_promo(Piece::Rook);
             movelist.add_move(m);
-            m.promo = Piece::Queen;
+            m.set_promo(Piece::Queen);
             movelist.add_move(m);
         }
         else

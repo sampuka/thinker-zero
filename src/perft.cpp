@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
         for (const Move& move : moves)
         {
-            std::cout << move.longform() << std::endl;
+            std::cout << move.longform() << ' ' << static_cast<int>(move.get_from()) << ' ' << static_cast<int>(move.get_to()) << ' ' << static_cast<int>(move.get_type()) << ' ' << static_cast<int>(move.get_promo()) << std::endl;
         }
 
         return 0;
