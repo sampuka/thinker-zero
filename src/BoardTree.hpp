@@ -61,13 +61,13 @@ public:
     }
 
     double evaluation;
-    Move bestmove = Move(0, 0, 0, 0);
+    Move bestmove;
 
     std::vector<BoardTree> nodes;
     bool expanded = false;
 
     Board board;
-    Move move = Move(0, 0, 0, 0);
+    Move move;
 };
 
 #endif

@@ -53,7 +53,7 @@ public:
 
             if (movesTwo.size() != 0)
             {
-                Move worstmove = Move(0,0,0,0);
+                Move worstmove;
                 double worstvalue = 1000000;
 
                 // Find best opponent move

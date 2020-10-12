@@ -41,7 +41,7 @@ protected:
     std::uint64_t b_inc = 0;
     bool infinite = false;
 
-    Move bestmove = Move(0, 0, 0, 0);
+    Move bestmove;
     double evaluation = 0;
     std::atomic<bool> thinking;
 

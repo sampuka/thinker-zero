@@ -31,18 +31,7 @@ public:
         : data(0)
     {}
 
-    // From x, from y, to x, to y
-    Move(std::uint8_t fx, std::uint8_t fy, std::uint8_t tx, std::uint8_t ty, Piece promo = Piece::None)
-    {
-        set_from(fy*8+fx);
-        set_to(ty*8+tx);
-        if (promo != Piece::None)
-            set_type(MoveSpecial::Promotion);
-        else
-            set_type(MoveSpecial::None);
-        set_promo(promo);
-    }
-
+    // From square, to square
     Move(Square from, Square to, MoveSpecial type, Piece promo = Piece::None)
     {
         set_from(from);
@@ -50,6 +39,11 @@ public:
         set_type(type);
         set_promo(promo);
     }
+
+    // From x, from y, to x, to y
+    Move(std::uint8_t fx, std::uint8_t fy, std::uint8_t tx, std::uint8_t ty, MoveSpecial type, Piece promo = Piece::None)
+        : Move(fy*8+fx, ty*8+tx, type, promo)
+    {}
 
     Move(std::string s)
     {

@@ -824,7 +824,6 @@ private:
                 }
             }
 
-
             Bitboard target = colors[static_cast<std::uint8_t>(turn)];
             while (target)
             {
@@ -840,7 +839,7 @@ private:
                 {
                     const Square to_sq = bitboard_bitscan_forward_pop(threat_moves);
                     const std::uint8_t to_x = to_sq%8;
-                    const std::uint8_t to_y = to_sq/8;
+                    //const std::uint8_t to_y = to_sq/8;
 
                     // Moving along pinned direction
                     if (
@@ -860,13 +859,17 @@ private:
                     {
                         // Just gonna buteforce-check for now
                         Board next(*this);
-                        next.perform_move(Move(from_x, from_y, to_x, to_y));
+                        next.perform_move(Move(from_sq, to_sq, MoveSpecial::EnPassant));
 
                         if (bitboard_read(next.get_threat(), king_square))
                             continue;
-                    }
 
-                    add_move(Move(from_x, from_y, to_x, to_y));
+                        add_move(Move(from_sq, to_sq, MoveSpecial::EnPassant));
+                    }
+                    else
+                    {
+                        add_move(Move(from_sq, to_sq, MoveSpecial::None));
+                    }
                 }
             }
         }
@@ -898,13 +901,13 @@ private:
                 {
                     const Square to_sq = bitboard_bitscan_forward_pop(threat_moves);
                     const std::uint8_t to_x = to_sq%8;
-                    const std::uint8_t to_y = to_sq/8;
+                    //const std::uint8_t to_y = to_sq/8;
 
                     if (tile.piece == Piece::King)
                     {
                         if (!bitboard_read(enemy_threat, to_sq))
                         {
-                            add_move(Move(king_square%8, king_square/8, to_x, to_y));
+                            add_move(Move(king_square, to_sq, MoveSpecial::None));
                             /*
                             if (bitboard_read(checkers, to_sq))
                             {
@@ -944,7 +947,7 @@ private:
                                 !bitboard_read(pinned, from_sq)
                            )
                         {
-                            add_move(Move(from_x, from_y, to_x, to_y));
+                            add_move(Move(from_sq, to_sq, MoveSpecial::None));
                         }
 
                         const Square chk = bitboard_bitscan_forward(checkers);
@@ -960,7 +963,7 @@ private:
                                 to_x == chk_x
                            )
                         {
-                            add_move(Move(from_x, from_y, to_x, to_y));
+                            add_move(Move(from_sq, to_sq, MoveSpecial::EnPassant));
                         }
                     }
                 }
