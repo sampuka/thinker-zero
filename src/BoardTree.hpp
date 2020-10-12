@@ -23,6 +23,7 @@ public:
 
         if (!expanded)
         {
+            nodes.clear();
             nodes.reserve(moves.size());
 
             for (const Move &m : moves)

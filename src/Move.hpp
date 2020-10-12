@@ -225,7 +225,7 @@ public:
 
     Move at(std::uint8_t i) const
     {
-        return list[i];
+        return list.at(i);
     }
 
     void add_move(const Move &m)
