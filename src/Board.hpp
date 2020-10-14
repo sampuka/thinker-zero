@@ -334,7 +334,6 @@ public:
 
         movelist_found = false;
         movelist.clear();
-        pseudolist.clear();
     }
 
     Color get_turn() const
@@ -811,10 +810,10 @@ private:
                     if (!bitboard_read(all_blockers, x, y+1))
                     {
                         //bitboard_set(most_moves[sq], x, y+1);
-                        add_move(pseudolist, Move(sq, (y+1)*8+x, MoveSpecial::None), true);
+                        add_move(movelist, Move(sq, (y+1)*8+x, MoveSpecial::None));
                         if (y == 1 && !bitboard_read(all_blockers, x, y+2))
                             //bitboard_set(most_moves[sq], x, y+2);
-                            add_move(pseudolist, Move(sq, (y+2)*8+x, MoveSpecial::None), true);
+                            add_move(movelist, Move(sq, (y+2)*8+x, MoveSpecial::None));
                     }
                 }
                 else
@@ -822,10 +821,10 @@ private:
                     if (!bitboard_read(all_blockers, x, y-1))
                     {
                         //bitboard_set(most_moves[sq], x, y-1);
-                        add_move(pseudolist, Move(sq, (y-1)*8+x, MoveSpecial::None), true);
+                        add_move(movelist, Move(sq, (y-1)*8+x, MoveSpecial::None));
                         if (y == 6 && !bitboard_read(all_blockers, x, y-2))
                             //bitboard_set(most_moves[sq], x, y-2);
-                            add_move(pseudolist, Move(sq, (y-2)*8+x, MoveSpecial::None), true);
+                            add_move(movelist, Move(sq, (y-2)*8+x, MoveSpecial::None));
                     }
                 }
             }
@@ -835,8 +834,12 @@ private:
 
         if (checkers == 0) // Generate non-evasive
         {
-            for (const Move& move : pseudolist)
+            std::uint8_t list_size = movelist.size();
+            movelist.clear();
+
+            for (std::uint8_t i = 0; i < list_size; i++)
             {
+                const Move& move = movelist.at(i);
                 //move.print();
                 const Square from_sq = move.get_from();
                 const Square to_sq = move.get_to();
@@ -858,7 +861,8 @@ private:
                 // En Passant edgecase
                 if (
                         (tile.piece == Piece::Pawn) &&
-                        (fx != tx)
+                        (fx != tx) &&
+                        !bitboard_read(all_blockers, to_sq)
                    )
                 {
                     // Just gonna buteforce-check for now
@@ -868,12 +872,12 @@ private:
                     if (bitboard_read(next.get_threat(), king_square))
                         continue;
 
-                    add_move(movelist, Move(from_sq, to_sq, MoveSpecial::EnPassant));
+                    add_move(movelist, Move(from_sq, to_sq, MoveSpecial::EnPassant), true);
                 }
                 else
                 {
                     //std::cout << "+ "; Move(from_sq, to_sq, MoveSpecial::None).print();
-                    add_move(movelist, Move(from_sq, to_sq, MoveSpecial::None));
+                    add_move(movelist, move, true);
                 }
             }
 
@@ -888,7 +892,7 @@ private:
                        )
                     {
                         //bitboard_set(most_moves[king_square], 6, 0);
-                        add_move(movelist, Move(king_square, 0*8+6, MoveSpecial::Castling));
+                        add_move(movelist, Move(king_square, 0*8+6, MoveSpecial::Castling), true);
                     }
                 }
 
@@ -900,7 +904,7 @@ private:
                        )
                     {
                         //bitboard_set(most_moves[king_square], 2, 0);
-                        add_move(movelist, Move(king_square, 0*8+2, MoveSpecial::Castling));
+                        add_move(movelist, Move(king_square, 0*8+2, MoveSpecial::Castling), true);
                     }
                 }
             }
@@ -914,7 +918,7 @@ private:
                        )
                     {
                         //bitboard_set(most_moves[king_square], 6, 7);
-                        add_move(movelist, Move(king_square, 7*8+6, MoveSpecial::Castling));
+                        add_move(movelist, Move(king_square, 7*8+6, MoveSpecial::Castling), true);
                     }
                 }
 
@@ -926,15 +930,19 @@ private:
                        )
                     {
                         //bitboard_set(most_moves[king_square], 2, 7);
-                        add_move(movelist, Move(king_square, 7*8+2, MoveSpecial::Castling));
+                        add_move(movelist, Move(king_square, 7*8+2, MoveSpecial::Castling), true);
                     }
                 }
             }
         }
         else // Generate evasive
         {
-            for (const Move& move : pseudolist)
+            std::uint8_t list_size = movelist.size();
+            movelist.clear();
+
+            for (std::uint8_t i = 0; i < list_size; i++)
             {
+                const Move& move = movelist.at(i);
                 const Square from_sq = move.get_from();
                 const Square to_sq = move.get_to();
                 const std::uint8_t fx = from_sq%8;
@@ -946,7 +954,7 @@ private:
                 {
                     if (!bitboard_read(enemy_threat, to_sq))
                     {
-                        add_move(movelist, Move(king_square, to_sq, MoveSpecial::None));
+                        add_move(movelist, Move(king_square, to_sq, MoveSpecial::None), true);
                     }
                 }
                 else if (bitboard_count(checkers) != 2)
@@ -959,7 +967,7 @@ private:
                             !bitboard_read(pinned, from_sq)
                        )
                     {
-                        add_move(movelist, Move(from_sq, to_sq, MoveSpecial::None));
+                        add_move(movelist, move, true);
                     }
 
                     const Square chk = bitboard_bitscan_forward(checkers);
@@ -975,7 +983,7 @@ private:
                             tx == chk_x
                        )
                     {
-                        add_move(movelist, Move(from_sq, to_sq, MoveSpecial::EnPassant));
+                        add_move(movelist, Move(from_sq, to_sq, MoveSpecial::EnPassant), true);
                     }
                 }
             }
@@ -992,7 +1000,7 @@ private:
 
         //take_global_movelist();
 
-        pseudolist.clear();
+        //pseudolist.clear();
 
         Color their_color = Color::White;
         if (turn == Color::White)
@@ -1236,7 +1244,7 @@ private:
             if (tile.color == turn)
             {
                 threat |= attacks;
-                add_moves(pseudolist, from_square, attacks & (~colors[static_cast<std::uint8_t>(turn)]), true);
+                add_moves(movelist, from_square, attacks & (~colors[static_cast<std::uint8_t>(turn)]));
             }
             else
             {
@@ -1258,7 +1266,7 @@ private:
 
         enemy_threat |= king_threats[1];
 
-        add_moves(pseudolist, king_squares[0], king_threats[0] & (~(enemy_threat | king_threats[1] | colors[static_cast<std::uint8_t>(turn)])));
+        add_moves(movelist, king_squares[0], king_threats[0] & (~(enemy_threat | king_threats[1] | colors[static_cast<std::uint8_t>(turn)])));
         //add_moves(king_squares[1], king_threats[1] & (~(enemy_threat | king_threats[0] | colors[static_cast<std::uint8_t>(their_color)])));
 
         //most_moves[king_squares[0]] = king_threats[0] & (~(enemy_threat | king_threats[1] | colors[static_cast<std::uint8_t>(turn)]));
@@ -1290,17 +1298,25 @@ private:
         const Tile tile = get_tile(m.get_from());
         const std::uint8_t ty = m.get_to()/8;
 
-        if (tile.piece == Piece::Pawn && ((ty == 0) || (ty == 7)) && !dont_promote)
+        if (tile.piece == Piece::Pawn && ((ty == 0) || (ty == 7)))
         {
             m.set_type(MoveSpecial::Promotion);
-            m.set_promo(Piece::Knight);
-            list.add_move(m);
-            m.set_promo(Piece::Bishop);
-            list.add_move(m);
-            m.set_promo(Piece::Rook);
-            list.add_move(m);
-            m.set_promo(Piece::Queen);
-            list.add_move(m);
+
+            if (dont_promote)
+            {
+                list.add_move(m);
+            }
+            else
+            {
+                m.set_promo(Piece::Knight);
+                list.add_move(m);
+                m.set_promo(Piece::Bishop);
+                list.add_move(m);
+                m.set_promo(Piece::Rook);
+                list.add_move(m);
+                m.set_promo(Piece::Queen);
+                list.add_move(m);
+            }
         }
         else
         {
@@ -1327,7 +1343,7 @@ private:
     // Move analysis
     mutable bool movelist_found = false;
     mutable MoveList movelist;
-    mutable MoveList pseudolist;
+    //mutable MoveList pseudolist;
 };
 
 #endif
