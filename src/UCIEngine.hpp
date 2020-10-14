@@ -35,6 +35,7 @@ protected:
     std::string engine_author = "Unspecified author";
 
     // Current player times and increment [ms]
+    std::uint64_t time_spent = 0; // Time passed since started thinking
     std::uint64_t w_time = 0;
     std::uint64_t b_time = 0;
     std::uint64_t w_inc = 0;
@@ -86,6 +87,8 @@ private:
         while (1)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+            time_spent = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_thinking_ts).count();
 
             while (rx_buffer.size() != 0)
             {
@@ -147,6 +150,9 @@ private:
 
                 else if (tokens.at(0) == "go")
                 {
+                    start_thinking_ts = std::chrono::steady_clock::now();
+                    time_spent = 0;
+
                     if (tokens.size() > 1 && tokens.at(1) == "perft")
                     {
                         board.print();
@@ -222,6 +228,8 @@ private:
         log << "< " << s << std::endl;
         std::cout << s << std::endl;
     }
+
+    std::chrono::steady_clock::time_point start_thinking_ts;
 
     std::vector<std::vector<std::string>> rx_buffer;
     std::mutex rx_buffer_mutex;
