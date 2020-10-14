@@ -343,6 +343,10 @@ public:
 
     void perform_move(Move move)
     {
+        movetohere = move;
+        if (bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], move.get_to()))
+                typetohere = MoveType::Capture;
+
         //move.print();
         const Tile from = get_tile(move.get_from());
 
@@ -1344,6 +1348,11 @@ private:
     mutable bool movelist_found = false;
     mutable MoveList movelist;
     //mutable MoveList pseudolist;
+
+public:
+    // Move to get here
+    Move movetohere;
+    MoveType typetohere = MoveType::Quiet;
 };
 
 #endif
