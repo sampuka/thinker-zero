@@ -227,7 +227,7 @@ public:
 
     void add_move(const Move &m)
     {
-        if (list_size == 200)
+        if (list_size == 100)
         {
             std::cout << "movelist max size!!!!!!!!!" << std::endl;
             for (const Move& mv : *this)
