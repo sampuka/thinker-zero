@@ -11,10 +11,12 @@
 enum class MoveType
 {
     Quiet = 0,
-    Capture,
+    Capture
+        /*,
     Evasion,
     EnPassant,
     Castling
+    */
 };
 
 enum class MoveSpecial
