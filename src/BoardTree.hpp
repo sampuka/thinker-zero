@@ -63,6 +63,9 @@ public:
     double evaluation;
     Move bestmove;
 
+    // Used for score pruning
+    double score = 0;
+
     std::vector<BoardTree> nodes;
     bool expanded = false;
 
