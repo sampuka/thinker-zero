@@ -253,9 +253,9 @@ public:
 
 private:
     std::uint8_t list_size = 0;
-    std::array<Move, 200> list;
+    std::array<Move, 100> list;
 };
 
-std::array<std::tuple<bool, MoveList, MoveList>, 200> g_movelists;
+//std::array<std::tuple<bool, MoveList, MoveList>, 200> g_movelists;
 
 #endif

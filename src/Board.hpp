@@ -142,10 +142,12 @@ public:
         }
     }
 
+    /*
     ~Board()
     {
         give_global_movelist();
     }
+    */
 
     Color get_color(std::uint8_t x, std::uint8_t y) const
     {
@@ -270,15 +272,17 @@ public:
         return colors[static_cast<std::uint8_t>(color)] & pieces[static_cast<std::uint8_t>(piece)];
     }
 
-    MoveList get_moves() const
+    MoveList& get_moves() const
     {
         ray_movegen();
 
+        /*
         MoveList list = *movelist;
 
         give_global_movelist();
+        */
 
-        return list;
+        return movelist;
     }
 
     Bitboard& get_threat() const
@@ -329,6 +333,8 @@ public:
         //most_moves = {0};
 
         movelist_found = false;
+        movelist.clear();
+        pseudolist.clear();
     }
 
     Color get_turn() const
@@ -436,7 +442,7 @@ public:
     {
         ray_movegen();
 
-        if (movelist->size() != 0)
+        if (movelist.size() != 0)
             return false;
 
         if ((enemy_threat & get_bitboard(turn, Piece::King)) != 0)
@@ -449,7 +455,7 @@ public:
     {
         ray_movegen();
 
-        if ((movelist->size() != 0) || is_checkmate())
+        if ((movelist.size() != 0) || is_checkmate())
             return false;
 
         if ((enemy_threat & get_bitboard(turn, Piece::King)) == 0)
@@ -462,7 +468,7 @@ public:
     {
         ray_movegen();
 
-        if (movelist->size() == 0)
+        if (movelist.size() == 0)
         {
             if (is_stalemate())
                 return 0;
@@ -737,6 +743,7 @@ public:
     }
 
 private:
+    /*
     void take_global_movelist() const
     {
         if (movelist != nullptr)
@@ -772,15 +779,16 @@ private:
             movelist_found = false;
         }
     }
+    */
 
     void ray_movegen() const
     {
         if (movelist_found)
             return;
 
-        take_global_movelist();
+        //take_global_movelist();
 
-        movelist->clear();
+        movelist.clear();
 
         static_analysis();
 
@@ -827,7 +835,7 @@ private:
 
         if (checkers == 0) // Generate non-evasive
         {
-            for (const Move& move : *pseudolist)
+            for (const Move& move : pseudolist)
             {
                 //move.print();
                 const Square from_sq = move.get_from();
@@ -925,7 +933,7 @@ private:
         }
         else // Generate evasive
         {
-            for (const Move& move : *pseudolist)
+            for (const Move& move : pseudolist)
             {
                 const Square from_sq = move.get_from();
                 const Square to_sq = move.get_to();
@@ -982,9 +990,9 @@ private:
         if (static_found)
             return;
 
-        take_global_movelist();
+        //take_global_movelist();
 
-        pseudolist->clear();
+        pseudolist.clear();
 
         Color their_color = Color::White;
         if (turn == Color::White)
@@ -1267,7 +1275,7 @@ private:
         return;
     }
 
-    void add_moves(MoveList* list, Square from_sq, Bitboard b, bool dont_promote = false) const
+    void add_moves(MoveList& list, Square from_sq, Bitboard b, bool dont_promote = false) const
     {
         while (b)
         {
@@ -1277,7 +1285,7 @@ private:
         }
     }
 
-    void add_move(MoveList* list, Move m, bool dont_promote = false) const
+    void add_move(MoveList& list, Move m, bool dont_promote = false) const
     {
         const Tile tile = get_tile(m.get_from());
         const std::uint8_t ty = m.get_to()/8;
@@ -1286,17 +1294,17 @@ private:
         {
             m.set_type(MoveSpecial::Promotion);
             m.set_promo(Piece::Knight);
-            list->add_move(m);
+            list.add_move(m);
             m.set_promo(Piece::Bishop);
-            list->add_move(m);
+            list.add_move(m);
             m.set_promo(Piece::Rook);
-            list->add_move(m);
+            list.add_move(m);
             m.set_promo(Piece::Queen);
-            list->add_move(m);
+            list.add_move(m);
         }
         else
         {
-            list->add_move(m);
+            list.add_move(m);
         }
     }
 
@@ -1318,11 +1326,8 @@ private:
 
     // Move analysis
     mutable bool movelist_found = false;
-
-    // Global movelist occupation
-    mutable std::uint8_t list_taken = 0;
-    mutable MoveList* movelist = nullptr;
-    mutable MoveList* pseudolist = nullptr;
+    mutable MoveList movelist;
+    mutable MoveList pseudolist;
 };
 
 #endif
