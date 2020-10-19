@@ -53,6 +53,31 @@ public:
         return beta;
     }
 
+    /*
+    //Look at nodes which involves captures.
+    double quiesce(BoardTree& base, double alpha, double beta )
+    {
+        double stand_pat = base.board.adv_eval();
+        if(stand_pat >= beta)
+            return beta;
+        if(alpha < stand_pat)
+            alpha = stand_pat;
+
+        until( every_capture_has_been_examined )
+        {
+            MakeCapture();
+            double score = -Quiesce( -beta, -alpha );
+            TakeBackMove();
+
+            if( score >= beta )
+                return beta;
+            if( score > alpha )
+               alpha = score;
+        }
+        return alpha;
+    }
+    */
+
     void think() override
     {
         // Default white
@@ -136,9 +161,12 @@ public:
         BoardTree root(board);
 
         if (root.board.get_turn() == Color::White)
-            alphaBetaMax(root, -100000, 100000, 4);
+            alphaBetaMax(root, -100000, 100000, 5);
         else
-            alphaBetaMin(root, -100000, 100000, 4);
+            alphaBetaMin(root, -100000, 100000, 5);
+
+        //Perform search looking at capture nodes.
+        //quiesce(root, -100000, 100000);
 
         minimax(root);
 
