@@ -17,16 +17,16 @@ public:
         board.perform_move(move);
     }
 
-    void expand(std::uint8_t n = 1)
+    void expand(MoveList& movelist, std::uint8_t n = 1)
     {
-        MoveList moves = board.get_moves();
+        board.get_moves(movelist);
 
         if (!expanded)
         {
             nodes.clear();
-            nodes.reserve(moves.size());
+            nodes.reserve(movelist.size());
 
-            for (const Move &m : moves)
+            for (const Move &m : movelist)
             {
                 nodes.emplace_back(board, m);
             }
@@ -38,21 +38,21 @@ public:
         {
             for (BoardTree &t : nodes)
             {
-                t.expand(n-1);
+                t.expand(movelist, n-1);
             }
         }
     }
 
-    std::uint64_t depth(std::uint8_t d)
+    std::uint64_t depth(MoveList& movelist, std::uint8_t d)
     {
         if (d == 0)
             return 1;
 
-        expand();
+        expand(movelist);
 
         std::uint64_t n = 0;
         for (BoardTree &b : nodes)
-            n += b.depth(d-1);
+            n += b.depth(movelist, d-1);
 
         nodes.clear();
         expanded = false;
