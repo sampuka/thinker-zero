@@ -14,7 +14,11 @@ public:
     double alphaBetaMax(BoardTree& base, double alpha, double beta, int depthleft)
     {
         if (depthleft == 0)
+        {
             return base.board.adv_eval();
+            //return quiesce(base, alpha, beta);
+        }
+
 
         base.expand(1);
 
@@ -35,7 +39,10 @@ public:
     double alphaBetaMin(BoardTree& base, double alpha, double beta, int depthleft)
     {
         if (depthleft == 0)
+        {
             return base.board.adv_eval();
+            //return quiesce(base, alpha, beta);
+        }
 
         base.expand(1);
 
@@ -53,9 +60,8 @@ public:
         return beta;
     }
 
-    /*
     //Look at nodes which involves captures.
-    double quiesce(BoardTree& base, double alpha, double beta )
+    double quiesce(BoardTree& base, double alpha, double beta)
     {
         double stand_pat = base.board.adv_eval();
         if(stand_pat >= beta)
@@ -63,20 +69,22 @@ public:
         if(alpha < stand_pat)
             alpha = stand_pat;
 
-        until( every_capture_has_been_examined )
+        if(base.board.typetohere == MoveType::Capture)
         {
-            MakeCapture();
-            double score = -Quiesce( -beta, -alpha );
-            TakeBackMove();
+            base.expand(1);
+            double score = stand_pat;
+            for (BoardTree &node : base.nodes)
+            {
+                score = -quiesce(node, -beta, -alpha);
+            }
 
-            if( score >= beta )
+            if(score >= beta)
                 return beta;
-            if( score > alpha )
+            if(score > alpha)
                alpha = score;
         }
         return alpha;
     }
-    */
 
     void think() override
     {
@@ -93,8 +101,6 @@ public:
         }
         else
         {
-            //std::uint8_t size = moves.size();
-            //for (std::uint8_t i = 0; i < size; i++)
             for (const Move& move : moves)
                 log << move.longform() << std::endl;
         }
@@ -161,12 +167,12 @@ public:
         BoardTree root(board);
 
         if (root.board.get_turn() == Color::White)
-            alphaBetaMax(root, -100000, 100000, 5);
+            alphaBetaMax(root, -100000, 100000, 4);
         else
-            alphaBetaMin(root, -100000, 100000, 5);
+            alphaBetaMin(root, -100000, 100000, 4);
 
         //Perform search looking at capture nodes.
-        //quiesce(root, -100000, 100000);
+        //quiesce(root, 10000, -10000);
 
         minimax(root);
 
