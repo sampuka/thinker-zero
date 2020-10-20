@@ -10,26 +10,14 @@ public:
         start();
     }
 
+    MoveList movelist;
+
     void think() override
     {
         // Default white
         int turn = 1;
         if(board.get_turn() == Color::Black)
             turn = -1;
-
-        MoveList moves = board.get_moves();
-
-        if (moves.size() == 0)
-        {
-            std::cerr << "No legal moves found!" << std::endl;
-        }
-        else
-        {
-            //std::uint8_t size = moves.size();
-            //for (std::uint8_t i = 0; i < size; i++)
-            for (const Move& move : moves)
-                log << move.longform() << std::endl;
-        }
 
         std::uniform_int_distribution<std::uint8_t> dist(0,1);
 
@@ -85,7 +73,8 @@ public:
             }
             else
             {
-                base.evaluation = base.board.adv_eval();
+                base.board.get_moves(movelist);
+                base.evaluation = base.board.adv_eval(movelist);
             }
 
             return;
@@ -93,7 +82,7 @@ public:
 
         // Create tree structure
         BoardTree root(board);
-        root.expand(4);
+        root.expand(movelist, 4);
 
         minimax(root);
 

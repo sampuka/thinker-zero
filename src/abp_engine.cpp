@@ -11,19 +11,22 @@ public:
         start();
     }
 
+    MoveList movelist;
+
     double alphaBetaMax(BoardTree& base, double alpha, double beta, int depthleft)
     {
+        base.board.get_moves(movelist);
+
         if (depthleft == 0)
         {
-            return base.board.adv_eval();
-            //return quiesce(base, alpha, beta);
+            //return base.board.adv_eval(movelist);
+            return quiesce(base, alpha, beta);
         }
 
-
-        base.expand(1);
+        base.expand(movelist, 1);
 
         if(base.nodes.size() == 0)
-            return base.board.adv_eval();
+            return base.board.adv_eval(movelist);
 
         for (BoardTree &node : base.nodes)
         {
@@ -38,16 +41,18 @@ public:
 
     double alphaBetaMin(BoardTree& base, double alpha, double beta, int depthleft)
     {
+        base.board.get_moves(movelist);
+
         if (depthleft == 0)
         {
-            return base.board.adv_eval();
-            //return quiesce(base, alpha, beta);
+            //return base.board.adv_eval(movelist);
+            return quiesce(base, alpha, beta);
         }
 
-        base.expand(1);
+        base.expand(movelist, 1);
 
         if(base.nodes.size() == 0)
-            return base.board.adv_eval();
+            return base.board.adv_eval(movelist);
 
         for (BoardTree &node : base.nodes)
         {
@@ -63,7 +68,9 @@ public:
     //Look at nodes which involves captures.
     double quiesce(BoardTree& base, double alpha, double beta)
     {
-        double stand_pat = base.board.adv_eval();
+        base.board.get_moves(movelist);
+
+        double stand_pat = base.board.adv_eval(movelist);
         if(stand_pat >= beta)
             return beta;
         if(alpha < stand_pat)
@@ -71,7 +78,7 @@ public:
 
         if(base.board.typetohere == MoveType::Capture)
         {
-            base.expand(1);
+            base.expand(movelist, 1);
             double score = stand_pat;
             for (BoardTree &node : base.nodes)
             {
@@ -92,18 +99,6 @@ public:
         int turn = 1;
         if(board.get_turn() == Color::Black)
             turn = -1;
-
-        MoveList moves = board.get_moves();
-
-        if (moves.size() == 0)
-        {
-            std::cerr << "No legal moves found!" << std::endl;
-        }
-        else
-        {
-            for (const Move& move : moves)
-                log << move.longform() << std::endl;
-        }
 
         std::uniform_int_distribution<std::uint8_t> dist(0,1);
 
@@ -158,7 +153,8 @@ public:
             }
             else
             {
-                base.evaluation = base.board.adv_eval();
+                base.board.get_moves(movelist);
+                base.evaluation = base.board.adv_eval(movelist);
             }
             return;
         };

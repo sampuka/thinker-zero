@@ -11,6 +11,8 @@ public:
         start();
     }
 
+    MoveList movelist;
+
     void think() override
     {
         // Default white
@@ -18,18 +20,11 @@ public:
         if(board.get_turn() == Color::Black)
             turn_bias = -1;
 
-        MoveList moves = board.get_moves();
+        MoveList startmoves;
+        board.get_moves(startmoves);
 
-        if (moves.size() == 0)
-        {
-            std::cerr << "No legal moves found!" << std::endl;
-        }
-        else
-        {
-            for (const Move& move : moves)
-                log << move.longform() << std::endl;
-        }
-        bestmove = moves.at(1);
+        bestmove = startmoves.at(1);
+
         /*
         // Create root
         BoardTree root(board);

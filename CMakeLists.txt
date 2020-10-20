@@ -23,9 +23,9 @@ set(MCTS_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/mcts_engine.cpp)
 add_executable(mcts_engine ${MCTS_SRCS})
 target_link_libraries(mcts_engine PRIVATE Threads::Threads)
 
-set(SCORE_PRUNING_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/score_pruning_engine.cpp)
-add_executable(score_pruning_engine ${SCORE_PRUNING_SRCS})
-target_link_libraries(score_pruning_engine PRIVATE Threads::Threads)
+#set(SCORE_PRUNING_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/score_pruning_engine.cpp)
+#add_executable(score_pruning_engine ${SCORE_PRUNING_SRCS})
+#target_link_libraries(score_pruning_engine PRIVATE Threads::Threads)
 
 #set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -Og -lpthread")
 set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -O3 -lpthread")
