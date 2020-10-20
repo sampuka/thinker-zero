@@ -63,6 +63,10 @@ public:
     double evaluation;
     Move bestmove;
 
+    // Used for monte carlo
+    int visitcount = 0;
+    double winscore = 0;
+
     // Used for score pruning
     double score = 0;
 
