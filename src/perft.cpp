@@ -9,6 +9,8 @@
 
 int main(int argc, char** argv)
 {
+    MoveList moves;
+
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
         /*
@@ -24,12 +26,13 @@ int main(int argc, char** argv)
         //Board test_board("r3k2r/p1ppqpb1/1n2pnp1/3PN3/1p2P3/2N2Q1p/PPPBbPPP/R2K3R w kq - 0 2");
         //Board test_board("r6r/p1ppqkb1/bn2Pnp1/8/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQ - 0 2");
         //Board test_board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P4/PPPKPPPP/RNBQ1BNR w kq - 2 3");
-        Board test_board("r3k2r/p1ppqpb1/b3pnp1/3PN3/1p2P3/2N1nQ1p/PPPB1PPP/R2B1K1R w kq - 4 3 ");
+        //Board test_board("r3k2r/p1ppqpb1/b3pnp1/3PN3/1p2P3/2N1nQ1p/PPPB1PPP/R2B1K1R w kq - 4 3 ");
         //Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
+        Board test_board("rnbqkbnr/1ppppppp/8/p7/8/3P4/PPPNPPPP/R1BQKBNR b KQkq - 1 2 ");
         //Board test_board;
         test_board.print();
 
-        MoveList moves = test_board.get_moves();
+        test_board.get_moves(moves);
         std::cout << "Threat:" << std::endl;
         bitboard_print(test_board.get_threat());
         std::cout << "Enemy threat:" << std::endl;
@@ -94,7 +97,7 @@ int main(int argc, char** argv)
 
                     BoardTree tree(base);
 
-                    std::uint64_t result = tree.depth(d);
+                    std::uint64_t result = tree.depth(moves, d);
 
                     if (result == target)
                     {
@@ -136,13 +139,13 @@ int main(int argc, char** argv)
 
     Board base(pos);
     base.print();
-    std::cout << "Eval: " << base.adv_eval() << std::endl;
+    std::cout << "Eval: " << base.adv_eval(moves) << std::endl;
 
     for (int i = 1; i <= goal; i++)
     {
         BoardTree tree(base);
 
-        std::cout << "Perft " << i << " = " << tree.depth(i) << std::endl;
+        std::cout << "Perft " << i << " = " << tree.depth(moves, i) << std::endl;
     }
 
     return 0;

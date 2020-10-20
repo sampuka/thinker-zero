@@ -158,16 +158,18 @@ private:
                         board.print();
                         std::uint8_t d = std::stoi(tokens.at(2)) - 1;
                         std::uint64_t total = 0;
-                        MoveList moves = board.get_moves();
+                        MoveList startlist;
+                        board.get_moves(startlist);
                         std::vector<BoardTree> trees;
-                        trees.reserve(moves.size());
+                        trees.reserve(startlist.size());
 
-                        for (std::uint16_t i = 0; i < moves.size(); i++)
+                        MoveList movelist;
+                        for (std::uint16_t i = 0; i < startlist.size(); i++)
                         {
-                            const Move &m = moves.at(i);
+                            const Move &m = startlist.at(i);
                             trees.emplace_back(board, m);
 
-                            std::uint64_t n = trees.at(i).depth(d);
+                            std::uint64_t n = trees.at(i).depth(movelist, d);
                             total += n;
 
                             std::cout << m.longform() << ": " << n << '\n';

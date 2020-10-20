@@ -13,7 +13,8 @@ public:
 
     void think() override
     {
-        MoveList moves = board.get_moves();
+        MoveList moves;
+        board.get_moves(moves);
 
         if (moves.size() == 0)
         {
