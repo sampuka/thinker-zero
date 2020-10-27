@@ -453,7 +453,7 @@ public:
         }
     }
 
-    bool is_checkmate(MoveList& movelist) const
+    bool is_checkmate(const MoveList& movelist) const
     {
         if (movelist.size() != 0)
             return false;
@@ -464,7 +464,7 @@ public:
         return false;
     }
 
-    bool is_stalemate(MoveList& movelist) const
+    bool is_stalemate(const MoveList& movelist) const
     {
         if (is_checkmate(movelist))
             return false;
@@ -481,7 +481,7 @@ public:
         return false;
     }
 
-    double basic_eval(MoveList& movelist) const
+    double basic_eval(const MoveList& movelist) const
     {
         if (movelist.size() == 0)
         {
@@ -527,7 +527,7 @@ public:
     }
 
     // Created based on "Simplified Evalution Function" on Chess Programming Wiki
-    double adv_eval(MoveList& movelist) const
+    double adv_eval(const MoveList& movelist) const
     {
         // Piece values
         constexpr std::array<double, 6> piece_values = {1.00, 3.20, 3.30, 5.00, 9.00, 200.00};
