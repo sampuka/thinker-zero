@@ -48,12 +48,15 @@ public:
         : Move(fy*8+fx, ty*8+tx, type, promo)
     {}
 
-    Move(std::string s)
+    Move(std::string s, Color turn, Piece piece, std::uint8_t ep_x) // Extra info needed for now
     {
         std::uint8_t fx = static_cast<std::uint8_t>(s.at(0)-'a');
         std::uint8_t fy = static_cast<std::uint8_t>(s.at(1)-'1');
         std::uint8_t tx = static_cast<std::uint8_t>(s.at(2)-'a');
         std::uint8_t ty = static_cast<std::uint8_t>(s.at(3)-'1');
+
+        set_from(fy*8+fx);
+        set_to(ty*8+tx);
 
         if (s.size() == 5)
         {
@@ -69,11 +72,29 @@ public:
         }
         else
         {
-            set_type(MoveSpecial::None);
+            if (
+                piece == Piece::Pawn &&
+                tx == ep_x &&
+                (
+                 (turn == Color::White && ty == 5) ||
+                 (turn == Color::Black && ty == 2)
+                )
+               )
+            {
+                set_type(MoveSpecial::EnPassant);
+            }
+            else if (
+                    piece == Piece::King &&
+                    std::abs(tx - fx) == 2
+                    )
+            {
+                set_type(MoveSpecial::Castling);
+            }
+            else
+            {
+                set_type(MoveSpecial::None);
+            }
         }
-
-        set_from(fy*8+fx);
-        set_to(ty*8+tx);
     }
 
     void set_from(Square from)
