@@ -325,6 +325,11 @@ public:
         return turn;
     }
 
+    std::uint8_t get_ep() const
+    {
+        return ep_x;
+    }
+
     void perform_move(Move move)
     {
         const Tile from = get_tile(move.get_from());
@@ -461,6 +466,9 @@ public:
 
     bool is_stalemate(MoveList& movelist) const
     {
+        if (is_checkmate(movelist))
+            return false;
+
         if (repeatable_movecount == 100)
             return true;
 
