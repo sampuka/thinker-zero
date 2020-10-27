@@ -25,8 +25,6 @@ public:
         can_castle(b.can_castle),
         ep_x(b.ep_x)
     {
-        //movelist.clear();
-        //pseudolist.clear();
     }
 
     Board(std::string FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
@@ -140,14 +138,10 @@ public:
         {
             ep_x = tokens.at(3).at(0) - 'a';
         }
-    }
 
-    /*
-    ~Board()
-    {
-        give_global_movelist();
+        repeatable_movecount = std::stoi(tokens.at(4));
+        turn_number = std::stoi(tokens.at(5));
     }
-    */
 
     Color get_color(std::uint8_t x, std::uint8_t y) const
     {
@@ -276,12 +270,6 @@ public:
     {
         ray_movegen(movelist);
 
-        /*
-        MoveList list = *movelist;
-
-        give_global_movelist();
-        */
-
         return;
     }
 
@@ -330,10 +318,6 @@ public:
         checkers = 0;
         check_blockers = 0;
         pinned = 0;
-        //most_moves = {0};
-
-        //movelist_found = false;
-        //movelist.clear();
     }
 
     Color get_turn() const
@@ -343,29 +327,51 @@ public:
 
     void perform_move(Move move)
     {
-        movetohere = move;
-        if (bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], move.get_to()))
-            typetohere = MoveType::Capture;
-
-        //move.print();
         const Tile from = get_tile(move.get_from());
 
-        const std::uint8_t fx = move.get_from()%8;
-        const std::uint8_t fy = move.get_from()/8;
-        const std::uint8_t tx = move.get_to()%8;
-        const std::uint8_t ty = move.get_to()/8;
+        const MoveSpecial move_type = move.get_type();
+        const Square from_sq = move.get_from();
+        const Square to_sq = move.get_to();
 
-        //Tile to = get_tile(move.tx, move.ty);
+        const std::uint8_t fx = from_sq%8;
+        const std::uint8_t fy = from_sq/8;
+        const std::uint8_t tx = to_sq%8;
+        const std::uint8_t ty = to_sq/8;
 
-        if (move.get_type() == MoveSpecial::Promotion)
-            set_tile(move.get_to(), Tile{from.color, move.get_promo()});
+        movetohere = move;
+
+        if (
+                bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], to_sq) ||
+                move_type == MoveSpecial::EnPassant
+           )
+        {
+            typetohere = MoveType::Capture;
+
+            repeatable_movecount = 0;
+        }
         else
-            set_tile(move.get_to(), from);
+        {
+            typetohere = MoveType::Quiet;
 
-        set_tile(move.get_from(), Tile{Color::Empty, Piece::None});
+            if (from.piece == Piece::Pawn)
+            {
+                repeatable_movecount = 0;
+            }
+            else
+            {
+                repeatable_movecount++;
+            }
+        }
+
+        if (move_type == MoveSpecial::Promotion)
+            set_tile(to_sq, Tile{from.color, move.get_promo()});
+        else
+            set_tile(to_sq, from);
+
+        set_tile(from_sq, Tile{Color::Empty, Piece::None});
 
         // Castling move
-        if (from.piece == Piece::King && std::abs(tx - fx) >= 2)
+        if (move_type == MoveSpecial::Castling)
         {
             // Kingside
             if (tx > fx)
@@ -385,8 +391,8 @@ public:
         // Handle castling priviledges if king move
         if (from.piece == Piece::King)
         {
-            can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
-            can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(turn)][0] = false;
+            can_castle[static_cast<std::uint8_t>(turn)][1] = false;
         }
 
         // Handle castling priviledges if rook move
@@ -396,32 +402,28 @@ public:
         {
             if (fx == 7)
             {
-                can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
+                can_castle[static_cast<std::uint8_t>(turn)][0] = false;
             }
 
             if (fx == 0)
             {
-                can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
+                can_castle[static_cast<std::uint8_t>(turn)][1] = false;
             }
         }
 
         // Handle castling if rook is captured
         if (tx == 7 && ty == 0)
-            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0) = false;
+            can_castle[static_cast<std::uint8_t>(Color::White)][0] = false;
         if (tx == 0 && ty == 0)
-            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(Color::White)][1] = false;
         if (tx == 7 && ty == 7)
-            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(0) = false;
+            can_castle[static_cast<std::uint8_t>(Color::Black)][0] = false;
         if (tx == 0 && ty == 7)
-            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(Color::Black)][1] = false;
 
         // En passant
-        if (from.piece == Piece::Pawn &&
-                fx != tx &&
-                tx == ep_x)
+        if (move_type == MoveSpecial::EnPassant)
         {
-            if ((turn == Color::White && ty == 5) ||
-                (turn == Color::Black && ty == 2))
             set_tile(ep_x, fy, Tile{Color::Empty, Piece::None});
         }
 
@@ -436,9 +438,14 @@ public:
         }
 
         if (get_turn() == Color::White)
+        {
             set_turn(Color::Black);
+        }
         else
+        {
+            turn_number++;
             set_turn(Color::White);
+        }
     }
 
     bool is_checkmate(MoveList& movelist) const
@@ -454,6 +461,9 @@ public:
 
     bool is_stalemate(MoveList& movelist) const
     {
+        if (repeatable_movecount == 100)
+            return true;
+
         if (movelist.size() != 0)
             return false;
 
@@ -469,12 +479,12 @@ public:
         {
             if (is_stalemate(movelist))
                 return 0;
+
             if (turn == Color::White)
-                //return -std::numeric_limits<double>::infinity();
                 return -200.00;
+
             if (turn == Color::Black)
                 return 200.00;
-                //return std::numeric_limits<double>::infinity();
         }
 
         double eval = 0;
@@ -695,24 +705,6 @@ public:
 
         os << s;
 
-        /*
-           std::cout << "Colors (white/black/empty)\n";
-
-           for (std::uint8_t c = 0; c < 3; c++)
-           {
-           colors.at(c).print();
-           std::cout << '\n';
-           }
-
-           std::cout << "Pieces (p,k,b,r,q,k)\n";
-
-           for (std::uint8_t p = 0; p < 6; p++)
-           {
-           pieces.at(p).print();
-           std::cout << '\n';
-           }
-           */
-
         os << "Can castle: ";
         if (can_castle.at(0).at(0))
             os << 'K';
@@ -738,44 +730,6 @@ public:
     }
 
 private:
-    /*
-    void take_global_movelist() const
-    {
-        if (movelist != nullptr)
-            return;
-
-        for (std::uint8_t i = 0; i < g_movelists.size(); i++)
-        {
-            if (!std::get<0>(g_movelists.at(i)))
-            {
-                //std::cout << "Taking list " << std::to_string(i) << std::endl;
-                std::get<0>(g_movelists.at(i)) = true;
-                movelist = &std::get<1>(g_movelists.at(i));
-                pseudolist = &std::get<2>(g_movelists.at(i));
-                list_taken = i;
-                return;
-            }
-        }
-
-        std::cerr << "FOUND NO FREE LIST!!!" << std::endl;
-    }
-
-    void give_global_movelist() const
-    {
-        if (movelist != nullptr)
-        {
-            //std::cout << "Releasing list " << std::to_string(list_taken) << std::endl;
-            movelist->clear();
-            pseudolist->clear();
-            movelist = nullptr;
-            pseudolist = nullptr;
-            std::get<0>(g_movelists.at(list_taken)) = false;
-            static_found = false;
-            movelist_found = false;
-        }
-    }
-    */
-
     void ray_movegen(MoveList& movelist) const
     {
         movelist.clear();
@@ -883,13 +837,6 @@ private:
                         }
                     }
                     break;
-                /*
-                case Piece::King:
-                    {
-                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::King)][from_square];
-                    }
-                    break;
-                */
 
                 default:
                     break;
@@ -924,10 +871,8 @@ private:
                 {
                     if (!bitboard_read(all_blockers, x, y+1))
                     {
-                        //bitboard_set(most_moves[sq], x, y+1);
                         add_move(movelist, Move(sq, (y+1)*8+x, MoveSpecial::None));
                         if (y == 1 && !bitboard_read(all_blockers, x, y+2))
-                            //bitboard_set(most_moves[sq], x, y+2);
                             add_move(movelist, Move(sq, (y+2)*8+x, MoveSpecial::None));
                     }
                 }
@@ -935,10 +880,8 @@ private:
                 {
                     if (!bitboard_read(all_blockers, x, y-1))
                     {
-                        //bitboard_set(most_moves[sq], x, y-1);
                         add_move(movelist, Move(sq, (y-1)*8+x, MoveSpecial::None));
                         if (y == 6 && !bitboard_read(all_blockers, x, y-2))
-                            //bitboard_set(most_moves[sq], x, y-2);
                             add_move(movelist, Move(sq, (y-2)*8+x, MoveSpecial::None));
                     }
                 }
@@ -953,7 +896,6 @@ private:
             for (std::uint8_t i = 0; i < list_size; i++)
             {
                 const Move& move = movelist.at(i);
-                //move.print();
                 const Square from_sq = move.get_from();
                 const Square to_sq = move.get_to();
                 const std::uint8_t fx = from_sq%8;
@@ -989,7 +931,6 @@ private:
                 }
                 else
                 {
-                    //std::cout << "+ "; Move(from_sq, to_sq, MoveSpecial::None).print();
                     add_move(movelist, move, true);
                 }
             }
@@ -1004,7 +945,6 @@ private:
                             (wks_safe & enemy_threat) == 0
                        )
                     {
-                        //bitboard_set(most_moves[king_square], 6, 0);
                         add_move(movelist, Move(king_square, 0*8+6, MoveSpecial::Castling), true);
                     }
                 }
@@ -1016,7 +956,6 @@ private:
                             (wqs_safe & enemy_threat) == 0
                        )
                     {
-                        //bitboard_set(most_moves[king_square], 2, 0);
                         add_move(movelist, Move(king_square, 0*8+2, MoveSpecial::Castling), true);
                     }
                 }
@@ -1030,7 +969,6 @@ private:
                             (bks_safe & enemy_threat) == 0
                        )
                     {
-                        //bitboard_set(most_moves[king_square], 6, 7);
                         add_move(movelist, Move(king_square, 7*8+6, MoveSpecial::Castling), true);
                     }
                 }
@@ -1042,7 +980,6 @@ private:
                             (bqs_safe & enemy_threat) == 0
                        )
                     {
-                        //bitboard_set(most_moves[king_square], 2, 7);
                         add_move(movelist, Move(king_square, 7*8+2, MoveSpecial::Castling), true);
                     }
                 }
@@ -1109,10 +1046,6 @@ private:
     {
         if (static_found)
             return;
-
-        //take_global_movelist();
-
-        //pseudolist.clear();
 
         Color their_color = Color::White;
         if (turn == Color::White)
@@ -1339,24 +1272,14 @@ private:
                         }
                     }
                     break;
-                /*
-                case Piece::King:
-                    {
-                        attacks = movegen_rays[static_cast<std::uint8_t>(Ray::King)][from_square];
-                    }
-                    break;
-                */
 
                 default:
                     break;
             }
 
-            //most_moves[from_square] = attacks & (~colors[static_cast<std::uint8_t>(turn)]);
-
             if (tile.color == turn)
             {
                 threat |= attacks;
-                //add_moves(movelist, from_square, attacks & (~colors[static_cast<std::uint8_t>(turn)]));
             }
             else
             {
@@ -1377,12 +1300,6 @@ private:
         };
 
         enemy_threat |= king_threats[1];
-
-        //add_moves(movelist, king_squares[0], king_threats[0] & (~(enemy_threat | king_threats[1] | colors[static_cast<std::uint8_t>(turn)])));
-        //add_moves(king_squares[1], king_threats[1] & (~(enemy_threat | king_threats[0] | colors[static_cast<std::uint8_t>(their_color)])));
-
-        //most_moves[king_squares[0]] = king_threats[0] & (~(enemy_threat | king_threats[1] | colors[static_cast<std::uint8_t>(turn)]));
-        //most_moves[king_squares[1]] = king_threats[1] & (~(enemy_threat | king_threats[0] | colors[static_cast<std::uint8_t>(their_color)]));
 
         bitboard_unset(check_blockers, king_squares[0]);
 
@@ -1442,6 +1359,8 @@ private:
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle; // KQkq
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
+    std::uint8_t repeatable_movecount = 0;
+    std::uint16_t turn_number = 0;
 
     // Static analysis
     mutable bool static_found = false;
@@ -1450,12 +1369,6 @@ private:
     mutable Bitboard checkers = 0;
     mutable Bitboard check_blockers = 0;
     mutable Bitboard pinned = 0;
-    //mutable std::array<Bitboard, 64> most_moves; // does not contain pawn pushes or castles
-
-    // Move analysis
-    //mutable bool movelist_found = false;
-    //mutable MoveList movelist;
-    //mutable MoveList pseudolist;
 
 public:
     // Move to get here

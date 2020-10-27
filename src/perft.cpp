@@ -139,6 +139,7 @@ int main(int argc, char** argv)
 
     Board base(pos);
     base.print();
+    base.get_moves(moves);
     std::cout << "Eval: " << base.adv_eval(moves) << std::endl;
 
     for (int i = 1; i <= goal; i++)
