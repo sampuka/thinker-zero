@@ -343,29 +343,42 @@ public:
 
     void perform_move(Move move)
     {
-        movetohere = move;
-        if (bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], move.get_to()))
-            typetohere = MoveType::Capture;
-
-        //move.print();
         const Tile from = get_tile(move.get_from());
 
-        const std::uint8_t fx = move.get_from()%8;
-        const std::uint8_t fy = move.get_from()/8;
-        const std::uint8_t tx = move.get_to()%8;
-        const std::uint8_t ty = move.get_to()/8;
+        const MoveSpecial move_type = move.get_type();
+        const Square from_sq = move.get_from();
+        const Square to_sq = move.get_to();
+
+        const std::uint8_t fx = from_sq%8;
+        const std::uint8_t fy = from_sq/8;
+        const std::uint8_t tx = to_sq%8;
+        const std::uint8_t ty = to_sq/8;
+
+        movetohere = move;
+
+        if (
+                bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], to_sq) ||
+                (move.get_type() == MoveSpecial::EnPassant)
+           )
+        {
+            typetohere = MoveType::Capture;
+        }
+        else
+        {
+            typetohere = MoveType::Quiet;
+        }
 
         //Tile to = get_tile(move.tx, move.ty);
 
-        if (move.get_type() == MoveSpecial::Promotion)
-            set_tile(move.get_to(), Tile{from.color, move.get_promo()});
+        if (move_type == MoveSpecial::Promotion)
+            set_tile(to_sq, Tile{from.color, move.get_promo()});
         else
-            set_tile(move.get_to(), from);
+            set_tile(to_sq, from);
 
-        set_tile(move.get_from(), Tile{Color::Empty, Piece::None});
+        set_tile(from_sq, Tile{Color::Empty, Piece::None});
 
         // Castling move
-        if (from.piece == Piece::King && std::abs(tx - fx) >= 2)
+        if (move_type == MoveSpecial::Castling)
         {
             // Kingside
             if (tx > fx)
@@ -385,8 +398,8 @@ public:
         // Handle castling priviledges if king move
         if (from.piece == Piece::King)
         {
-            can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
-            can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(turn)][0] = false;
+            can_castle[static_cast<std::uint8_t>(turn)][1] = false;
         }
 
         // Handle castling priviledges if rook move
@@ -396,32 +409,28 @@ public:
         {
             if (fx == 7)
             {
-                can_castle.at(static_cast<std::uint8_t>(turn)).at(0) = false;
+                can_castle[static_cast<std::uint8_t>(turn)][0] = false;
             }
 
             if (fx == 0)
             {
-                can_castle.at(static_cast<std::uint8_t>(turn)).at(1) = false;
+                can_castle[static_cast<std::uint8_t>(turn)][1] = false;
             }
         }
 
         // Handle castling if rook is captured
         if (tx == 7 && ty == 0)
-            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(0) = false;
+            can_castle[static_cast<std::uint8_t>(Color::White)][0] = false;
         if (tx == 0 && ty == 0)
-            can_castle.at(static_cast<std::uint8_t>(Color::White)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(Color::White)][1] = false;
         if (tx == 7 && ty == 7)
-            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(0) = false;
+            can_castle[static_cast<std::uint8_t>(Color::Black)][0] = false;
         if (tx == 0 && ty == 7)
-            can_castle.at(static_cast<std::uint8_t>(Color::Black)).at(1) = false;
+            can_castle[static_cast<std::uint8_t>(Color::Black)][1] = false;
 
         // En passant
-        if (from.piece == Piece::Pawn &&
-                fx != tx &&
-                tx == ep_x)
+        if (move_type == MoveSpecial::EnPassant)
         {
-            if ((turn == Color::White && ty == 5) ||
-                (turn == Color::Black && ty == 2))
             set_tile(ep_x, fy, Tile{Color::Empty, Piece::None});
         }
 
