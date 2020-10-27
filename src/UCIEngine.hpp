@@ -141,7 +141,12 @@ private:
                     {
                         while (++i < tokens.size())
                         {
-                            board.perform_move(Move(tokens.at(i)));
+                            Move m(tokens.at(i), Color::Empty, Piece::None, 9); // Used for get_from()
+                            board.perform_move(Move(
+                                        tokens.at(i),
+                                        board.get_turn(),
+                                        board.get_piece(m.get_from()),
+                                        board.get_ep()));
                         }
                     }
 
