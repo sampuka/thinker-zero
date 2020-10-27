@@ -5,6 +5,7 @@
 #include "Bitboard.hpp"
 #include "Move.hpp"
 #include "movegen_rays.hpp"
+#include "zobrist.hpp"
 
 #include <array>
 #include <cstdint>
@@ -479,6 +480,39 @@ public:
             return true;
 
         return false;
+    }
+
+    std::uint64_t get_zobrist() const
+    {
+        std::uint64_t z = 0;
+
+        Bitboard all_pieces = colors[static_cast<std::uint8_t>(Color::White)] | colors[static_cast<std::uint8_t>(Color::Black)];
+
+        while (all_pieces)
+        {
+            const Square sq = bitboard_bitscan_forward_pop(all_pieces);
+            const Tile t = get_tile(sq);
+
+            z ^= zobrist_pieces
+                [static_cast<std::uint8_t>(t.color)] [static_cast<std::uint8_t>(t.piece)] [sq];
+        }
+
+        if (turn == Color::Black)
+            z ^= zobrist_black;
+
+        for (std::uint8_t s = 0; s < 2; s++)
+        {
+            for (std::uint8_t c = 0; c < 2; c++)
+            {
+                if (can_castle[c][s])
+                    z ^= zobrist_castles[c][s];
+            }
+        }
+
+        if (ep_x != 9)
+            z ^= zobrist_ep[ep_x];
+
+        return z;
     }
 
     double basic_eval(const MoveList& movelist) const

@@ -28,8 +28,8 @@ int main(int argc, char** argv)
         //Board test_board("rnb1kbnr/pp1ppppp/2p5/q7/8/3P4/PPPKPPPP/RNBQ1BNR w kq - 2 3");
         //Board test_board("r3k2r/p1ppqpb1/b3pnp1/3PN3/1p2P3/2N1nQ1p/PPPB1PPP/R2B1K1R w kq - 4 3 ");
         //Board test_board("rnbqkbnr/ppp1pppp/3p4/1B6/8/4P3/PPPP1PPP/RNBQK1NR b KQkq - 1 2 ");
-        Board test_board("rnbqkbnr/1ppppppp/8/p7/8/3P4/PPPNPPPP/R1BQKBNR b KQkq - 1 2 ");
-        //Board test_board;
+        //Board test_board("rnbqkbnr/1ppppppp/8/p7/8/3P4/PPPNPPPP/R1BQKBNR b KQkq - 1 2 ");
+        Board test_board;
         test_board.print();
 
         test_board.get_moves(moves);
@@ -44,6 +44,7 @@ int main(int argc, char** argv)
         bitboard_print(test_board.get_check_blockers());
         std::cout << "Pinned:" << std::endl;
         bitboard_print(test_board.get_pinned());
+        std::cout << "Zobrist: " << test_board.get_zobrist() << std::endl;
         std::cout << '\n';
 
         for (const Move& move : moves)
