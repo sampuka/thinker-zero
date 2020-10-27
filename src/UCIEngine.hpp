@@ -35,16 +35,16 @@ protected:
     std::string engine_author = "Unspecified author";
 
     // Current player times and increment [ms]
-    std::uint64_t time_spent = 0; // Time passed since started thinking
-    std::uint64_t w_time = 0;
-    std::uint64_t b_time = 0;
-    std::uint64_t w_inc = 0;
-    std::uint64_t b_inc = 0;
-    bool infinite = false;
+    std::atomic<std::uint64_t> time_spent = 0; // Time passed since started thinking
+    std::atomic<std::uint64_t> w_time = 0;
+    std::atomic<std::uint64_t> b_time = 0;
+    std::atomic<std::uint64_t> w_inc = 0;
+    std::atomic<std::uint64_t> b_inc = 0;
+    std::atomic<bool> infinite = false;
 
     Move bestmove;
-    double evaluation = 0;
-    std::atomic<bool> thinking;
+    std::atomic<double> evaluation = 0;
+    std::atomic<bool> thinking = false;
 
     std::mt19937 eng;
 
