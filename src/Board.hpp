@@ -138,6 +138,9 @@ public:
         {
             ep_x = tokens.at(3).at(0) - 'a';
         }
+
+        repeatable_movecount = std::stoi(tokens.at(4));
+        turn_number = std::stoi(tokens.at(5));
     }
 
     Color get_color(std::uint8_t x, std::uint8_t y) const
@@ -339,14 +342,25 @@ public:
 
         if (
                 bitboard_read(~colors[static_cast<std::uint8_t>(Color::Empty)], to_sq) ||
-                (move.get_type() == MoveSpecial::EnPassant)
+                move_type == MoveSpecial::EnPassant
            )
         {
             typetohere = MoveType::Capture;
+
+            repeatable_movecount = 0;
         }
         else
         {
             typetohere = MoveType::Quiet;
+
+            if (from.piece == Piece::Pawn)
+            {
+                repeatable_movecount = 0;
+            }
+            else
+            {
+                repeatable_movecount++;
+            }
         }
 
         if (move_type == MoveSpecial::Promotion)
@@ -424,9 +438,14 @@ public:
         }
 
         if (get_turn() == Color::White)
+        {
             set_turn(Color::Black);
+        }
         else
+        {
+            turn_number++;
             set_turn(Color::White);
+        }
     }
 
     bool is_checkmate(MoveList& movelist) const
@@ -442,6 +461,9 @@ public:
 
     bool is_stalemate(MoveList& movelist) const
     {
+        if (repeatable_movecount == 100)
+            return true;
+
         if (movelist.size() != 0)
             return false;
 
@@ -1337,6 +1359,8 @@ private:
     Color turn = Color::White;
     std::array<std::array<bool, 2>, 2> can_castle; // KQkq
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
+    std::uint8_t repeatable_movecount = 0;
+    std::uint16_t turn_number = 0;
 
     // Static analysis
     mutable bool static_found = false;
