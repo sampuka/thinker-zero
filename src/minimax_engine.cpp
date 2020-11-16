@@ -74,7 +74,15 @@ public:
             else
             {
                 base.board.get_moves(movelist);
+                movelist.is_checkmate = base.is_checkmate;
+                movelist.is_stalemate = base.is_stalemate;
                 base.evaluation = base.board.adv_eval(movelist);
+                /*
+                if (movelist.is_stalemate)
+                {
+                    std::cout << "Evaluating stalemate due to repetition: " << base.evaluation << std::endl;
+                }
+                */
             }
 
             return;
@@ -82,12 +90,28 @@ public:
 
         // Create tree structure
         BoardTree root(board);
-        root.expand(movelist, 4);
+        root.expand(movelist, z_list, 4);
 
         minimax(root);
 
         bestmove = root.bestmove;
         evaluation = root.evaluation*turn;
+
+        /*
+        std::cout << "About to move " << bestmove.longform() << std::endl;
+        std::cout << root.nodes.size() << std::endl;
+        std::cout << evaluation << std::endl;
+
+        MoveList m2;
+        BoardTree test(board, bestmove);
+        auto z2 = z_list;
+        z2.push_back(test.board.get_zobrist());
+        test.board.get_moves(m2, z2, false);
+        std::cout << int{m2.size()} << std::endl;
+        std::cout << m2.is_checkmate << std::endl;
+        std::cout << m2.is_stalemate << std::endl;
+        std::cout << test.board.adv_eval(m2) << std::endl;
+        */
 
         // End of function
         thinking = false;
