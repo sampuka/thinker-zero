@@ -254,6 +254,8 @@ public:
     void clear()
     {
         list_size = 0;
+        is_checkmate = false;
+        is_stalemate = false;
     }
 
     Move* begin()
@@ -265,6 +267,9 @@ public:
     {
         return std::begin(list)+list_size;
     }
+
+    bool is_checkmate = false;
+    bool is_stalemate = false;
 
 private:
     std::uint8_t list_size = 0;
