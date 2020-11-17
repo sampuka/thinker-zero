@@ -15,6 +15,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <vector>
 
 class UCIEngine
 {
@@ -45,6 +46,8 @@ protected:
     Move bestmove;
     std::atomic<double> evaluation = 0;
     std::atomic<bool> thinking = false;
+
+    std::vector<std::uint64_t> z_list;
 
     std::mt19937 eng;
 
@@ -116,6 +119,7 @@ private:
 
                 else if (tokens.at(0) == "position")
                 {
+                    z_list.clear();
                     std::uint32_t i = 1;
 
                     if (tokens.at(1) == "startpos")
@@ -137,15 +141,39 @@ private:
                         i+=7;
                     }
 
+                    z_list.push_back(board.get_zobrist());
+
                     if (i != tokens.size() && tokens.at(i) == "moves")
                     {
                         while (++i < tokens.size())
                         {
-                            board.perform_move(Move(tokens.at(i)));
+                            Move move_(tokens.at(i), Color::Empty, Piece::None, 9); // Used for get_from()
+                            Piece p = board.get_piece(move_.get_from());
+
+                            Move move(tokens.at(i),
+                                    board.get_turn(),
+                                    p,
+                                    board.get_ep());
+
+                            board.perform_move(move);
+
+                            if (
+                                    (p == Piece::Pawn) ||
+                                    (board.typetohere == MoveType::Capture) ||
+                                    (move.get_type() != MoveSpecial::None)
+                               )
+                            {
+                                z_list.clear();
+                            }
+
+                            z_list.push_back(board.get_zobrist());
                         }
                     }
 
                     board.print(log);
+                    for (const std::uint64_t z : z_list)
+                        log << z << ' ';
+                    log << std::endl;
                 }
 
                 else if (tokens.at(0) == "go")

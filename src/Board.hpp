@@ -5,6 +5,7 @@
 #include "Bitboard.hpp"
 #include "Move.hpp"
 #include "movegen_rays.hpp"
+#include "zobrist.hpp"
 
 #include <array>
 #include <cstdint>
@@ -266,11 +267,99 @@ public:
         return colors[static_cast<std::uint8_t>(color)] & pieces[static_cast<std::uint8_t>(piece)];
     }
 
+    /*
+    bool is_checkmate(const MoveList& movelist) const
+    {
+        if (movelist.size() != 0)
+            return false;
+
+        if ((enemy_threat & get_bitboard(turn, Piece::King)) != 0)
+            return true;
+
+        return false;
+    }
+
+    bool is_stalemate(const MoveList& movelist) const
+    {
+        if (is_checkmate(movelist))
+            return false;
+
+        if (repeatable_movecount == 100)
+            return true;
+
+        if (movelist.size() != 0)
+            return false;
+
+        if ((enemy_threat & get_bitboard(turn, Piece::King)) == 0)
+            return true;
+
+        return false;
+    }
+    */
+
     void get_moves(MoveList& movelist) const
+    {
+        std::vector<std::uint64_t> z_list;
+        get_moves(movelist, z_list);
+    }
+
+    void get_moves(MoveList& movelist, std::vector<std::uint64_t> z_list, bool debug = false) const
     {
         ray_movegen(movelist);
 
-        return;
+        std::uint64_t zob = get_zobrist();
+
+        if (debug)
+        {
+            std::cout << zob << std::endl;
+            for (std::uint64_t zo : z_list)
+            {
+                std::cout << zo << ' ';
+            }
+            std::cout << std::endl;
+        }
+
+        std::uint8_t count = 0;
+        for (const std::uint64_t z : z_list)
+        {
+            if (z == zob)
+            {
+                count++;
+
+                if (count == 3)
+                {
+                    if (debug && false)
+                    {
+                        std::cout << zob << std::endl;
+                        for (std::uint64_t zo : z_list)
+                        {
+                            std::cout << zo << ' ';
+                        }
+                        std::cout << std::endl;
+                    }
+                    movelist.clear();
+                    movelist.is_stalemate = true;
+                    return;
+                }
+            }
+        }
+
+        if (movelist.size() == 0)
+        {
+            if (checkers == 0)
+            {
+                movelist.is_stalemate = true;
+            }
+            else if (checkers != 0)
+            {
+                movelist.is_checkmate = true;
+            }
+        }
+
+        if (!movelist.is_checkmate && repeatable_movecount == 100)
+        {
+            movelist.is_stalemate = true;
+        }
     }
 
     Bitboard& get_threat() const
@@ -323,6 +412,11 @@ public:
     Color get_turn() const
     {
         return turn;
+    }
+
+    std::uint8_t get_ep() const
+    {
+        return ep_x;
     }
 
     void perform_move(Move move)
@@ -446,38 +540,53 @@ public:
             turn_number++;
             set_turn(Color::White);
         }
+
+        zobrist_hash = 0;
     }
 
-    bool is_checkmate(MoveList& movelist) const
+    std::uint64_t get_zobrist() const
     {
-        if (movelist.size() != 0)
-            return false;
+        if (zobrist_hash != 0)
+            return zobrist_hash;
 
-        if ((enemy_threat & get_bitboard(turn, Piece::King)) != 0)
-            return true;
+        std::uint64_t z = 0;
 
-        return false;
+        Bitboard all_pieces = colors[static_cast<std::uint8_t>(Color::White)] | colors[static_cast<std::uint8_t>(Color::Black)];
+
+        while (all_pieces)
+        {
+            const Square sq = bitboard_bitscan_forward_pop(all_pieces);
+            const Tile t = get_tile(sq);
+
+            z ^= zobrist_pieces
+                [static_cast<std::uint8_t>(t.color)] [static_cast<std::uint8_t>(t.piece)] [sq];
+        }
+
+        if (turn == Color::Black)
+            z ^= zobrist_black;
+
+        for (std::uint8_t s = 0; s < 2; s++)
+        {
+            for (std::uint8_t c = 0; c < 2; c++)
+            {
+                if (can_castle[c][s])
+                    z ^= zobrist_castles[c][s];
+            }
+        }
+
+        if (ep_x != 9)
+            z ^= zobrist_ep[ep_x];
+
+        zobrist_hash = z;
+
+        return zobrist_hash;
     }
 
-    bool is_stalemate(MoveList& movelist) const
-    {
-        if (repeatable_movecount == 100)
-            return true;
-
-        if (movelist.size() != 0)
-            return false;
-
-        if ((enemy_threat & get_bitboard(turn, Piece::King)) == 0)
-            return true;
-
-        return false;
-    }
-
-    double basic_eval(MoveList& movelist) const
+    double basic_eval(const MoveList& movelist) const
     {
         if (movelist.size() == 0)
         {
-            if (is_stalemate(movelist))
+            if (movelist.is_stalemate)
                 return 0;
 
             if (turn == Color::White)
@@ -519,7 +628,7 @@ public:
     }
 
     // Created based on "Simplified Evalution Function" on Chess Programming Wiki
-    double adv_eval(MoveList& movelist) const
+    double adv_eval(const MoveList& movelist) const
     {
         // Piece values
         constexpr std::array<double, 6> piece_values = {1.00, 3.20, 3.30, 5.00, 9.00, 200.00};
@@ -615,10 +724,10 @@ public:
             -0.50,-0.30,-0.30,-0.30,-0.30,-0.30,-0.30,-0.50
         };
 
-        if (is_stalemate(movelist))
+        if (movelist.is_stalemate)
             return 0;
 
-        if (is_checkmate(movelist))
+        if (movelist.is_checkmate)
         {
             if (turn == Color::White)
                 return -200.00;
@@ -1361,6 +1470,9 @@ private:
     std::uint8_t ep_x = 9; // x value for en passant, 9 if no en passant
     std::uint8_t repeatable_movecount = 0;
     std::uint16_t turn_number = 0;
+
+    // Zobrist
+    mutable std::uint64_t zobrist_hash = 0;
 
     // Static analysis
     mutable bool static_found = false;
