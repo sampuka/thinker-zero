@@ -90,12 +90,40 @@ public:
 
         // Create tree structure
         BoardTree root(board);
-        root.expand(movelist, z_list, 4);
 
-        minimax(root);
+        std::chrono::duration<double, std::milli> previous_layer(0);
+        std::chrono::duration<double, std::milli> last_layer(0);
+        int layer = 1;
 
-        bestmove = root.bestmove;
-        evaluation = root.evaluation*turn;
+        std::uint64_t time_left = w_time;
+        std::uint64_t time_inc = w_inc;
+        if (board.get_turn() == Color::Black)
+        {
+            time_left = b_time;
+            time_inc = b_inc;
+        }
+
+        std::uint64_t max_time = std::min(time_inc + time_left/10, std::uint64_t{10000});
+        std::uint64_t exp_time = 0;
+
+        while ((max_time - time_spent > exp_time) && (layer <= 4))
+        {
+            auto tp = std::chrono::high_resolution_clock::now();
+            root.expand(movelist, z_list, layer);
+            minimax(root);
+            std::chrono::duration<double> dur = std::chrono::high_resolution_clock::now() - tp;
+
+            bestmove = root.bestmove;
+            evaluation = root.evaluation*turn;
+
+            layer++;
+            previous_layer = last_layer;
+            last_layer = dur;
+
+            exp_time = std::min(static_cast<double>(last_layer.count()/previous_layer.count()), double{30})*last_layer.count();
+        }
+
+        //std::cout << layer << ' ' << last_layer.count() << ' ' << previous_layer.count() << std::endl;
 
         /*
         std::cout << "About to move " << bestmove.longform() << std::endl;
