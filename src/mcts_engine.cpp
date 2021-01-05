@@ -98,9 +98,15 @@ public:
     void backpropagation(BoardTree* node, int playout_result)
     {
         BoardTree* eval_node = node;
-        while(eval_node != NULL)
+        while(eval_node != nullptr)
         {
             eval_node->visitcount++;
+
+            // TO ADD:
+            // IF eval_node PLAYER TURN IS WIN (i.e. == playout_result)
+            //     Increment node win count!!!!
+
+            eval_node = eval_node->parent_tree;
         }
     }
 
