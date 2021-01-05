@@ -11,6 +11,9 @@ int main(int argc, char** argv)
 {
     MoveList moves;
 
+    std::cout << "Board class size = " << std::to_string(sizeof(Board)) << std::endl;
+    std::cout << "BoardTree class size = " << std::to_string(sizeof(BoardTree)) << std::endl;
+
     if (argc == 2 && std::string(argv[1]) == "movegen")
     {
         /*
