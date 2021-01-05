@@ -72,8 +72,8 @@ public:
         // Find end state (win/lose/draw/max iterations)
         int max_moves = 150;
         int moves = 0;
-        while( !tmp_board.is_checkmate(tmp_moves) 
-            && !tmp_board.is_stalemate(tmp_moves) 
+        while( !tmp_moves.is_checkmate
+            && !tmp_moves.is_stalemate
             && moves < max_moves )
         {
             // Generate random move
