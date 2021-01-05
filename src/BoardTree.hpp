@@ -11,8 +11,8 @@ public:
     {
     }
 
-    BoardTree(const Board &parent_board, const Move &parent_move)
-        : board(parent_board), move(parent_move)
+    BoardTree(const Board &parent_board, const Move &parent_move, BoardTree *_parent_tree = nullptr)
+        : board(parent_board), move(parent_move), parent_tree(_parent_tree)
     {
         board.perform_move(move);
     }
@@ -38,7 +38,7 @@ public:
 
             for (const Move &m : movelist)
             {
-                nodes.emplace_back(board, m);
+                nodes.emplace_back(board, m, this);
             }
 
             expanded = true;
@@ -92,6 +92,9 @@ public:
 
     Board board;
     Move move;
+
+    // Parent node
+    BoardTree* parent_tree = nullptr;
 };
 
 #endif
