@@ -31,7 +31,7 @@ public:
         BoardTree root_node(board);
 
         // MCTS
-        uint64_t time_max = 2000;
+        uint64_t time_max = 8000;
         while(time_spent < time_max)
         {
             // === Selection ===
@@ -49,12 +49,13 @@ public:
             }
 
             // === Simulation ===
-            int playout_result = simulate_playout_random(node_to_explore); // UNBIASED
+            int playout_result = simulate_playout_random(node_to_explore);
 
             // === Backpropagation ===
-            // I HAVE AN INHERENT PROBLEM OF NOT CONSIDERING TURNS
-
+            backpropagation(node_to_explore, playout_result);
         }
+
+        bestmove = find_best_child(&root_node)->move;
 
         // End of function
         thinking = false;
@@ -64,8 +65,10 @@ public:
     // Output: Normalized unbiased end state evaluation (1,0,-1)
     int simulate_playout_random(BoardTree *root_node)
     {
+        //std::cout << "[MCTS]> Simulating random playout..." << std::endl;
+
+        // Generate possible moves
         MoveList tmp_moves;
-        
         Board tmp_board = root_node->board;
         tmp_board.get_moves(tmp_moves);
         
@@ -90,7 +93,7 @@ public:
 
         // Evaluate end state (this needs turn bias?)
         int eval = tmp_board.basic_eval(tmp_moves);             // Rough double to int conversion
-        int eval_norm = (eval/std::abs(eval));                  // Normalized evaluation (1,0,-1)
+        int eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
         
         return eval_norm;
     }
@@ -100,12 +103,22 @@ public:
         BoardTree* eval_node = node;
         while(eval_node != nullptr)
         {
+            // Increment visit count regardless
             eval_node->visitcount++;
 
-            // TO ADD:
-            // IF eval_node PLAYER TURN IS WIN (i.e. == playout_result)
-            //     Increment node win count!!!!
+            // Get board turn (This needs turn bias too)?
+            int board_turn = 0;
+            if(eval_node->board.get_turn() == Color::White)
+                board_turn = 1;
+            else
+                board_turn = -1;
+            board_turn *= turn_bias; 
 
+            // Increment win count if win
+            if(board_turn == playout_result)
+                eval_node->winscore++;
+
+            // Set current node -> parent node
             eval_node = eval_node->parent_tree;
         }
     }
