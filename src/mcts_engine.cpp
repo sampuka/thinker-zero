@@ -191,7 +191,7 @@ public:
             return 9999999;
         }
 
-        return ((node_score / node_visit) + c * std::sqrt(std::log(parent_visit) / node_visit));
+        return ((node_score / (double)node_visit) + c * std::sqrt(std::log(parent_visit) / (double)node_visit));
     }
 
     // Member variables
