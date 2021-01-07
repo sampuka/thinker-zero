@@ -346,11 +346,11 @@ public:
 
         if (movelist.size() == 0)
         {
-            if (checkers == 0)
+            if (movelist.checkers == 0)
             {
                 movelist.is_stalemate = true;
             }
-            else if (checkers != 0)
+            else if (movelist.checkers != 0)
             {
                 movelist.is_checkmate = true;
             }
@@ -362,51 +362,54 @@ public:
         }
     }
 
-    Bitboard& get_threat() const
+    Bitboard& get_threat(MoveList &movelist) const
     {
-        static_analysis();
+        static_analysis(movelist);
 
-        return threat;
+        return movelist.threat;
     }
 
-    Bitboard& get_enemy_threat() const
+    Bitboard& get_enemy_threat(MoveList &movelist) const
     {
-        static_analysis();
+        static_analysis(movelist);
 
-        return enemy_threat;
+        return movelist.enemy_threat;
     }
 
-    Bitboard& get_checkers() const
+    Bitboard& get_checkers(MoveList &movelist) const
     {
-        static_analysis();
+        static_analysis(movelist);
 
-        return checkers;
+        return movelist.checkers;
     }
 
-    Bitboard& get_check_blockers() const
+    Bitboard& get_check_blockers(MoveList &movelist) const
     {
-        static_analysis();
+        static_analysis(movelist);
 
-        return check_blockers;
+        return movelist.check_blockers;
     }
 
-    Bitboard& get_pinned() const
+    Bitboard& get_pinned(MoveList &movelist) const
     {
-        static_analysis();
+        static_analysis(movelist);
 
-        return pinned;
+        return movelist.pinned;
     }
 
     void set_turn(Color color)
     {
         turn = color;
+        zobrist_hash = 0;
 
-        static_found = false;
-        threat = 0;
-        enemy_threat = 0;
-        checkers = 0;
-        check_blockers = 0;
-        pinned = 0;
+        /*
+        movelist.static_found = false;
+        movelist.threat = 0;
+        movelist.enemy_threat = 0;
+        movelist.checkers = 0;
+        movelist.check_blockers = 0;
+        movelist.pinned = 0;
+        */
     }
 
     Color get_turn() const
@@ -843,7 +846,12 @@ private:
     {
         movelist.clear();
 
-        static_analysis();
+        static_analysis(movelist);
+        //Bitboard &threat = movelist.threat;
+        Bitboard &enemy_threat = movelist.enemy_threat;
+        Bitboard &checkers = movelist.checkers;
+        Bitboard &check_blockers = movelist.check_blockers;
+        Bitboard &pinned = movelist.pinned;
 
         Color their_color = Color::White;
         if (turn == Color::White)
@@ -1031,9 +1039,10 @@ private:
                 {
                     // Just gonna buteforce-check for now
                     Board next(*this);
+                    MoveList next_movelist;
                     next.perform_move(Move(from_sq, to_sq, MoveSpecial::EnPassant));
 
-                    if (bitboard_read(next.get_threat(), king_square))
+                    if (bitboard_read(next.get_threat(next_movelist), king_square))
                         continue;
 
                     add_move(movelist, Move(from_sq, to_sq, MoveSpecial::EnPassant), true);
@@ -1151,10 +1160,24 @@ private:
         return;
     }
 
-    void static_analysis() const
+    void static_analysis(MoveList &movelist) const
     {
-        if (static_found)
+        if (movelist.board_zobrist == get_zobrist())
             return;
+        else
+        {
+            movelist.threat = 0;
+            movelist.enemy_threat = 0;
+            movelist.checkers = 0;
+            movelist.check_blockers = 0;
+            movelist.pinned = 0;
+        }
+
+        Bitboard &threat = movelist.threat;
+        Bitboard &enemy_threat = movelist.enemy_threat;
+        Bitboard &checkers = movelist.checkers;
+        Bitboard &check_blockers = movelist.check_blockers;
+        Bitboard &pinned = movelist.pinned;
 
         Color their_color = Color::White;
         if (turn == Color::White)
@@ -1417,7 +1440,7 @@ private:
             check_blockers = 0;
         }
 
-        static_found = true;
+        movelist.board_zobrist = get_zobrist();
         return;
     }
 
@@ -1473,14 +1496,6 @@ private:
 
     // Zobrist
     mutable std::uint64_t zobrist_hash = 0;
-
-    // Static analysis
-    mutable bool static_found = false;
-    mutable Bitboard threat = 0;
-    mutable Bitboard enemy_threat = 0;
-    mutable Bitboard checkers = 0;
-    mutable Bitboard check_blockers = 0;
-    mutable Bitboard pinned = 0;
 
 public:
     // Move to get here
