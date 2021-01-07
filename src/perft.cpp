@@ -37,16 +37,16 @@ int main(int argc, char** argv)
 
         test_board.get_moves(moves);
         std::cout << "Threat:" << std::endl;
-        bitboard_print(test_board.get_threat());
+        bitboard_print(test_board.get_threat(moves));
         std::cout << "Enemy threat:" << std::endl;
-        bitboard_print(test_board.get_enemy_threat());
+        bitboard_print(test_board.get_enemy_threat(moves));
         std::cout << "Checkers:" << std::endl;
-        std::cout << "Checker count: " << std::to_string(bitboard_count(test_board.get_checkers())) << std::endl;
-        bitboard_print(test_board.get_checkers());
+        std::cout << "Checker count: " << std::to_string(bitboard_count(test_board.get_checkers(moves))) << std::endl;
+        bitboard_print(test_board.get_checkers(moves));
         std::cout << "Check blockers:" << std::endl;
-        bitboard_print(test_board.get_check_blockers());
+        bitboard_print(test_board.get_check_blockers(moves));
         std::cout << "Pinned:" << std::endl;
-        bitboard_print(test_board.get_pinned());
+        bitboard_print(test_board.get_pinned(moves));
         std::cout << "Zobrist: " << test_board.get_zobrist() << std::endl;
         std::cout << '\n';
 
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     }
 
     int goal = 6;
-    std::string pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+    std::string pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     if (argc > 1)
         goal = std::atoi(argv[1]);
@@ -130,15 +130,15 @@ int main(int argc, char** argv)
     if (argc > 2)
     {
         if (argv[2] == std::string("kiwipete"))
-            pos = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -";
+            pos = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
         else if (argv[2] == std::string("pos3"))
-            pos = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -";
+            pos = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1";
         else if (argv[2] == std::string("pos4"))
-            pos = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq -";
+            pos = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1";
         else if (argv[2] == std::string("pos5"))
-            pos = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ -";
+            pos = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 0 1";
         else if (argv[2] == std::string("pos6"))
-            pos = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - -";
+            pos = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 1";
     }
 
     Board base(pos);
