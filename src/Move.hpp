@@ -271,6 +271,15 @@ public:
     bool is_checkmate = false;
     bool is_stalemate = false;
 
+    // Static analysis
+    // bool static_found = false;
+    std::uint64_t board_zobrist = 0;
+    Bitboard threat = 0;
+    Bitboard enemy_threat = 0;
+    Bitboard checkers = 0;
+    Bitboard check_blockers = 0;
+    Bitboard pinned = 0;
+
 private:
     std::uint8_t list_size = 0;
     std::array<Move, 200> list;
