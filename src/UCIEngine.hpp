@@ -253,6 +253,11 @@ private:
                         board = Board("Q2bRBNN/K1kqRpp1/p1Prp3/p1pp4/6P1/5PP1/2P1Pp2/7n w - - 0 1");
                         std::cout << "Solution e3a3" << std::endl;
                     }
+                    else if (tokens.at(1) == "4")
+                    {
+                        board = Board("3K4/4B3/3Rp3/8/4pk2/1Qp1Np2/2p2P2/2R5 w - - 0 1");
+                        std::cout << "Solution d6d7, f4e5, b3b8" << std::endl;
+                    }
 
                     board.print();
 
