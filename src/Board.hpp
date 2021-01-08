@@ -798,7 +798,7 @@ public:
             if (wPawnsFile >= 2)
                 eval -= 0.35;
             if (bPawnsFile >= 2)
-                eval -= 0.35;
+                eval += 0.35;
 
             wPawnsFile = 0;
             bPawnsFile = 0;
