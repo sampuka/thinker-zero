@@ -236,6 +236,36 @@ private:
                         think_thread = std::thread(&UCIEngine::think, this);
                     }
                 }
+                else if (tokens.at(0) == "puzzle")
+                {
+                    if (tokens.at(1) == "1")
+                    {
+                        board = Board("8/8/8/qn6/kn6/1n6/1KP5/8 w - - 0 1");
+                        std::cout << "Solution c2b3" << std::endl;
+                    }
+                    else if (tokens.at(1) == "2")
+                    {
+                        board = Board("1Bb3BN/R2Pk2r/1Q5B/4q2R/2bN4/4Q1BK/1p6/1bq1R1rb w - - 0 1");
+                        std::cout << "Solution e3a3" << std::endl;
+                    }
+                    else if (tokens.at(1) == "3")
+                    {
+                        board = Board("Q2bRBNN/K1kqRpp1/p1Prp3/p1pp4/6P1/5PP1/2P1Pp2/7n w - - 0 1");
+                        std::cout << "Solution e3a3" << std::endl;
+                    }
+
+                    board.print();
+
+                    start_thinking_ts = std::chrono::steady_clock::now();
+                    time_spent = 0;
+                    w_time = 10000;
+                    b_time = 10000;
+                    w_inc = 1000;
+                    b_inc = 1000;
+                    thinking = true;
+                    think_state = true;
+                    think_thread = std::thread(&UCIEngine::think, this);
+                }
             }
 
             // State machine ish
