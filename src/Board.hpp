@@ -584,11 +584,11 @@ public:
 
     double basic_eval(const MoveList& movelist) const
     {
-        if (movelist.size() == 0)
-        {
-            if (movelist.is_stalemate)
-                return 0;
+        if (movelist.is_stalemate)
+            return 0;
 
+        if (movelist.is_checkmate)
+        {
             if (turn == Color::White)
                 return -200.00;
 
