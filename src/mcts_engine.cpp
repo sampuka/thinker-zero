@@ -31,7 +31,7 @@ public:
         BoardTree root_node(board);
 
         // MCTS
-        uint64_t time_max = 8000;
+        uint64_t time_max = 5000;
         while(time_spent < time_max)
         {
             // === Selection ===
@@ -54,8 +54,23 @@ public:
             // === Backpropagation ===
             backpropagation(node_to_explore, playout_result);
         }
-
-        bestmove = find_best_child(&root_node)->move;
+        
+        // Find best move (new)
+        double bestwinrate = 0;
+        for(size_t i = 0; i < root_node.nodes.size(); i++)
+        {
+            std::cout << "[Node #" << i << "]: Move: " << root_node.nodes[i].move.longform() << " w:" << root_node.nodes[i].winscore << "/v:" << root_node.nodes[i].visitcount << "/wr:";
+            double winrate = root_node.nodes[i].winscore / root_node.nodes[i].visitcount;
+            std::cout << winrate << std::endl;
+            if(winrate > bestwinrate)
+            {
+                bestwinrate = winrate;
+                bestmove = root_node.nodes[i].move;
+            }
+        }
+        
+        // Find best move (old)
+        //bestmove = find_best_child(&root_node)->move;
 
         // End of function
         thinking = false;
@@ -65,15 +80,13 @@ public:
     // Output: Normalized unbiased end state evaluation (1,0,-1)
     int simulate_playout_random(BoardTree *root_node)
     {
-        //std::cout << "[MCTS]> Simulating random playout..." << std::endl;
-
         // Generate possible moves
         MoveList tmp_moves;
         Board tmp_board = root_node->board;
         tmp_board.get_moves(tmp_moves);
         
         // Find end state (win/lose/draw/max iterations)
-        int max_moves = 150;
+        int max_moves = 50;
         int moves = 0;
         while( !tmp_moves.is_checkmate
             && !tmp_moves.is_stalemate
@@ -87,26 +100,43 @@ public:
             tmp_board.perform_move(random_move);
             tmp_board.get_moves(tmp_moves);
             
+            // Break if large lead
+            //if(std::abs(tmp_board.basic_eval(tmp_moves)) > 10)
+            //    break;
+
             // Ensure max iterations
             moves++;
         }
 
+        // Output evaluation at end
+        //std::cout << "[Eval] " << tmp_board.basic_eval(tmp_moves) << std::endl;
+        
         // Evaluate end state (this needs turn bias?)
         int eval = tmp_board.basic_eval(tmp_moves);             // Rough double to int conversion
-        int eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
-        
+
+        int eval_norm = 0;
+        if(eval != 0)
+            eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
+
         return eval_norm;
     }
 
     void backpropagation(BoardTree* node, int playout_result)
     {
         BoardTree* eval_node = node;
+        //std::cout << "Backpropagation:" << std::endl;
+        //std::cout << "Playout result: " << playout_result << std::endl;
         while(eval_node != nullptr)
         {
+            // Output before propagation
+            //std::cout << "[turn: " << (eval_node->board.get_turn() == Color::White ? "White" : "Black") << "] ";
+            //std::cout << "w:" << eval_node->winscore << '/';
+            //std::cout << "v:" << eval_node->visitcount << " -> ";
+
             // Increment visit count regardless
             eval_node->visitcount++;
 
-            // Get board turn (This needs turn bias too)?
+            // Get board turn
             int board_turn = 0;
             if(eval_node->board.get_turn() == Color::White)
                 board_turn = 1;
@@ -117,6 +147,10 @@ public:
             // Increment win count if win
             if(board_turn == playout_result)
                 eval_node->winscore++;
+            
+            // Output after propagation
+            //std::cout << "w:" << eval_node->winscore << '/';
+            //std::cout << "v:" << eval_node->visitcount << std::endl;
 
             // Set current node -> parent node
             eval_node = eval_node->parent_tree;
@@ -150,12 +184,19 @@ public:
     double uct(int parent_visit, int node_visit, double node_score)
     {
         double c = std::sqrt(2.0); // Theoretical value
-        return ((node_score / node_visit) + c * std::sqrt(std::log(parent_visit) / node_visit));
+
+        // Avoid divide by zero
+        if(node_visit == 0)
+        {
+            return 9999999;
+        }
+
+        return ((node_score / (double)node_visit) + c * std::sqrt(std::log(parent_visit) / (double)node_visit));
     }
 
     // Member variables
     int turn_bias = 0;  // Needed for evals
-    int win_score = 10;
+    //int win_score = 10;
 };
 
 int main()
