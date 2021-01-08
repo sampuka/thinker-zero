@@ -32,7 +32,7 @@ public:
 
         // MCTS
         uint64_t time_max = 5000;
-        while(time_spent < time_max)
+        while((time_spent < time_max) && !emergency_brake)
         {
             // === Selection ===
             BoardTree* promising_node = select_node(&root_node);
@@ -61,7 +61,8 @@ public:
         {
             std::cout << "[Node #" << i << "]: Move: " << root_node.nodes[i].move.longform() << " w:" << root_node.nodes[i].winscore << "/v:" << root_node.nodes[i].visitcount << "/wr:";
             double winrate = root_node.nodes[i].winscore / root_node.nodes[i].visitcount;
-            std::cout << winrate << std::endl;
+            std::cout << winrate;
+            std::cout << "/uct:" << uct(root_node.visitcount, root_node.nodes[i].visitcount, root_node.nodes[i].winscore) << std::endl;
             if(winrate > bestwinrate)
             {
                 bestwinrate = winrate;
@@ -71,6 +72,43 @@ public:
         
         // Find best move (old)
         //bestmove = find_best_child(&root_node)->move;
+
+        // Heavy debug output
+        BoardTree* eval_node = &root_node;
+        while(eval_node->nodes.size() > 0)
+        {
+            BoardTree* best_child;
+            double bwr = -1;
+            if(eval_node->board.get_turn() == Color::White)
+            {
+                bwr = 0;
+                for(size_t i = 0; i < eval_node->nodes.size(); i++)
+                {
+                    double wr = eval_node->nodes[i].winscore / eval_node->nodes[i].visitcount;
+                    if(wr > bwr)
+                    {
+                        bwr = wr;
+                        best_child = &(eval_node->nodes[i]);
+                    }
+                }
+            }
+            else
+            {
+                bwr = 999999;
+                for(size_t i = 0; i < eval_node->nodes.size(); i++)
+                {
+                    double wr = eval_node->nodes[i].winscore / eval_node->nodes[i].visitcount;
+                    if(wr < bwr)
+                    {
+                        bwr = wr;
+                        best_child = &(eval_node->nodes[i]);
+                    }
+                }
+
+            }
+            eval_node = best_child;
+            std::cout << "Picked [" << eval_node->move.longform() << "], wr:" << bwr << std::endl;
+        }
 
         // End of function
         thinking = false;
@@ -84,9 +122,12 @@ public:
         MoveList tmp_moves;
         Board tmp_board = root_node->board;
         tmp_board.get_moves(tmp_moves);
-        
+       
+        // Save start eval
+        double eval_start = tmp_board.adv_eval(tmp_moves);
+
         // Find end state (win/lose/draw/max iterations)
-        int max_moves = 50;
+        int max_moves = 15;
         int moves = 0;
         while( !tmp_moves.is_checkmate
             && !tmp_moves.is_stalemate
@@ -99,26 +140,30 @@ public:
             // Perform move and get moves of next state
             tmp_board.perform_move(random_move);
             tmp_board.get_moves(tmp_moves);
-            
-            // Break if large lead
-            //if(std::abs(tmp_board.basic_eval(tmp_moves)) > 10)
-            //    break;
 
             // Ensure max iterations
             moves++;
         }
 
         // Output evaluation at end
+        //std::cout << "============================" << std::endl;
         //std::cout << "[Eval] " << tmp_board.basic_eval(tmp_moves) << std::endl;
+        //tmp_board.print();
         
         // Evaluate end state (this needs turn bias?)
-        int eval = tmp_board.basic_eval(tmp_moves);             // Rough double to int conversion
+        double eval = tmp_board.adv_eval(tmp_moves);             // Rough double to int conversion
+        //eval -= eval_start;                                     // Optional: relative evaluation
 
         int eval_norm = 0;
-        if(eval != 0)
-            eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
+        if (eval > 0.5)
+            eval_norm = 1;
+        if (eval < -0.5)
+            eval_norm = -1;
 
-        return eval_norm;
+        //if(eval != 0)
+        //    eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
+
+        return eval_norm * turn_bias;
     }
 
     void backpropagation(BoardTree* node, int playout_result)
@@ -142,7 +187,7 @@ public:
                 board_turn = 1;
             else
                 board_turn = -1;
-            board_turn *= turn_bias; 
+            board_turn *= -turn_bias; // Negated to consider turn-to-move
 
             // Increment win count if win
             if(board_turn == playout_result)
@@ -173,8 +218,8 @@ public:
         int parent_visitcount = node->visitcount;
         const auto comparator = [&](const BoardTree &a, const BoardTree &b)
         {
-            double node_a_uct = uct(parent_visitcount, a.winscore, a.visitcount);
-            double node_b_uct = uct(parent_visitcount, b.winscore, b.visitcount);
+            double node_a_uct = uct(parent_visitcount, a.visitcount, a.winscore);
+            double node_b_uct = uct(parent_visitcount, b.visitcount, b.winscore);
             return (node_a_uct < node_b_uct);
         };
 
@@ -196,6 +241,7 @@ public:
 
     // Member variables
     int turn_bias = 0;  // Needed for evals
+    bool emergency_brake = false;
     //int win_score = 10;
 };
 
