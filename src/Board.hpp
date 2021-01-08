@@ -754,6 +754,8 @@ public:
             }
         }
 
+        int wPawnsFile = 0, bPawnsFile = 0;
+
         for (std::uint8_t x = 0; x < 8; x++)
         {
             for (std::uint8_t y = 0; y < 8; y++)
@@ -771,7 +773,15 @@ public:
 
                 switch (t.piece)
                 {
-                    case Piece::Pawn:   pv += pawn_ps[index]; break;
+                    case Piece::Pawn:
+                        pv += pawn_ps[index];
+
+                        if (t.color == Color::Black)
+                            bPawnsFile += 1;
+
+                        else
+                            wPawnsFile += 1;
+                        break;
                     case Piece::Knight: pv += knight_ps[index]; break;
                     case Piece::Bishop: pv += bishop_ps[index]; break;
                     case Piece::Rook:   pv += rook_ps[index]; break;
@@ -785,6 +795,13 @@ public:
                 else
                     eval -= pv;
             }
+            if (wPawnsFile >= 2)
+                eval -= 0.35;
+            if (bPawnsFile >= 2)
+                eval -= 0.35;
+
+            wPawnsFile = 0;
+            bPawnsFile = 0;
         }
 
         return eval;
