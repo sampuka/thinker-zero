@@ -258,13 +258,18 @@ private:
                         board = Board("3K4/4B3/3Rp3/8/4pk2/1Qp1Np2/2p2P2/2R5 w - - 0 1");
                         std::cout << "Solution d6d7, f4e5, b3b8" << std::endl;
                     }
+                    else if (tokens.at(1) == "5")
+                    {
+                        board = Board("r2qk2r/pb4pp/1n2Pb2/2B2Q2/p1p5/2P5/2B2PPP/RN2R1K1 w - - 1 0");
+                        std::cout << "Solution f5g6, h7g6, c2g6" << std::endl;
+                    }
 
                     board.print();
 
                     start_thinking_ts = std::chrono::steady_clock::now();
                     time_spent = 0;
-                    w_time = 10000;
-                    b_time = 10000;
+                    w_time = 1000000;
+                    b_time = 1000000;
                     w_inc = 1000;
                     b_inc = 1000;
                     thinking = true;
