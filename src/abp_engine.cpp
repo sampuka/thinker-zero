@@ -19,8 +19,8 @@ public:
 
         if (depthleft == 0)
         {
-            //return base.board.adv_eval(movelist);
-            return quiesce(base, alpha, beta);
+            return base.board.adv_eval(movelist);
+           // return quiesce(base, alpha, beta);
         }
 
         base.expand(movelist, 1);
@@ -45,8 +45,8 @@ public:
 
         if (depthleft == 0)
         {
-            //return base.board.adv_eval(movelist);
-            return quiesce(base, alpha, beta);
+            return -base.board.adv_eval(movelist);
+            //return quiesce(base, alpha, beta);
         }
 
         base.expand(movelist, 1);

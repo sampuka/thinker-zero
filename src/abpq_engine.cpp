@@ -45,8 +45,9 @@ public:
 
         if (depthleft == 0)
         {
-            //return base.board.adv_eval(movelist);
+           // return -base.board.adv_eval(movelist);
             return quiesce(base, alpha, beta);
+
         }
 
         base.expand(movelist, 1);
@@ -70,6 +71,7 @@ public:
     double quiesce(BoardTree& base, double alpha, double beta)
     {
         base.board.get_moves(movelist);
+        BoardTree& base_copy =base;
 
         double stand_pat = base.board.adv_eval(movelist);
         if(stand_pat >= beta)
@@ -105,20 +107,30 @@ public:
 //checks and pawn promotions (such a generator is simpler and faster than the normal one).
 
 
-        if(base.board.typetohere == MoveType::Capture)
-        {
-            base.expand(movelist, 1);
+
+
             double score = stand_pat;
             for (BoardTree &node : base.nodes)
             {
-                score = -quiesce(node, -beta, -alpha);
+                if(base.board.typetohere == MoveType::Capture)
+
+                    base.expand(movelist, 1);
+                    score = -1.0 * quiesce(node, -beta, -alpha);
+                    base=base_copy;
             }
-                // undo last move --> restore state is this possible, i dont think it works without.
+            // undo last move --> restore state is this possible, i dont think it works without.
+            // there should be a limit in how deep it searches, because right  now i think it keeps searching.
+
+
             if(score >= beta)
+            {
                 return beta;
+            }
             if(score > alpha)
+            {
                alpha = score;
-        }
+            }
+
         return alpha;
     }
 
@@ -192,9 +204,9 @@ public:
         BoardTree root(board);
 
         if (root.board.get_turn() == Color::White)
-            alphaBetaMax(root, -100000, 100000, 3);
+            alphaBetaMax(root, -100000, 100000, 4);
         else
-            alphaBetaMin(root, -100000, 100000, 3);
+            alphaBetaMin(root, -100000, 100000, 4);
 
         //Perform search looking at capture nodes.
         //quiesce(root, 10000, -10000);
