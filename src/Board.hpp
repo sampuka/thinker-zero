@@ -746,8 +746,8 @@ public:
             Bitboard black_pieces = colors[static_cast<std::uint8_t>(Color::Black)] - get_bitboard(Color::Black, Piece::Pawn);
 
             if (
-                    ((get_bitboard(Color::White, Piece::Queen) == 0) || (bitboard_count(white_pieces) <= 1)) ||
-                    ((get_bitboard(Color::Black, Piece::Queen) == 0) || (bitboard_count(black_pieces) <= 1))
+                    ((get_bitboard(Color::White, Piece::Queen) == 0) && (bitboard_count(white_pieces) <= 1)) ||
+                    ((get_bitboard(Color::Black, Piece::Queen) == 0) && (bitboard_count(black_pieces) <= 1))
                )
             {
                 endgameness = 1;
