@@ -91,9 +91,9 @@ public:
         // Create tree structure
         BoardTree root(board);
 
-        std::chrono::duration<double, std::milli> previous_layer(0);
-        std::chrono::duration<double, std::milli> last_layer(0);
-        int layer = 1;
+        std::chrono::duration<double, std::milli> previous_ply(0);
+        std::chrono::duration<double, std::milli> last_ply(0);
+        int ply = 1;
 
         std::uint64_t time_left = w_time;
         std::uint64_t time_inc = w_inc;
@@ -103,24 +103,24 @@ public:
             time_inc = b_inc;
         }
 
-        std::uint64_t max_time = std::min(time_inc + time_left/10, std::uint64_t{10000});
+        std::uint64_t max_time = std::min(time_inc + time_left/10, std::uint64_t{30000});
         std::uint64_t exp_time = 0;
 
-        while ((max_time - time_spent > exp_time) && (layer <= 4))
+        while ((max_time - time_spent > exp_time) && (ply <= 4))
         {
             auto tp = std::chrono::high_resolution_clock::now();
-            root.expand(movelist, z_list, layer);
+            root.expand(movelist, z_list, ply);
             minimax(root);
             std::chrono::duration<double> dur = std::chrono::high_resolution_clock::now() - tp;
 
             bestmove = root.bestmove;
             evaluation = root.evaluation*turn;
 
-            layer++;
-            previous_layer = last_layer;
-            last_layer = dur;
+            ply++;
+            previous_ply = last_ply;
+            last_ply = dur;
 
-            exp_time = std::min(static_cast<double>(last_layer.count()/previous_layer.count()), double{30})*last_layer.count();
+            exp_time = std::min(static_cast<double>(last_ply.count()/previous_ply.count()), double{30})*last_ply.count();
         }
 
         //std::cout << layer << ' ' << last_layer.count() << ' ' << previous_layer.count() << std::endl;

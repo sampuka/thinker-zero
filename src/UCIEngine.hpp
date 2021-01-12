@@ -270,8 +270,8 @@ private:
                     time_spent = 0;
                     w_time = 1000000;
                     b_time = 1000000;
-                    w_inc = 1000;
-                    b_inc = 1000;
+                    w_inc = 10000;
+                    b_inc = 10000;
                     thinking = true;
                     think_state = true;
                     think_thread = std::thread(&UCIEngine::think, this);
