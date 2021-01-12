@@ -113,10 +113,11 @@ public:
             for (BoardTree &node : base.nodes)
             {
                 if(base.board.typetohere == MoveType::Capture)
-
+                {
                     base.expand(movelist, 1);
                     score = -1.0 * quiesce(node, -beta, -alpha);
                     base=base_copy;
+                }
             }
             // undo last move --> restore state is this possible, i dont think it works without.
             // there should be a limit in how deep it searches, because right  now i think it keeps searching.

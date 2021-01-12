@@ -45,7 +45,7 @@ public:
 
         if (depthleft == 0)
         {
-            return -base.board.adv_eval(movelist);
+            return base.board.adv_eval(movelist);
             //return quiesce(base, alpha, beta);
         }
 
