@@ -57,6 +57,7 @@ public:
         
         // Find best move (new)
         double bestwinrate = 0;
+        std::cout << "Available moves:" << std::endl;
         for(size_t i = 0; i < root_node.nodes.size(); i++)
         {
             std::cout << "[Node #" << i << "]: Move: " << root_node.nodes[i].move.longform() << " w:" << root_node.nodes[i].winscore << "/v:" << root_node.nodes[i].visitcount << "/wr:";
@@ -69,15 +70,33 @@ public:
                 bestmove = root_node.nodes[i].move;
             }
         }
-        
-        // Find best move (old)
-        //bestmove = find_best_child(&root_node)->move;
 
-        // Heavy debug output
-        BoardTree* eval_node = &root_node;
+        // Print principal variation
+        principal_variation(&root_node);
+
+
+        // End of function
+        thinking = false;
+    }
+    
+    void principal_variation(BoardTree* root_node)
+    {
+        std::cout << "Principal variation:" << std::endl;
+        BoardTree* eval_node = root_node;
         while(eval_node->nodes.size() > 0)
         {
-            BoardTree* best_child;
+            // BIG PRINT
+            /*
+            for(size_t i = 0; i < eval_node->nodes.size(); i++)
+            {
+                std::cout << "[Node #" << i << "]: Move: " << eval_node->nodes[i].move.longform() << " w:" << eval_node->nodes[i].winscore << "/v:" << eval_node->nodes[i].visitcount << "/wr:";
+                double winrate = eval_node->nodes[i].winscore / eval_node->nodes[i].visitcount;
+                std::cout << winrate;
+                std::cout << "/uct:" << uct(eval_node->visitcount, eval_node->nodes[i].visitcount, eval_node->nodes[i].winscore) << std::endl;
+            }
+            */
+            // END OF BIG PRINT
+            BoardTree* best_child = nullptr;
             double bwr = -1;
             if(eval_node->board.get_turn() == Color::White)
             {
@@ -107,13 +126,10 @@ public:
 
             }
             eval_node = best_child;
-            std::cout << "Picked [" << eval_node->move.longform() << "], wr:" << bwr << std::endl;
+            std::cout << "Picked [" << eval_node->move.longform() << "], wr:" << bwr << ", visit:" << eval_node->visitcount << ", wins:" << eval_node->winscore <<  std::endl;
         }
-
-        // End of function
-        thinking = false;
     }
-
+    
     // Input:  Tree node
     // Output: Normalized unbiased end state evaluation (1,0,-1)
     int simulate_playout_random(BoardTree *root_node)
@@ -122,6 +138,24 @@ public:
         MoveList tmp_moves;
         Board tmp_board = root_node->board;
         tmp_board.get_moves(tmp_moves);
+
+        // Check if state is win
+        if(tmp_moves.is_checkmate)
+        {
+            // Get board turn
+            int board_turn = 0;
+            if(tmp_board.get_turn() == Color::White)
+                board_turn = 1;
+            else
+                board_turn = -1;
+            board_turn *= -turn_bias; // Negative because you are in check mate
+
+            return board_turn;
+        }
+
+        // Check if state is stale
+        if(tmp_moves.is_stalemate)
+            return 0;
        
         // Save start eval
         double eval_start = tmp_board.adv_eval(tmp_moves);
@@ -129,13 +163,14 @@ public:
         // Find end state (win/lose/draw/max iterations)
         int max_moves = 15;
         int moves = 0;
+        Move random_move;
         while( !tmp_moves.is_checkmate
             && !tmp_moves.is_stalemate
             && moves < max_moves )
         {
             // Generate random move
             std::uniform_int_distribution<std::uint8_t> dist(0, tmp_moves.size()-1);
-            Move random_move = tmp_moves.at(dist(eng));
+            random_move = tmp_moves.at(dist(eng));
             
             // Perform move and get moves of next state
             tmp_board.perform_move(random_move);
@@ -144,40 +179,28 @@ public:
             // Ensure max iterations
             moves++;
         }
-
-        // Output evaluation at end
-        //std::cout << "============================" << std::endl;
-        //std::cout << "[Eval] " << tmp_board.basic_eval(tmp_moves) << std::endl;
-        //tmp_board.print();
         
         // Evaluate end state (this needs turn bias?)
-        double eval = tmp_board.adv_eval(tmp_moves);             // Rough double to int conversion
-        //eval -= eval_start;                                     // Optional: relative evaluation
-
+        double eval = tmp_board.adv_eval(tmp_moves);    // Rough double to int conversion
+        eval -= eval_start;                             // Optional: relative evaluation
+        
+        // Translate evaluation
+        double padding = 0.5;
         int eval_norm = 0;
-        if (eval > 0.5)
+        if (eval > padding)
             eval_norm = 1;
-        if (eval < -0.5)
+        if (eval < -padding)
             eval_norm = -1;
+        eval_norm *= turn_bias;
 
-        //if(eval != 0)
-        //    eval_norm = (eval/std::abs(eval)) * turn_bias;      // Normalized evaluation (1,0,-1)
-
-        return eval_norm * turn_bias;
+        return eval_norm;
     }
 
     void backpropagation(BoardTree* node, int playout_result)
     {
         BoardTree* eval_node = node;
-        //std::cout << "Backpropagation:" << std::endl;
-        //std::cout << "Playout result: " << playout_result << std::endl;
         while(eval_node != nullptr)
         {
-            // Output before propagation
-            //std::cout << "[turn: " << (eval_node->board.get_turn() == Color::White ? "White" : "Black") << "] ";
-            //std::cout << "w:" << eval_node->winscore << '/';
-            //std::cout << "v:" << eval_node->visitcount << " -> ";
-
             // Increment visit count regardless
             eval_node->visitcount++;
 
@@ -193,10 +216,6 @@ public:
             if(board_turn == playout_result)
                 eval_node->winscore++;
             
-            // Output after propagation
-            //std::cout << "w:" << eval_node->winscore << '/';
-            //std::cout << "v:" << eval_node->visitcount << std::endl;
-
             // Set current node -> parent node
             eval_node = eval_node->parent_tree;
         }
@@ -229,6 +248,7 @@ public:
     double uct(int parent_visit, int node_visit, double node_score)
     {
         double c = std::sqrt(2.0); // Theoretical value
+        //c = 0.35;
 
         // Avoid divide by zero
         if(node_visit == 0)
@@ -242,7 +262,6 @@ public:
     // Member variables
     int turn_bias = 0;  // Needed for evals
     bool emergency_brake = false;
-    //int win_score = 10;
 };
 
 int main()
