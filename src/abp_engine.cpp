@@ -13,7 +13,7 @@ public:
 
     MoveList movelist;
 
-    double alphaBetaMax(BoardTree& base, double alpha, double beta, int depthleft)
+    double alphaBetaMax(BoardTree& base, double alpha, double beta, int depthleft, std::vector<std::uint64_t> &zob_list)
     {
         base.board.get_moves(movelist);
 
@@ -23,14 +23,18 @@ public:
            // return quiesce(base, alpha, beta);
         }
 
-        base.expand(movelist, 1);
+        base.expand(movelist, zob_list, 1);
 
         if(base.nodes.size() == 0)
             return base.board.adv_eval(movelist);
 
         for (BoardTree &node : base.nodes)
         {
-            double score = alphaBetaMin(node, alpha, beta, depthleft - 1);
+            std::uint64_t zob = node.board.get_zobrist();
+            zob_list.push_back(zob);
+            double score = alphaBetaMin(node, alpha, beta, depthleft - 1, zob_list);
+            zob_list.pop_back();
+
             if(score >= beta)
                 return beta;   // fail hard beta-cutoff
             if(score > alpha)
@@ -39,7 +43,7 @@ public:
         return alpha;
     }
 
-    double alphaBetaMin(BoardTree& base, double alpha, double beta, int depthleft)
+    double alphaBetaMin(BoardTree& base, double alpha, double beta, int depthleft, std::vector<std::uint64_t> &zob_list)
     {
         base.board.get_moves(movelist);
 
@@ -49,14 +53,18 @@ public:
             //return quiesce(base, alpha, beta);
         }
 
-        base.expand(movelist, 1);
+        base.expand(movelist, zob_list, 1);
 
         if(base.nodes.size() == 0)
             return base.board.adv_eval(movelist);
 
         for (BoardTree &node : base.nodes)
         {
-            double score = alphaBetaMax(node, alpha, beta, depthleft - 1);
+            std::uint64_t zob = node.board.get_zobrist();
+            zob_list.push_back(zob);
+            double score = alphaBetaMax(node, alpha, beta, depthleft - 1, zob_list);
+            zob_list.pop_back();
+
             if(score <= alpha)
                 return alpha; // fail hard alpha-cutoff
             if(score < beta)
@@ -182,9 +190,9 @@ public:
             auto tp = std::chrono::high_resolution_clock::now();
 
             if (root.board.get_turn() == Color::White)
-                alphaBetaMax(root, -100000, 100000, ply);
+                alphaBetaMax(root, -100000, 100000, ply, z_list);
             else
-                alphaBetaMin(root, -100000, 100000, ply);
+                alphaBetaMin(root, -100000, 100000, ply, z_list);
 
             //Perform search looking at capture nodes.
             //quiesce(root, 10000, -10000);
