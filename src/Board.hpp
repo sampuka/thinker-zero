@@ -752,6 +752,22 @@ public:
             {
                 endgameness = 1;
             }
+
+            if ((bitboard_count(white_pieces) >= 2) && (bitboard_count(white_pieces) <= 4))
+            {
+                if(bitboard_count(get_bitboard(Color::White, Piece::Bishop)) == 2)
+                {
+                    eval += 0.35;
+                }
+            }
+
+            if ((bitboard_count(black_pieces) >= 2) && (bitboard_count(black_pieces) <= 4))
+            {
+                if(bitboard_count(get_bitboard(Color::Black, Piece::Bishop)) == 2)
+                {
+                    eval -= 0.35;
+                }
+            }
         }
 
         int wPawnsFile = 0, bPawnsFile = 0;
