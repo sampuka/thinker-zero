@@ -162,18 +162,46 @@ public:
         // Create tree structure
         BoardTree root(board);
 
-        if (root.board.get_turn() == Color::White)
-            alphaBetaMax(root, -100000, 100000, 4);
-        else
-            alphaBetaMin(root, -100000, 100000, 4);
+        std::chrono::duration<double, std::milli> previous_ply(0);
+        std::chrono::duration<double, std::milli> last_ply(0);
+        int ply = 1;
 
-        //Perform search looking at capture nodes.
-        //quiesce(root, 10000, -10000);
+        std::uint64_t time_left = w_time;
+        std::uint64_t time_inc = w_inc;
+        if (board.get_turn() == Color::Black)
+        {
+            time_left = b_time;
+            time_inc = b_inc;
+        }
 
-        minimax(root);
+        std::uint64_t max_time = std::min(time_inc + time_left/10, std::uint64_t{30000});
+        std::uint64_t exp_time = 0;
 
-        bestmove = root.bestmove;
-        evaluation = root.evaluation*turn;
+        while ((max_time - time_spent > exp_time) && (ply <= 5))
+        {
+            auto tp = std::chrono::high_resolution_clock::now();
+
+            if (root.board.get_turn() == Color::White)
+                alphaBetaMax(root, -100000, 100000, ply);
+            else
+                alphaBetaMin(root, -100000, 100000, ply);
+
+            //Perform search looking at capture nodes.
+            //quiesce(root, 10000, -10000);
+
+            minimax(root);
+
+            std::chrono::duration<double> dur = std::chrono::high_resolution_clock::now() - tp;
+
+            bestmove = root.bestmove;
+            evaluation = root.evaluation*turn;
+
+            ply++;
+            previous_ply = last_ply;
+            last_ply = dur;
+
+            exp_time = std::min(static_cast<double>(last_ply.count()/previous_ply.count()), double{30})*last_ply.count();
+        }
 
         // End of function
         thinking = false;
