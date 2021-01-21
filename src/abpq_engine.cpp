@@ -20,7 +20,7 @@ public:
         if (depthleft == 0)
         {
             //return base.board.adv_eval(movelist);
-            return quiesce(base, alpha, beta);
+            return quiesce(base, alpha, beta, 1);
         }
 
         base.expand(movelist, zob_list, 1);
@@ -50,7 +50,7 @@ public:
         if (depthleft == 0)
         {
            // return -base.board.adv_eval(movelist);
-            return quiesce(base, alpha, beta);
+            return quiesce(base, alpha, beta, 1);
 
         }
 
@@ -76,12 +76,17 @@ public:
 
 
     //Look at nodes which involves captures.
-    double quiesce(BoardTree& base, double alpha, double beta)
+    double quiesce(BoardTree& base, double alpha, double beta, int depthleft)
     {
+        if(depthleft == 0)
+        {
+            return alpha;
+        }
         base.board.get_moves(movelist);
         BoardTree& base_copy =base;
 
         double stand_pat = base.board.adv_eval(movelist);
+
         if(stand_pat >= beta)
             return stand_pat; // some say that returning beta will make it kill itself --> https://stackoverflow.com/questions/48846642/is-there-something-wrong-with-my-quiescence-search
         if(alpha < stand_pat)
@@ -116,27 +121,29 @@ public:
 
 
 
-
+            base.expand(movelist, 1);
             double score = stand_pat;
             for (BoardTree &node : base.nodes)
             {
                 if(base.board.typetohere == MoveType::Capture)
-                {
-                    base.expand(movelist, 1);
-                    score = -1.0 * quiesce(node, -beta, -alpha);
+                    {
+
+                   // base.expand(movelist, 1);
+                    score = -1.0 * quiesce(node, -beta, -alpha, depthleft-1);
                     base=base_copy;
-                }
-            }
+
+                    }
+
             // undo last move --> restore state is this possible, i dont think it works without.
             // there should be a limit in how deep it searches, because right  now i think it keeps searching.
 
 
             if(score >= beta)
-            {
+
                 return beta;
-            }
+
             if(score > alpha)
-            {
+
                alpha = score;
             }
 
