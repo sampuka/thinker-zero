@@ -224,7 +224,7 @@ public:
             time_inc = b_inc;
         }
 
-        std::uint64_t max_time = std::min(time_inc + time_left/10, std::uint64_t{30000});
+        std::uint64_t max_time = std::min(time_inc + time_left/4, std::uint64_t{30000});
         std::uint64_t exp_time = 0;
 
         while ((max_time - time_spent > exp_time) && (ply <= 5))
