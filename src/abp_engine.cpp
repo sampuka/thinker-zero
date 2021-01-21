@@ -73,34 +73,6 @@ public:
         return beta;
     }
 
-    //Look at nodes which involves captures.
-    double quiesce(BoardTree& base, double alpha, double beta)
-    {
-        base.board.get_moves(movelist);
-
-        double stand_pat = base.board.adv_eval(movelist);
-        if(stand_pat >= beta)
-            return beta;
-        if(alpha < stand_pat)
-            alpha = stand_pat;
-
-        if(base.board.typetohere == MoveType::Capture)
-        {
-            base.expand(movelist, 1);
-            double score = stand_pat;
-            for (BoardTree &node : base.nodes)
-            {
-                score = -quiesce(node, -beta, -alpha);
-            }
-
-            if(score >= beta)
-                return beta;
-            if(score > alpha)
-               alpha = score;
-        }
-        return alpha;
-    }
-
     void think() override
     {
         // Default white
