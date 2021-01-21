@@ -7,6 +7,9 @@ class MinimaxEngine : public UCIEngine
 public:
     MinimaxEngine()
     {
+        engine_name = "Minimax Engine";
+        engine_author = "Mathias, Mathias, Martin og Maly";
+
         start();
     }
 
