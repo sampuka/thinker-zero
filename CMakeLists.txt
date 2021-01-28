@@ -19,6 +19,10 @@ set(ABPQ_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/abpq_engine.cpp)
 add_executable(abpq_engine ${ABPQ_SRCS})
 target_link_libraries(abpq_engine PRIVATE Threads::Threads)
 
+set(ABP_V2_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/abp_v2_engine.cpp)
+add_executable(abp_v2_engine ${ABP_V2_SRCS})
+target_link_libraries(abp_v2_engine PRIVATE Threads::Threads)
+
 set(MINIMAX_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/minimax_engine.cpp)
 add_executable(minimax_engine ${MINIMAX_SRCS})
 target_link_libraries(minimax_engine PRIVATE Threads::Threads)
