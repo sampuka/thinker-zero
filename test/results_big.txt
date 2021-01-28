@@ -303,3 +303,25 @@ Finished game 151 (SF3 vs Minimax Engine): 1-0 {White mates}
 Started game 152 of 160 (SF2 vs SF1)
 Finished game 152 (SF2 vs SF1): 1-0 {White mates}
 Started game 153 of 160 (SF3 vs ABP Engine)
+Finished game 153 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 154 of 160 (SF1 vs Minimax Engine)
+Finished game 154 (SF1 vs Minimax Engine): 0-1 {Black mates}
+Started game 155 of 160 (SF2 vs ABP Engine)
+Finished game 155 (SF2 vs ABP Engine): 1-0 {Black loses on time}
+Started game 156 of 160 (SF1 vs SF3)
+Finished game 156 (SF1 vs SF3): 1-0 {White mates}
+Started game 157 of 160 (SF1 vs ABP Engine)
+Finished game 157 (SF1 vs ABP Engine): 0-1 {Black mates}
+Started game 158 of 160 (Minimax Engine vs SF2)
+Finished game 158 (Minimax Engine vs SF2): 1-0 {White mates}
+Started game 159 of 160 (Minimax Engine vs ABP Engine)
+Finished game 159 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 160 of 160 (SF3 vs SF2)
+Finished game 160 (SF3 vs SF2): 1-0 {White mates}
+Rank Name                          Elo     +/-   Games   Score   Draws
+   1 SF3                           255     118      64   81.3%    0.0%
+   2 SF2                            38      87      64   55.5%    1.6%
+   3 SF1                           -27      86      64   46.1%    1.6%
+   4 ABP Engine                    -38      84      64   44.5%    7.8%
+   5 Minimax Engine               -213     104      64   22.7%    4.7%
+Finished match
