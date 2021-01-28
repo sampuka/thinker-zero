@@ -1,0 +1,305 @@
+Started game 1 of 160 (Minimax Engine vs SF3)
+Finished game 1 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 2 of 160 (SF1 vs SF2)
+Finished game 2 (SF1 vs SF2): 1-0 {White mates}
+Started game 3 of 160 (ABP Engine vs SF3)
+Finished game 3 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 4 of 160 (Minimax Engine vs SF1)
+Finished game 4 (Minimax Engine vs SF1): 0-1 {Black mates}
+Started game 5 of 160 (ABP Engine vs SF2)
+Finished game 5 (ABP Engine vs SF2): 0-1 {Black mates}
+Started game 6 of 160 (SF3 vs SF1)
+Finished game 6 (SF3 vs SF1): 1-0 {White mates}
+Started game 7 of 160 (ABP Engine vs SF1)
+Finished game 7 (ABP Engine vs SF1): 0-1 {Black mates}
+Started game 8 of 160 (SF2 vs Minimax Engine)
+Finished game 8 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 9 of 160 (ABP Engine vs Minimax Engine)
+Finished game 9 (ABP Engine vs Minimax Engine): 1/2-1/2 {Draw by 3-fold repetition}
+Started game 10 of 160 (SF2 vs SF3)
+Finished game 10 (SF2 vs SF3): 0-1 {Black mates}
+Started game 11 of 160 (SF3 vs Minimax Engine)
+Finished game 11 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 12 of 160 (SF2 vs SF1)
+Finished game 12 (SF2 vs SF1): 1-0 {White mates}
+Started game 13 of 160 (SF3 vs ABP Engine)
+Finished game 13 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 14 of 160 (SF1 vs Minimax Engine)
+Finished game 14 (SF1 vs Minimax Engine): 0-1 {Black mates}
+Started game 15 of 160 (SF2 vs ABP Engine)
+Finished game 15 (SF2 vs ABP Engine): 1-0 {White mates}
+Started game 16 of 160 (SF1 vs SF3)
+Finished game 16 (SF1 vs SF3): 1-0 {White mates}
+Started game 17 of 160 (SF1 vs ABP Engine)
+Finished game 17 (SF1 vs ABP Engine): 1-0 {White mates}
+Started game 18 of 160 (Minimax Engine vs SF2)
+Finished game 18 (Minimax Engine vs SF2): 0-1 {Black mates}
+Started game 19 of 160 (Minimax Engine vs ABP Engine)
+Finished game 19 (Minimax Engine vs ABP Engine): 1-0 {White mates}
+Started game 20 of 160 (SF3 vs SF2)
+Finished game 20 (SF3 vs SF2): 1-0 {White mates}
+Started game 21 of 160 (Minimax Engine vs SF3)
+Finished game 21 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 22 of 160 (SF1 vs SF2)
+Finished game 22 (SF1 vs SF2): 1-0 {White mates}
+Started game 23 of 160 (ABP Engine vs SF3)
+Finished game 23 (ABP Engine vs SF3): 1-0 {White mates}
+Started game 24 of 160 (Minimax Engine vs SF1)
+Finished game 24 (Minimax Engine vs SF1): 0-1 {Black mates}
+Started game 25 of 160 (ABP Engine vs SF2)
+Finished game 25 (ABP Engine vs SF2): 0-1 {Black mates}
+Started game 26 of 160 (SF3 vs SF1)
+Finished game 26 (SF3 vs SF1): 1-0 {White mates}
+Started game 27 of 160 (ABP Engine vs SF1)
+Finished game 27 (ABP Engine vs SF1): 1-0 {White mates}
+Started game 28 of 160 (SF2 vs Minimax Engine)
+Finished game 28 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 29 of 160 (ABP Engine vs Minimax Engine)
+Finished game 29 (ABP Engine vs Minimax Engine): 1-0 {White mates}
+Started game 30 of 160 (SF2 vs SF3)
+Finished game 30 (SF2 vs SF3): 0-1 {Black mates}
+Started game 31 of 160 (SF3 vs Minimax Engine)
+Finished game 31 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 32 of 160 (SF2 vs SF1)
+Finished game 32 (SF2 vs SF1): 1-0 {White mates}
+Started game 33 of 160 (SF3 vs ABP Engine)
+Finished game 33 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 34 of 160 (SF1 vs Minimax Engine)
+Finished game 34 (SF1 vs Minimax Engine): 1-0 {White mates}
+Started game 35 of 160 (SF2 vs ABP Engine)
+Finished game 35 (SF2 vs ABP Engine): 1/2-1/2 {Draw by 3-fold repetition}
+Started game 36 of 160 (SF1 vs SF3)
+Finished game 36 (SF1 vs SF3): 0-1 {Black mates}
+Started game 37 of 160 (SF1 vs ABP Engine)
+Finished game 37 (SF1 vs ABP Engine): 1-0 {Black loses on time}
+Started game 38 of 160 (Minimax Engine vs SF2)
+Finished game 38 (Minimax Engine vs SF2): 0-1 {Black mates}
+Started game 39 of 160 (Minimax Engine vs ABP Engine)
+Finished game 39 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 40 of 160 (SF3 vs SF2)
+Finished game 40 (SF3 vs SF2): 1-0 {White mates}
+Started game 41 of 160 (Minimax Engine vs SF3)
+Finished game 41 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 42 of 160 (SF1 vs SF2)
+Finished game 42 (SF1 vs SF2): 1-0 {White mates}
+Started game 43 of 160 (ABP Engine vs SF3)
+Finished game 43 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 44 of 160 (Minimax Engine vs SF1)
+Finished game 44 (Minimax Engine vs SF1): 0-1 {Black mates}
+Started game 45 of 160 (ABP Engine vs SF2)
+Finished game 45 (ABP Engine vs SF2): 1-0 {White mates}
+Started game 46 of 160 (SF3 vs SF1)
+Finished game 46 (SF3 vs SF1): 1-0 {White mates}
+Started game 47 of 160 (ABP Engine vs SF1)
+Finished game 47 (ABP Engine vs SF1): 0-1 {Black mates}
+Started game 48 of 160 (SF2 vs Minimax Engine)
+Finished game 48 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 49 of 160 (ABP Engine vs Minimax Engine)
+Finished game 49 (ABP Engine vs Minimax Engine): 1/2-1/2 {Draw by fifty moves rule}
+Started game 50 of 160 (SF2 vs SF3)
+Finished game 50 (SF2 vs SF3): 1-0 {White mates}
+Started game 51 of 160 (SF3 vs Minimax Engine)
+Finished game 51 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 52 of 160 (SF2 vs SF1)
+Finished game 52 (SF2 vs SF1): 1-0 {White mates}
+Started game 53 of 160 (SF3 vs ABP Engine)
+Finished game 53 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 54 of 160 (SF1 vs Minimax Engine)
+Finished game 54 (SF1 vs Minimax Engine): 0-1 {Black mates}
+Started game 55 of 160 (SF2 vs ABP Engine)
+Finished game 55 (SF2 vs ABP Engine): 0-1 {Black mates}
+Started game 56 of 160 (SF1 vs SF3)
+Finished game 56 (SF1 vs SF3): 0-1 {Black mates}
+Started game 57 of 160 (SF1 vs ABP Engine)
+Finished game 57 (SF1 vs ABP Engine): 1-0 {White mates}
+Started game 58 of 160 (Minimax Engine vs SF2)
+Finished game 58 (Minimax Engine vs SF2): 0-1 {Black mates}
+Started game 59 of 160 (Minimax Engine vs ABP Engine)
+Finished game 59 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 60 of 160 (SF3 vs SF2)
+Finished game 60 (SF3 vs SF2): 0-1 {Black mates}
+Started game 61 of 160 (Minimax Engine vs SF3)
+Finished game 61 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 62 of 160 (SF1 vs SF2)
+Finished game 62 (SF1 vs SF2): 1-0 {White mates}
+Started game 63 of 160 (ABP Engine vs SF3)
+Finished game 63 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 64 of 160 (Minimax Engine vs SF1)
+Finished game 64 (Minimax Engine vs SF1): 1-0 {White mates}
+Started game 65 of 160 (ABP Engine vs SF2)
+Finished game 65 (ABP Engine vs SF2): 1-0 {White mates}
+Started game 66 of 160 (SF3 vs SF1)
+Finished game 66 (SF3 vs SF1): 1-0 {White mates}
+Started game 67 of 160 (ABP Engine vs SF1)
+Finished game 67 (ABP Engine vs SF1): 0-1 {Black mates}
+Started game 68 of 160 (SF2 vs Minimax Engine)
+Finished game 68 (SF2 vs Minimax Engine): 0-1 {Black mates}
+Started game 69 of 160 (ABP Engine vs Minimax Engine)
+Finished game 69 (ABP Engine vs Minimax Engine): 1-0 {White mates}
+Started game 70 of 160 (SF2 vs SF3)
+Finished game 70 (SF2 vs SF3): 0-1 {Black mates}
+Started game 71 of 160 (SF3 vs Minimax Engine)
+Finished game 71 (SF3 vs Minimax Engine): 0-1 {Black mates}
+Started game 72 of 160 (SF2 vs SF1)
+Finished game 72 (SF2 vs SF1): 1-0 {White mates}
+Started game 73 of 160 (SF3 vs ABP Engine)
+Finished game 73 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 74 of 160 (SF1 vs Minimax Engine)
+Finished game 74 (SF1 vs Minimax Engine): 1-0 {White mates}
+Started game 75 of 160 (SF2 vs ABP Engine)
+Finished game 75 (SF2 vs ABP Engine): 0-1 {Black mates}
+Started game 76 of 160 (SF1 vs SF3)
+Finished game 76 (SF1 vs SF3): 0-1 {Black mates}
+Started game 77 of 160 (SF1 vs ABP Engine)
+Finished game 77 (SF1 vs ABP Engine): 1-0 {White mates}
+Started game 78 of 160 (Minimax Engine vs SF2)
+Finished game 78 (Minimax Engine vs SF2): 0-1 {Black mates}
+Started game 79 of 160 (Minimax Engine vs ABP Engine)
+Finished game 79 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 80 of 160 (SF3 vs SF2)
+Finished game 80 (SF3 vs SF2): 1-0 {White mates}
+Started game 81 of 160 (Minimax Engine vs SF3)
+Finished game 81 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 82 of 160 (SF1 vs SF2)
+Finished game 82 (SF1 vs SF2): 0-1 {Black mates}
+Started game 83 of 160 (ABP Engine vs SF3)
+Finished game 83 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 84 of 160 (Minimax Engine vs SF1)
+Finished game 84 (Minimax Engine vs SF1): 1-0 {White mates}
+Started game 85 of 160 (ABP Engine vs SF2)
+Finished game 85 (ABP Engine vs SF2): 0-1 {Black mates}
+Started game 86 of 160 (SF3 vs SF1)
+Finished game 86 (SF3 vs SF1): 1-0 {White mates}
+Started game 87 of 160 (ABP Engine vs SF1)
+Finished game 87 (ABP Engine vs SF1): 0-1 {Black mates}
+Started game 88 of 160 (SF2 vs Minimax Engine)
+Finished game 88 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 89 of 160 (ABP Engine vs Minimax Engine)
+Finished game 89 (ABP Engine vs Minimax Engine): 1-0 {White mates}
+Started game 90 of 160 (SF2 vs SF3)
+Finished game 90 (SF2 vs SF3): 1-0 {White mates}
+Started game 91 of 160 (SF3 vs Minimax Engine)
+Finished game 91 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 92 of 160 (SF2 vs SF1)
+Finished game 92 (SF2 vs SF1): 0-1 {Black mates}
+Started game 93 of 160 (SF3 vs ABP Engine)
+Finished game 93 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 94 of 160 (SF1 vs Minimax Engine)
+Finished game 94 (SF1 vs Minimax Engine): 1-0 {White mates}
+Started game 95 of 160 (SF2 vs ABP Engine)
+Finished game 95 (SF2 vs ABP Engine): 1-0 {White mates}
+Started game 96 of 160 (SF1 vs SF3)
+Finished game 96 (SF1 vs SF3): 0-1 {Black mates}
+Started game 97 of 160 (SF1 vs ABP Engine)
+Finished game 97 (SF1 vs ABP Engine): 1/2-1/2 {Draw by 3-fold repetition}
+Started game 98 of 160 (Minimax Engine vs SF2)
+Finished game 98 (Minimax Engine vs SF2): 1-0 {White mates}
+Started game 99 of 160 (Minimax Engine vs ABP Engine)
+Finished game 99 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 100 of 160 (SF3 vs SF2)
+Finished game 100 (SF3 vs SF2): 0-1 {Black mates}
+Started game 101 of 160 (Minimax Engine vs SF3)
+Finished game 101 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 102 of 160 (SF1 vs SF2)
+Finished game 102 (SF1 vs SF2): 0-1 {Black mates}
+Started game 103 of 160 (ABP Engine vs SF3)
+Finished game 103 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 104 of 160 (Minimax Engine vs SF1)
+Finished game 104 (Minimax Engine vs SF1): 0-1 {Black mates}
+Started game 105 of 160 (ABP Engine vs SF2)
+Finished game 105 (ABP Engine vs SF2): 0-1 {Black mates}
+Started game 106 of 160 (SF3 vs SF1)
+Finished game 106 (SF3 vs SF1): 1-0 {White mates}
+Started game 107 of 160 (ABP Engine vs SF1)
+Finished game 107 (ABP Engine vs SF1): 1-0 {White mates}
+Started game 108 of 160 (SF2 vs Minimax Engine)
+Finished game 108 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 109 of 160 (ABP Engine vs Minimax Engine)
+Finished game 109 (ABP Engine vs Minimax Engine): 1/2-1/2 {Draw by 3-fold repetition}
+Started game 110 of 160 (SF2 vs SF3)
+Finished game 110 (SF2 vs SF3): 0-1 {Black mates}
+Started game 111 of 160 (SF3 vs Minimax Engine)
+Finished game 111 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 112 of 160 (SF2 vs SF1)
+Finished game 112 (SF2 vs SF1): 0-1 {Black mates}
+Started game 113 of 160 (SF3 vs ABP Engine)
+Finished game 113 (SF3 vs ABP Engine): 1-0 {White mates}
+Started game 114 of 160 (SF1 vs Minimax Engine)
+Finished game 114 (SF1 vs Minimax Engine): 1-0 {White mates}
+Started game 115 of 160 (SF2 vs ABP Engine)
+Finished game 115 (SF2 vs ABP Engine): 1-0 {White mates}
+Started game 116 of 160 (SF1 vs SF3)
+Finished game 116 (SF1 vs SF3): 0-1 {Black mates}
+Started game 117 of 160 (SF1 vs ABP Engine)
+Finished game 117 (SF1 vs ABP Engine): 0-1 {Black mates}
+Started game 118 of 160 (Minimax Engine vs SF2)
+Finished game 118 (Minimax Engine vs SF2): 0-1 {Black mates}
+Started game 119 of 160 (Minimax Engine vs ABP Engine)
+Finished game 119 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 120 of 160 (SF3 vs SF2)
+Finished game 120 (SF3 vs SF2): 1-0 {White mates}
+Started game 121 of 160 (Minimax Engine vs SF3)
+Finished game 121 (Minimax Engine vs SF3): 1-0 {White mates}
+Started game 122 of 160 (SF1 vs SF2)
+Finished game 122 (SF1 vs SF2): 1-0 {White mates}
+Started game 123 of 160 (ABP Engine vs SF3)
+Finished game 123 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 124 of 160 (Minimax Engine vs SF1)
+Finished game 124 (Minimax Engine vs SF1): 0-1 {Black mates}
+Started game 125 of 160 (ABP Engine vs SF2)
+Finished game 125 (ABP Engine vs SF2): 1-0 {White mates}
+Started game 126 of 160 (SF3 vs SF1)
+Finished game 126 (SF3 vs SF1): 1-0 {White mates}
+Started game 127 of 160 (ABP Engine vs SF1)
+Finished game 127 (ABP Engine vs SF1): 1-0 {White mates}
+Started game 128 of 160 (SF2 vs Minimax Engine)
+Finished game 128 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 129 of 160 (ABP Engine vs Minimax Engine)
+Finished game 129 (ABP Engine vs Minimax Engine): 1-0 {White mates}
+Started game 130 of 160 (SF2 vs SF3)
+Finished game 130 (SF2 vs SF3): 0-1 {Black mates}
+Started game 131 of 160 (SF3 vs Minimax Engine)
+Finished game 131 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 132 of 160 (SF2 vs SF1)
+Finished game 132 (SF2 vs SF1): 0-1 {Black mates}
+Started game 133 of 160 (SF3 vs ABP Engine)
+Finished game 133 (SF3 vs ABP Engine): 0-1 {Black mates}
+Started game 134 of 160 (SF1 vs Minimax Engine)
+Finished game 134 (SF1 vs Minimax Engine): 1-0 {White mates}
+Started game 135 of 160 (SF2 vs ABP Engine)
+Finished game 135 (SF2 vs ABP Engine): 1-0 {White mates}
+Started game 136 of 160 (SF1 vs SF3)
+Finished game 136 (SF1 vs SF3): 0-1 {Black mates}
+Started game 137 of 160 (SF1 vs ABP Engine)
+Finished game 137 (SF1 vs ABP Engine): 0-1 {Black mates}
+Started game 138 of 160 (Minimax Engine vs SF2)
+Finished game 138 (Minimax Engine vs SF2): 1-0 {White mates}
+Started game 139 of 160 (Minimax Engine vs ABP Engine)
+Finished game 139 (Minimax Engine vs ABP Engine): 0-1 {Black mates}
+Started game 140 of 160 (SF3 vs SF2)
+Finished game 140 (SF3 vs SF2): 0-1 {Black mates}
+Started game 141 of 160 (Minimax Engine vs SF3)
+Finished game 141 (Minimax Engine vs SF3): 0-1 {Black mates}
+Started game 142 of 160 (SF1 vs SF2)
+Finished game 142 (SF1 vs SF2): 1-0 {White mates}
+Started game 143 of 160 (ABP Engine vs SF3)
+Finished game 143 (ABP Engine vs SF3): 0-1 {Black mates}
+Started game 144 of 160 (Minimax Engine vs SF1)
+Finished game 144 (Minimax Engine vs SF1): 1-0 {White mates}
+Started game 145 of 160 (ABP Engine vs SF2)
+Finished game 145 (ABP Engine vs SF2): 0-1 {Black mates}
+Started game 146 of 160 (SF3 vs SF1)
+Finished game 146 (SF3 vs SF1): 1-0 {White mates}
+Started game 147 of 160 (ABP Engine vs SF1)
+Finished game 147 (ABP Engine vs SF1): 1-0 {White mates}
+Started game 148 of 160 (SF2 vs Minimax Engine)
+Finished game 148 (SF2 vs Minimax Engine): 1-0 {White mates}
+Started game 149 of 160 (ABP Engine vs Minimax Engine)
+Finished game 149 (ABP Engine vs Minimax Engine): 1-0 {White mates}
+Started game 150 of 160 (SF2 vs SF3)
+Finished game 150 (SF2 vs SF3): 1-0 {White mates}
+Started game 151 of 160 (SF3 vs Minimax Engine)
+Finished game 151 (SF3 vs Minimax Engine): 1-0 {White mates}
+Started game 152 of 160 (SF2 vs SF1)
+Finished game 152 (SF2 vs SF1): 1-0 {White mates}
+Started game 153 of 160 (SF3 vs ABP Engine)
