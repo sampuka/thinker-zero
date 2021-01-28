@@ -119,6 +119,11 @@ public:
             bestmove = root.bestmove;
             evaluation = root.evaluation*turn;
 
+            if (evaluation > 150)
+            {
+                break;
+            }
+
             ply++;
             previous_ply = last_ply;
             last_ply = dur;
