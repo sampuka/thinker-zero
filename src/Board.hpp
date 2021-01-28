@@ -28,6 +28,16 @@ public:
     {
     }
 
+    Board(const Board &b, const Move &m) :
+        colors(b.colors),
+        pieces(b.pieces),
+        turn(b.turn),
+        can_castle(b.can_castle),
+        ep_x(b.ep_x)
+    {
+        perform_move(m);
+    }
+
     Board(std::string FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
     {
         colors.at(static_cast<std::uint8_t>(Color::Empty)) = ~0;
