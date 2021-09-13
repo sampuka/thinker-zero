@@ -32,6 +32,25 @@ public:
             Board node(base, movelist.at(i));
 
             std::uint64_t zob = node.get_zobrist();
+
+            TValue tv = tt->read(zob);
+            if (tv.zobrist_key == zob)
+            {
+                //std::cout << "TT hit for " << zob << std::endl;
+            }
+            else
+            {
+                if (tv.zobrist_key == 0)
+                {
+                    //std::cout << "TT new for " << zob << std::endl;
+                }
+                else
+                {
+                    std::cout << "TT overwrite for " << zob << std::endl;
+                }
+                tt->insert(zob);
+            }
+
             zob_list.push_back(zob);
             double score = alphaBetaMin(node, alpha, beta, depthleft - 1, zob_list);
             zob_list.pop_back();

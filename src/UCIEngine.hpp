@@ -3,6 +3,7 @@
 
 #include "Board.hpp"
 #include "BoardTree.hpp"
+#include "TTable.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <iterator>
 #include <mutex>
+#include <memory>
 #include <random>
 #include <sstream>
 #include <string>
@@ -49,6 +51,8 @@ protected:
 
     std::vector<std::uint64_t> z_list;
 
+    std::unique_ptr<TTable> tt;
+
     std::mt19937 eng;
 
     std::ofstream log;
@@ -82,6 +86,11 @@ private:
             rx_buffer_mutex.lock();
             rx_buffer.push_back(tokens);
             rx_buffer_mutex.unlock();
+
+            if (cmd == "quit")
+            {
+                break;
+            }
         }
     }
 
@@ -104,6 +113,7 @@ private:
                 {
                     send_cmd("id name " + engine_name);
                     send_cmd("id author " + engine_author);
+                    tt = std::make_unique<TTable>(27);
                     send_cmd("uciok");
                 }
 
@@ -114,6 +124,7 @@ private:
 
                 else if (tokens.at(0) == "quit")
                 {
+                    rx_thread.join();
                     return;
                 }
 
