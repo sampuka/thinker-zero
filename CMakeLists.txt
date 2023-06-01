@@ -1,39 +1,24 @@
-cmake_minimum_required(VERSION 3.1)
-project(ai4_engines)
+cmake_minimum_required(VERSION 3.14)
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
+project(
+    thinker-zero
+    VERSION 0.1
+    DESCRIPTION "A chess engine"
+    LANGUAGES CXX
+)
 
-set(PERFT_SRCS ../src/Board.hpp ../src/perft.cpp)
-add_executable(perft ${PERFT_SRCS})
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-#set(RANDOM_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/random_engine.cpp)
-#add_executable(random_engine ${RANDOM_SRCS})
-#target_link_libraries(random_engine PRIVATE Threads::Threads)
+# Test what this is
+#set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-#set(ABP_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/abp_engine.cpp)
-#add_executable(abp_engine ${ABP_SRCS})
-#target_link_libraries(abp_engine PRIVATE Threads::Threads)
+file(GLOB_RECURSE SRC_FILES REQUIRE_DEPENDS "src/*.hpp" "src/*.cpp")
 
-#set(ABPQ_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/abpq_engine.cpp)
-#add_executable(abpq_engine ${ABPQ_SRCS})
-#target_link_libraries(abpq_engine PRIVATE Threads::Threads)
+message(NOTICE "List of all sources: ${SRC_FILES}")
 
-set(ABP_V2_SRCS ../src/Board.hpp ../src/TTable.hpp ../src/UCIEngine.hpp ../src/abp_v2_engine.cpp)
-add_executable(abp_v2_engine ${ABP_V2_SRCS})
-target_link_libraries(abp_v2_engine PRIVATE Threads::Threads)
+add_executable(thinker-zero ${SRC_FILES})
 
-#set(MINIMAX_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/minimax_engine.cpp)
-#add_executable(minimax_engine ${MINIMAX_SRCS})
-#target_link_libraries(minimax_engine PRIVATE Threads::Threads)
+target_include_directories(thinker-zero PRIVATE "src")
 
-#set(MCTS_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/mcts_engine.cpp)
-#add_executable(mcts_engine ${MCTS_SRCS})
-#target_link_libraries(mcts_engine PRIVATE Threads::Threads)
-
-#set(SCORE_PRUNING_SRCS ../src/Board.hpp ../src/UCIEngine.hpp ../src/score_pruning_engine.cpp)
-#add_executable(score_pruning_engine ${SCORE_PRUNING_SRCS})
-#target_link_libraries(score_pruning_engine PRIVATE Threads::Threads)
-
-#set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -Og -lpthread")
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wshadow -pedantic -g -O3 -lpthread")
+target_compile_options(thinker-zero PRIVATE -Wall -Wextra -Wpedantic -Werror)
