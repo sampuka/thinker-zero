@@ -1,19 +1,16 @@
 #include "engine/Engine.hpp"
-#include "uci/uci_interface.hpp"
-
-#include <cstdio>
+#include "logging/logging.hpp"
+#include "console/console_parsing.hpp"
 
 int main()
 {
-    std::printf("Hello India!\n");
+    set_log_filepath("thinker-zero-log.txt");
 
-    start_uci_interface_thread();
+    start_console_interface_thread();
 
     engine.main_loop(); // Will loop here until application ends
 
-    end_uci_interface_thread();
-    
-    std::printf("Goodbye India!\n");
+    end_console_interface_thread();
 
     return 0;
 }
