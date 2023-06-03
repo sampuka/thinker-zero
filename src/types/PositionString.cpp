@@ -2,7 +2,10 @@
 
 PositionString::PositionString(const std::string& string)
 {
-    (void)string;
+    if (string == "startpos")
+    {
+        position.setup_standard_position();
+    }
     // Parse string -> construct position
 }
 

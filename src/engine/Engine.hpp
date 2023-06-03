@@ -17,7 +17,9 @@ public:
     void new_game();
 
     // Chess stuff
-    void set_position(Position position);
+    void set_position(Position new_position);
+    Position& get_position();
+
     void perform_move(const Move& move);
 
 private:

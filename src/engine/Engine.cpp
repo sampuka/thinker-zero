@@ -17,12 +17,17 @@ void Engine::new_game()
 {
 }
 
-void Engine::set_position(Position position)
+void Engine::set_position(Position new_position)
 {
-    position = position;
+    position = new_position;
+}
+
+Position& Engine::get_position()
+{
+    return position;
 }
 
 void Engine::perform_move(const Move& move)
 {
-    position.perform_move(move);
+    position.make_move(move);
 }

@@ -37,12 +37,15 @@ void uci_position(const std::vector<std::string>& args)
         movelist.emplace_back(args.at(i));
     }
 
-    engine.set_position(position_string.get_position());
+    Position position = position_string.get_position();
 
     for (const Move& move : movelist)
     {
-        engine.perform_move(move);
+        (void)move;
+        position.make_move(move);
     }
+
+    engine.set_position(position);
 }
 
 void uci_go(const std::vector<std::string>& args)

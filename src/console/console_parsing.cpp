@@ -1,5 +1,6 @@
 #include "console_parsing.hpp"
 
+#include "console/position_printer.hpp"
 #include "engine/Engine.hpp"
 #include "logging/logging.hpp"
 #include "uci_commands.hpp"
@@ -42,7 +43,7 @@ void parse_uci_command(const std::string& command, const std::vector<std::string
         else
         {
             log_error("Position command without arguments");
-            std::printf("Command 'position' requires FEN string");
+            std::printf("Command 'position' requires FEN string\n");
         }
     }
     else if (command == "go")
@@ -79,7 +80,9 @@ void parse_command(const std::string& command, const std::vector<std::string>& a
     }
     else if (command == "print")
     {
-        std::printf("Print position here :)\n");
+        std::string position_string = format_position_to_string(engine.get_position());
+        
+        std::printf("Current position:\n%s", position_string.c_str());
     }
     else if (command == "uci")
     {
