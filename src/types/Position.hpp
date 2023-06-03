@@ -1,7 +1,7 @@
 #ifndef TYPES_POSITION_HPP
 #define TYPES_POSITION_HPP
 
-#include "types/BitboardTypes.hpp"
+#include "types/BitboardList.hpp"
 #include "types/Move.hpp"
 
 #include <array>
