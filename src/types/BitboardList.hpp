@@ -26,6 +26,14 @@ public:
         return T::Empty;
     }
 
+    void clear_all_by_square(Square square)
+    {
+        for (uint8_t i = 0; i < bitboards.size(); i++)
+        {
+            bitboards[i].clear_by_square(square);
+        }
+    }
+
     const Bitboard& operator[](T key) const
     {
         return bitboards[static_cast<uint8_t>(key)];

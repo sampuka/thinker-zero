@@ -16,10 +16,10 @@ enum class MoveType : uint8_t
     Reserved5 = 5,
     Reserved6 = 6,
     Reserved7 = 7,
-    Reserved8 = 8,
-    Reserved9 = 9,
-    Reserved10 = 10,
-    Reserved11 = 11,
+    KnightPromo = 8,
+    BishopPromo = 9,
+    RookPromo = 10,
+    QueenPromo = 11,
     Reserved12 = 12,
     Reserved13 = 13,
     Reserved14 = 14,
@@ -39,6 +39,9 @@ public:
 
     void set_from_square(Square from_square);
     Square get_from_square() const;
+
+    void set_type(MoveType type);
+    MoveType get_type() const;
 
 private:
     uint16_t encoded_move = 0;

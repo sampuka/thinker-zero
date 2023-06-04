@@ -14,3 +14,13 @@ uint8_t Square::get_data() const
 {
     return encoded_square;
 }
+
+uint8_t Square::get_file() const
+{
+    return (encoded_square % 8) + 1;
+}
+
+uint8_t Square::get_rank() const
+{
+    return (encoded_square / 8) + 1;
+}

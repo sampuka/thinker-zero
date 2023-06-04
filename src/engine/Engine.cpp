@@ -27,7 +27,9 @@ void Engine::new_game()
 
 void Engine::go()
 {
-    MoveList moves = generate_moves<Piece::Pawn>(position);
+    MoveList moves;
+    generate_moves<Piece::Pawn>(position, moves);
+    generate_moves<Piece::King>(position, moves);
 
     if (moves.size() == 0)
     {

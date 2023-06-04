@@ -78,5 +78,16 @@ std::string format_position_to_string(const Position& position)
     
     str += "╚════════╝\n";
 
+    if (position.get_player() == Color::White)
+    {
+        str += "White";
+    }
+    else
+    {
+        str += "Black";
+    }
+    
+    str += " to play\n";
+
     return str;
 }

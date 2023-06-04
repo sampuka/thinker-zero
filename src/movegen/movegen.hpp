@@ -8,6 +8,6 @@
 using MoveList = std::vector<Move>; // Probably inefficient
 
 template<Piece piece>
-MoveList generate_moves(const Position& position);
+void generate_moves(const Position& position, MoveList& moves);
 
 #endif // MOVEGEN_MOVEGEN_HPP

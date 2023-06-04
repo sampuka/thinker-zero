@@ -58,19 +58,28 @@ void Position::make_move(const Move& move)
     Color color = bitboard_by_color.find_on_square(from_square);
     Piece piece = bitboard_by_piece.find_on_square(from_square);
 
-    if (color == Color::Empty || piece == Piece::Empty)
+    //Color player_color = get_player();
+    //Color other_color = get_other_color(player_color);
+
+    if (color != get_player()|| piece == Piece::Empty)
     {
-        log_error("Moving from empty square (%d)", from_square.get_data());
+        log_error("Illegal move from square (%d)", from_square.get_data());
         return;
     }
 
     // Remove piece from from square
-    bitboard_by_color[color].clear_by_square(from_square);
-    bitboard_by_piece[piece].clear_by_square(from_square);
+    bitboard_by_color.clear_all_by_square(from_square);
+    bitboard_by_piece.clear_all_by_square(from_square);
+
+    // Remove piece about to be taken (if any)
+    bitboard_by_color.clear_all_by_square(to_square);
+    bitboard_by_piece.clear_all_by_square(to_square);
 
     // Place piece at to square
     bitboard_by_color[color].set_by_square(to_square);
     bitboard_by_piece[piece].set_by_square(to_square);
+
+    player = get_other_color(player);
 }
 
 void Position::unmake_move(const Move& move)
@@ -92,4 +101,14 @@ void Position::set_square(Square square, Color color, Piece piece)
 {
     bitboard_by_piece[piece].set_by_square(square);
     bitboard_by_color[color].set_by_square(square);
+}
+
+Color Position::get_player() const
+{
+    return player;
+}
+
+void Position::set_player(Color new_color)
+{
+    player = new_color;
 }

@@ -19,14 +19,42 @@ void uci_uciok()
 
 void uci_bestmove(const Move& move)
 {
-    uint8_t from = move.get_from_square().get_data();
-    uint8_t to = move.get_to_square().get_data();
+    Square from = move.get_from_square();
+    Square to = move.get_to_square();
     
     std::string str;
-    str += (from % 8) + 'a';
-    str += (from / 8) + '1';
-    str += (to % 8) + 'a';
-    str += (to / 8) + '1';
+    str += from.get_file() + 'a' - 1;
+    str += from.get_rank() + '0';
+    str += to.get_file() + 'a' - 1;
+    str += to.get_rank() + '0';
+
+    switch (move.get_type())
+    {
+        case MoveType::KnightPromo:
+        {
+            str += "n";
+            break;
+        }
+        case MoveType::BishopPromo:
+        {
+            str += "b";
+            break;
+        }
+        case MoveType::RookPromo:
+        {
+            str += "r";
+            break;
+        }
+        case MoveType::QueenPromo:
+        {
+            str += "q";
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 
     std::printf("bestmove %s\n", str.c_str());
 }

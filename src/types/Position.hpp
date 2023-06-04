@@ -23,8 +23,11 @@ public:
     
     void set_square(Square square, Color color, Piece piece);
 
-private:
+    Color get_player() const;
+    void set_player(Color new_color);
 
+private:
+    Color player = Color::White;
     BitboardByPiece bitboard_by_piece;
     BitboardByColor bitboard_by_color;
 };

@@ -12,6 +12,9 @@ public:
 
     uint8_t get_data() const;
 
+    uint8_t get_file() const;
+    uint8_t get_rank() const;
+
 private:
     uint8_t encoded_square;
 };

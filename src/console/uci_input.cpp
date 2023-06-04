@@ -25,18 +25,13 @@ void uci_position(const std::vector<std::string>& args)
 {
     PositionString position_string(args.at(0));
 
-    std::vector<Move> movelist;
-    for (size_t i = 1; i < args.size(); i++)
-    {
-        movelist.emplace_back(args.at(i));
-    }
-
     Position position = position_string.get_position();
-
-    for (const Move& move : movelist)
+    if (args.size() >= 2 && args.at(1) == "moves")
     {
-        (void)move;
-        position.make_move(move);
+        for (size_t i = 2; i < args.size(); i++)
+        {
+            position.make_move(Move(args.at(i)));
+        }
     }
 
     engine.set_position(position);
