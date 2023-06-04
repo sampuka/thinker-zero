@@ -1,9 +1,9 @@
 #include "console_parsing.hpp"
 
 #include "console/position_printer.hpp"
+#include "console/uci_input.hpp"
 #include "engine/Engine.hpp"
 #include "logging/logging.hpp"
-#include "uci_commands.hpp"
 
 #include <iostream>
 #include <memory>
@@ -13,7 +13,7 @@
 #include <tuple>
 #include <vector>
 
-enum EngineInterface
+enum class EngineInterface
 {
     NONE,
     UCI

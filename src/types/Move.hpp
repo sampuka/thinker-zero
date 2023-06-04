@@ -29,8 +29,9 @@ enum class MoveType : uint8_t
 class Move
 {
 public:
-    Move() = delete;
+    Move() = default;
     Move(const std::string& move_string); // Construct the move on an empty board from a move string. "e7e8q", for instance
+    Move(Square from, Square to);
     //Move(const Position& position, const std::string& move_string); // Construct the move on a certain board.
 
     void set_to_square(Square to_square);
@@ -40,7 +41,7 @@ public:
     Square get_from_square() const;
 
 private:
-    uint16_t encoded_move;
+    uint16_t encoded_move = 0;
 };
 
 #endif // TYPES_MOVE_HPP

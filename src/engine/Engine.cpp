@@ -1,5 +1,13 @@
 #include "Engine.hpp"
 
+#include "console/uci_output.hpp"
+#include "movegen/movegen.hpp"
+
+Engine::Engine() : rng(rd())
+{
+
+}
+
 void Engine::main_loop()
 {
     while (engine_running)
@@ -15,6 +23,22 @@ void Engine::shutdown()
 
 void Engine::new_game()
 {
+}
+
+void Engine::go()
+{
+    MoveList moves = generate_moves<Piece::Pawn>(position);
+
+    if (moves.size() == 0)
+    {
+        uci_bestmove(Move("0000"));
+    }
+    else
+    {
+        std::uniform_int_distribution<uint8_t> uid(0, moves.size()-1);
+
+        uci_bestmove(moves.at(uid(rng)));
+    }
 }
 
 void Engine::set_position(Position new_position)

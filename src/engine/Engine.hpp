@@ -4,10 +4,12 @@
 #include "types/Move.hpp"
 #include "types/Position.hpp"
 
+#include <random>
+
 class Engine
 {
 public:
-    Engine() = default;
+    Engine();
 
     // Practical stuff
     void shutdown();
@@ -15,6 +17,8 @@ public:
 
     // Engine stuff
     void new_game();
+
+    void go();
 
     // Chess stuff
     void set_position(Position new_position);
@@ -25,6 +29,8 @@ public:
 private:
     // Practical stuff
     bool engine_running = true;
+    std::random_device rd;
+    std::mt19937 rng;
 
     // Engine stuff
 

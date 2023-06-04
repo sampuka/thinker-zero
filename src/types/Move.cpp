@@ -5,8 +5,6 @@
 
 Move::Move(const std::string& move_string)
 {
-    encoded_move = 0;
-
     Square from_square(move_string.at(0) - 'a' + 1, move_string.at(1) - '0');
     Square to_square(move_string.at(2) - 'a' + 1, move_string.at(3) - '0');
 
@@ -14,6 +12,12 @@ Move::Move(const std::string& move_string)
     set_to_square(to_square);
 
     log_msg("Created a Move with data 0x%04x, from = %u, to = %u", encoded_move, get_from_square().get_data(), get_to_square().get_data());
+}
+
+Move::Move(Square from, Square to)
+{
+    set_from_square(from);
+    set_to_square(to);
 }
 
 void Move::set_to_square(Square to_square)

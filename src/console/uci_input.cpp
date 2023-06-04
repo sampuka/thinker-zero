@@ -1,5 +1,6 @@
-#include "uci_commands.hpp"
+#include "uci_input.hpp"
 
+#include "console/uci_output.hpp"
 #include "engine/Engine.hpp"
 #include "types/PositionString.hpp"
 
@@ -7,19 +8,12 @@
 
 void uci_start()
 {
-    std::printf(
-        "id name Thinker-zero Chess Engine\n"
-        "id author Mathias Ebbensgaard Jensen\n"
-        );
-
-    // Send supported settings
-
-    std::printf("uciok\n");
+    uci_uciok();
 }
 
 void uci_isready()
 {
-    std::printf("readyok\n");
+    uci_readyok();
 }
 
 void uci_ucinewgame()
@@ -52,5 +46,5 @@ void uci_go(const std::vector<std::string>& args)
 {
     (void)args;
 
-    std::printf("bestmove e7e5\n");
+    engine.go();
 }
