@@ -1,7 +1,7 @@
-#ifndef TYPES_POSITIONSTRING_HPP
-#define TYPES_POSITIONSTRING_HPP
+#ifndef POSITION_POSITIONSTRING_HPP
+#define POSITION_POSITIONSTRING_HPP
 
-#include "types/Position.hpp"
+#include "position/Position.hpp"
 
 #include <string>
 
@@ -17,4 +17,4 @@ private:
     Position position;
 };
 
-#endif // TYPES_POSITIONSTRING_HPP
+#endif // POSITION_POSITIONSTRING_HPP

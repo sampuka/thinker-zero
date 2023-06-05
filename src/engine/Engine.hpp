@@ -2,7 +2,7 @@
 #define ENGINE_ENGINE_HPP
 
 #include "types/Move.hpp"
-#include "types/Position.hpp"
+#include "position/Position.hpp"
 
 #include <random>
 

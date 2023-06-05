@@ -1,5 +1,5 @@
-#ifndef TYPES_POSITION_HPP
-#define TYPES_POSITION_HPP
+#ifndef POSITION_POSITION_HPP
+#define POSITION_POSITION_HPP
 
 #include "types/BitboardList.hpp"
 #include "types/Move.hpp"
@@ -26,10 +26,13 @@ public:
     Color get_player() const;
     void set_player(Color new_color);
 
+    Bitboard get_bitboard(Color color) const;
+    Bitboard get_bitboard(Piece piece) const;
+
 private:
     Color player = Color::White;
     BitboardByPiece bitboard_by_piece;
     BitboardByColor bitboard_by_color;
 };
 
-#endif // TYPES_POSITION_HPP
+#endif // POSITION_POSITION_HPP

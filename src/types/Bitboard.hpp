@@ -8,34 +8,77 @@
 class Bitboard
 {
 public:
-    Bitboard() = default;
+    constexpr Bitboard() = default;
 
-    bool read_by_square(Square square) const
+    constexpr Bitboard(uint64_t data) : board(data)
     {
-        if (board & (uint64_t{1} << square.get_data()))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
-    uint8_t read_bitcount() const
+    constexpr uint64_t get_data() const
+    {
+        return board;
+    }
+
+    constexpr bool read_by_square(Square square) const
+    {
+        return board & (uint64_t{1} << square.get_data());
+    }
+
+    constexpr uint8_t read_bitcount() const
     {
         // Implement with fancy inline ASM thingy
         return 0;
     }
 
-    void set_by_square(Square square)
+    constexpr void set_by_square(Square square)
     {
         board |= (uint64_t{1} << square.get_data());
     }
 
-    void clear_by_square(Square square)
+    constexpr void clear_by_square(Square square)
     {
         board &= ~(uint64_t{1} << square.get_data());
+    }
+
+    uint8_t scan_forward() const
+    {
+        uint64_t res = 0; // Must be 64 bit for the asm instruction
+
+        asm(
+            "bsf %1,%0\n"
+            : "=r"(res)
+            : "b"(board)
+        );
+
+        return res;
+    }
+
+    uint8_t scan_backward() const
+    {
+        uint64_t res = 0;
+
+        asm(
+            "bsr %1,%0\n"
+            : "=r"(res)
+            : "b"(board)
+        );
+
+        return res;
+    }
+
+    constexpr Bitboard operator|(const Bitboard& rhs)
+    {
+        return Bitboard(board | rhs.get_data());
+    }
+
+    constexpr Bitboard operator&(const Bitboard& rhs)
+    {
+        return Bitboard(board & rhs.get_data());
+    }
+
+    constexpr Bitboard operator~()
+    {
+        return Bitboard(~board);
     }
 
 private:

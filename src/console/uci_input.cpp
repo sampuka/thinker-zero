@@ -2,7 +2,7 @@
 
 #include "console/uci_output.hpp"
 #include "engine/Engine.hpp"
-#include "types/PositionString.hpp"
+#include "position/PositionString.hpp"
 
 #include <cstdio>
 

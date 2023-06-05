@@ -58,9 +58,6 @@ void Position::make_move(const Move& move)
     Color color = bitboard_by_color.find_on_square(from_square);
     Piece piece = bitboard_by_piece.find_on_square(from_square);
 
-    //Color player_color = get_player();
-    //Color other_color = get_other_color(player_color);
-
     if (color != get_player()|| piece == Piece::Empty)
     {
         log_error("Illegal move from square (%d)", from_square.get_data());
@@ -111,4 +108,14 @@ Color Position::get_player() const
 void Position::set_player(Color new_color)
 {
     player = new_color;
+}
+
+Bitboard Position::get_bitboard(Color color) const
+{
+    return bitboard_by_color[color];
+}
+
+Bitboard Position::get_bitboard(Piece piece) const
+{
+    return bitboard_by_piece[piece];
 }
