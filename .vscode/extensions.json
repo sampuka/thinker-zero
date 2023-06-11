@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "akiramiyakoda.cppincludeguard"
+        "akiramiyakoda.cppincludeguard",
+        "llvm-vs-code-extensions.vscode-clangd"
     ]
 }

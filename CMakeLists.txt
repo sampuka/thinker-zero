@@ -19,6 +19,11 @@ message(NOTICE "List of all sources: ${SRC_FILES}")
 
 add_executable(thinker-zero ${SRC_FILES})
 
-target_include_directories(thinker-zero PRIVATE "src")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+target_include_directories(thinker-zero PUBLIC "src")
+target_include_directories(thinker-zero SYSTEM PUBLIC "C:/msys64/mingw64/include")
+#target_include_directories(thinker-zero SYSTEM PUBLIC "C:/msys64/mingw64/include/C++/13.1.0")
+#target_include_directories(thinker-zero SYSTEM PUBLIC "C:/msys64/mingw64/include/C++/13.1.0/bits")
 
 target_compile_options(thinker-zero PRIVATE -Wall -Wextra -Wpedantic -Werror)
