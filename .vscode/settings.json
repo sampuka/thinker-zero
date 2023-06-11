@@ -5,5 +5,8 @@
     "C/C++ Include Guard.Path Skip": 1,
     "C/C++ Include Guard.Remove Extension": false,
     "C/C++ Include Guard.Spaces After Endif": 1,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "clangd.arguments": [
+        "--query-driver=C:\\msys64\\mingw64\\bin\\g++.exe"
+    ]
 }
