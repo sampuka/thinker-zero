@@ -13,14 +13,13 @@
 #include "engine/Engine.hpp"
 #include "logging/logging.hpp"
 
-
 enum class EngineInterface
 {
 	NONE,
 	UCI
 };
 
-// std::unique_ptr<std::jthread> console_interface_thread = nullptr;
+std::unique_ptr<std::jthread> console_interface_thread = nullptr;
 bool console_interface_running = true;
 
 EngineInterface selected_interface = EngineInterface::UCI;  // Assume UCI for now
@@ -144,10 +143,10 @@ void console_interface_thread_loop()
 
 void start_console_interface_thread()
 {
-	// console_interface_thread = std::make_unique<std::jthread>(console_interface_thread_loop);
+	console_interface_thread = std::make_unique<std::jthread>(console_interface_thread_loop);
 }
 
 void end_console_interface_thread()
 {
-	// console_interface_thread = nullptr;
+	console_interface_thread = nullptr;
 }
