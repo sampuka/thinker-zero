@@ -5,36 +5,31 @@
 
 class Square
 {
-public:
-    Square() = delete;
+   public:
+	Square() = delete;
 
-    constexpr Square(uint8_t file, uint8_t rank) // Move(3, 2) for c2
-    {
-        encoded_square = (rank - 1) * 8 + (file - 1);
-    }
+	// Move(3, 2) for c2
+	constexpr Square(uint8_t file, uint8_t rank) : encoded_square((rank - 1) * 8 + (file - 1)) {}
 
-    constexpr Square(uint8_t encoded_data)
-    {
-        encoded_square = encoded_data;
-    }
+	constexpr Square(uint8_t encoded_data) : encoded_square(encoded_data) {}
 
-    constexpr uint8_t get_data() const
-    {
-        return encoded_square;
-    }
+	constexpr uint8_t get_data() const
+	{
+		return encoded_square;
+	}
 
-    constexpr uint8_t get_file() const
-    {
-        return (encoded_square % 8) + 1;
-    }
+	constexpr uint8_t get_file() const
+	{
+		return (encoded_square % 8) + 1;
+	}
 
-    constexpr uint8_t get_rank() const
-    { 
-        return (encoded_square / 8) + 1;
-    }
+	constexpr uint8_t get_rank() const
+	{
+		return (encoded_square / 8) + 1;
+	}
 
-private:
-    uint8_t encoded_square;
+   private:
+	uint8_t encoded_square;
 };
 
 constexpr uint8_t FILE_A = 1;
@@ -55,4 +50,4 @@ constexpr uint8_t RANK_6 = 6;
 constexpr uint8_t RANK_7 = 7;
 constexpr uint8_t RANK_8 = 8;
 
-#endif // TYPES_SQUARE_HPP
+#endif  // TYPES_SQUARE_HPP

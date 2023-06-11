@@ -1,3 +1,5 @@
 build/
+.cache/
 *.user
 hartmann.epd
+compile_commands.json

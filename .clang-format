@@ -1,0 +1,30 @@
+BasedOnStyle:  Google
+TabWidth:        4
+IndentWidth:     4
+UseTab:          AlignWithSpaces 
+ColumnLimit: 200
+
+Language: Cpp
+
+# Configure each individual brace in BraceWrapping
+BreakBeforeBraces: Custom
+# Control of individual brace wrapping cases
+BraceWrapping: {
+    AfterCaseLabel: 'true'
+    AfterClass: 'true'
+    AfterControlStatement: 'true'
+    AfterEnum : 'true'
+    AfterFunction : 'true'
+    AfterNamespace : 'true'
+    AfterStruct : 'true'
+    AfterUnion : 'true'
+    BeforeCatch : 'true'
+    BeforeElse : 'true'
+    IndentBraces : 'false'
+    AfterExternBlock : 'true'
+    SplitEmptyFunction : 'false'
+    SplitEmptyRecord : 'false'
+    SplitEmptyNamespace : 'true'
+}
+
+AllowShortFunctionsOnASingleLine: Empty

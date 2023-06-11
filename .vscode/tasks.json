@@ -2,6 +2,32 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "copy_compile_commands",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "Copy-Item",
+            "args": [
+                "-Path",
+                "./build/compile_commands.json",
+                "-Destination",
+                "./compile_commands.json"
+            ],
+        },
+        {
+            "label": "make_build_directory",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "md",
+            "args": [
+                "-Force",
+                "build"
+            ],
+        },
+        {
             "label": "cmake",
             "type": "shell",
             "options": {
@@ -12,6 +38,9 @@
                 "-G",
                 "'MinGW Makefiles'",
                 "./.."
+            ],
+            "dependsOn": [
+                "make_build_directory"
             ]
         },
         {
@@ -22,8 +51,10 @@
                 "cwd": "${workspaceRoot}/build"
             },
             "dependsOn": [
-                "cmake"
-            ]
+                "cmake",
+                "copy_compile_commands"
+            ],
+            "dependsOrder": "sequence"
         },
         {
             "label": "build",
