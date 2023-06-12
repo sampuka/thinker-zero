@@ -1,8 +1,11 @@
 #include "Engine.hpp"
 
 #include "console/uci_output.hpp"
+#include "evaluation/evaluation.hpp"
 #include "movegen/movegen.hpp"
 #include "position/PositionAnalysis.hpp"
+
+#include <iostream>
 
 Engine::Engine() : rng(rd())
 {
@@ -28,6 +31,9 @@ void Engine::new_game()
 void Engine::go()
 {
 	MoveList legal_moves = generate_legal_moves(position);
+
+	const float board_evaluation = evaluation::evaluate_board(position);
+	std::cout << "Board evaluation: " << board_evaluation << std::endl;
 
 	if (legal_moves.size() == 0)
 	{
