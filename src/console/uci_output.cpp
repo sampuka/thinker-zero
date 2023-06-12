@@ -2,59 +2,58 @@
 
 void uci_readyok()
 {
-    std::printf("readyok\n");
+	std::printf("readyok\n");
 }
 
 void uci_uciok()
 {
-    std::printf(
-        "id name Thinker-zero Chess Engine\n"
-        "id author Mathias Ebbensgaard Jensen\n"
-        );
+	std::printf(
+		"id name Thinker-zero Chess Engine\n"
+		"id author Mathias Ebbensgaard Jensen\n");
 
-    // Send supported settings
+	// Send supported settings
 
-    std::printf("uciok\n");
+	std::printf("uciok\n");
 }
 
 void uci_bestmove(const Move& move)
 {
-    Square from = move.get_from_square();
-    Square to = move.get_to_square();
-    
-    std::string str;
-    str += from.get_file() + 'a' - 1;
-    str += from.get_rank() + '0';
-    str += to.get_file() + 'a' - 1;
-    str += to.get_rank() + '0';
+	Square from = move.get_from_square();
+	Square to = move.get_to_square();
 
-    switch (move.get_type())
-    {
-        case MoveType::KnightPromo:
-        {
-            str += "n";
-            break;
-        }
-        case MoveType::BishopPromo:
-        {
-            str += "b";
-            break;
-        }
-        case MoveType::RookPromo:
-        {
-            str += "r";
-            break;
-        }
-        case MoveType::QueenPromo:
-        {
-            str += "q";
-            break;
-        }
-        default:
-        {
-            break;
-        }
-    }
+	std::string str;
+	str += from.get_file() + 'a' - 1;
+	str += from.get_rank() + '0';
+	str += to.get_file() + 'a' - 1;
+	str += to.get_rank() + '0';
 
-    std::printf("bestmove %s\n", str.c_str());
+	switch (move.get_type())
+	{
+		case MoveType::KnightPromo:
+		{
+			str += "n";
+			break;
+		}
+		case MoveType::BishopPromo:
+		{
+			str += "b";
+			break;
+		}
+		case MoveType::RookPromo:
+		{
+			str += "r";
+			break;
+		}
+		case MoveType::QueenPromo:
+		{
+			str += "q";
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+
+	std::printf("bestmove %s\n", str.c_str());
 }

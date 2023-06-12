@@ -1,11 +1,11 @@
 #ifndef MOVEGEN_MOVEGEN_RAYS_HPP
 #define MOVEGEN_MOVEGEN_RAYS_HPP
 
-#include <array>
-#include <functional>
-
 #include "types/Bitboard.hpp"
 #include "types/Square.hpp"
+
+#include <array>
+#include <functional>
 
 enum class Ray
 {
@@ -28,7 +28,8 @@ constexpr uint8_t abs_distance(uint8_t a, uint8_t b)
 	return (a > b) ? (a - b) : (b - a);
 }
 
-constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []() {
+constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
+{
 	std::array<std::array<Bitboard, 64>, 12> rays;
 
 	for (uint8_t _r = 0; _r < 12; _r++)
@@ -42,7 +43,8 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []() {
 			const uint8_t file = from_square.get_file();
 			const uint8_t rank = from_square.get_rank();
 
-			auto generate_by_ray = [&](uint8_t file_dir, uint8_t rank_dir) {
+			auto generate_by_ray = [&](uint8_t file_dir, uint8_t rank_dir)
+			{
 				uint8_t new_file = file + file_dir;
 				uint8_t new_rank = rank + rank_dir;
 

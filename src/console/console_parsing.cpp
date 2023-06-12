@@ -1,5 +1,10 @@
 #include "console_parsing.hpp"
 
+#include "console/position_printer.hpp"
+#include "console/uci_input.hpp"
+#include "engine/Engine.hpp"
+#include "logging/logging.hpp"
+
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -7,11 +12,6 @@
 #include <thread>
 #include <tuple>
 #include <vector>
-
-#include "console/position_printer.hpp"
-#include "console/uci_input.hpp"
-#include "engine/Engine.hpp"
-#include "logging/logging.hpp"
 
 enum class EngineInterface
 {

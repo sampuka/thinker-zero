@@ -5,13 +5,17 @@
 
 class Square
 {
-   public:
+public:
 	Square() = delete;
 
 	// Move(3, 2) for c2
-	constexpr Square(uint8_t file, uint8_t rank) : encoded_square((rank - 1) * 8 + (file - 1)) {}
+	constexpr Square(uint8_t file, uint8_t rank) : encoded_square((rank - 1) * 8 + (file - 1))
+	{
+	}
 
-	constexpr Square(uint8_t encoded_data) : encoded_square(encoded_data) {}
+	constexpr Square(uint8_t encoded_data) : encoded_square(encoded_data)
+	{
+	}
 
 	constexpr uint8_t get_data() const
 	{
@@ -28,7 +32,7 @@ class Square
 		return (encoded_square / 8) + 1;
 	}
 
-   private:
+private:
 	uint8_t encoded_square;
 };
 

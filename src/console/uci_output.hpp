@@ -9,4 +9,4 @@ void uci_uciok();
 
 void uci_bestmove(const Move& move);
 
-#endif // CONSOLE_UCI_OUTPUT_HPP
+#endif  // CONSOLE_UCI_OUTPUT_HPP

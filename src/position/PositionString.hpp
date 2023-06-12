@@ -8,13 +8,13 @@
 class PositionString
 {
 public:
-    PositionString() = delete;
-    PositionString(const std::string& string); // Takes a FEN string (at least that is the plan)
+	PositionString() = delete;
+	PositionString(const std::string& string);  // Takes a FEN string (at least that is the plan)
 
-    Position get_position() const;
+	Position get_position() const;
 
 private:
-    Position position;
+	Position position;
 };
 
-#endif // POSITION_POSITIONSTRING_HPP
+#endif  // POSITION_POSITIONSTRING_HPP

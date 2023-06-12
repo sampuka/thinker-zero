@@ -8,4 +8,4 @@ void log_error(const char* format, ...);
 
 void set_log_filepath(const std::string& filepath);
 
-#endif // LOGGING_LOGGING_HPP
+#endif  // LOGGING_LOGGING_HPP

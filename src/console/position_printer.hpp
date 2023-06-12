@@ -5,4 +5,4 @@
 
 std::string format_position_to_string(const Position& position);
 
-#endif // CONSOLE_POSITION_PRINTER_HPP
+#endif  // CONSOLE_POSITION_PRINTER_HPP

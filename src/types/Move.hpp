@@ -1,11 +1,11 @@
 #ifndef TYPES_MOVE_HPP
 #define TYPES_MOVE_HPP
 
-#include <cstdint>
-#include <string>
-
 #include "types/Square.hpp"
 #include "util/bit_operations.hpp"
+
+#include <cstdint>
+#include <string>
 
 enum class MoveType : uint8_t
 {
@@ -29,7 +29,7 @@ enum class MoveType : uint8_t
 
 class Move
 {
-   public:
+public:
 	Move() = default;
 
 	Move(const std::string& move_string)  // Construct the move on an empty board from a move string. "e7e8q", for instance
@@ -81,7 +81,7 @@ class Move
 		return static_cast<MoveType>(get_bits<uint16_t, 12, 4>(encoded_move));
 	}
 
-   private:
+private:
 	uint16_t encoded_move = 0;
 };
 

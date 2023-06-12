@@ -20,11 +20,28 @@ BraceWrapping: {
     AfterUnion : 'true'
     BeforeCatch : 'true'
     BeforeElse : 'true'
+    BeforeLambdaBody: 'true' 
     IndentBraces : 'false'
     AfterExternBlock : 'true'
-    SplitEmptyFunction : 'false'
-    SplitEmptyRecord : 'false'
+    SplitEmptyFunction : 'true'
+    SplitEmptyRecord : 'true'
     SplitEmptyNamespace : 'true'
 }
 
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: false
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        2
+    SortPriority:    2
+    CaseSensitive:   true
+  - Regex:           '^((<|")(gtest|gmock|isl|json)/)'
+    Priority:        3
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        4
+  - Regex:           '.*'
+    Priority:        1
+    SortPriority:    0

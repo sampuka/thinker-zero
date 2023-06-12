@@ -7,48 +7,48 @@
 
 #include <array>
 
-template<typename T, uint8_t size>
+template <typename T, uint8_t size>
 class BitboardList
 {
 public:
-    BitboardList() = default;
+	BitboardList() = default;
 
-    T find_on_square(Square square) const
-    {
-        for (uint8_t i = 0; i < bitboards.size(); i++)
-        {
-            if (bitboards[i].read_by_square(square))
-            {
-                return static_cast<T>(i);
-            }
-        }
+	T find_on_square(Square square) const
+	{
+		for (uint8_t i = 0; i < bitboards.size(); i++)
+		{
+			if (bitboards[i].read_by_square(square))
+			{
+				return static_cast<T>(i);
+			}
+		}
 
-        return T::Empty;
-    }
+		return T::Empty;
+	}
 
-    void clear_all_by_square(Square square)
-    {
-        for (uint8_t i = 0; i < bitboards.size(); i++)
-        {
-            bitboards[i].clear_by_square(square);
-        }
-    }
+	void clear_all_by_square(Square square)
+	{
+		for (uint8_t i = 0; i < bitboards.size(); i++)
+		{
+			bitboards[i].clear_by_square(square);
+		}
+	}
 
-    const Bitboard& operator[](T key) const
-    {
-        return bitboards[static_cast<uint8_t>(key)];
-    }
+	const Bitboard& operator[](T key) const
+	{
+		return bitboards[static_cast<uint8_t>(key)];
+	}
 
-    Bitboard& operator[](T key)
-    {
-        return bitboards[static_cast<uint8_t>(key)];
-    }
+	Bitboard& operator[](T key)
+	{
+		return bitboards[static_cast<uint8_t>(key)];
+	}
 
 private:
-    std::array<Bitboard, size> bitboards;
+	std::array<Bitboard, size> bitboards;
 };
 
 using BitboardByPiece = BitboardList<Piece, types_of_pieces>;
 using BitboardByColor = BitboardList<Color, 2>;
 
-#endif // TYPES_BITBOARDBYPIECE_HPP
+#endif  // TYPES_BITBOARDBYPIECE_HPP

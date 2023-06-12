@@ -6,13 +6,13 @@
 class PositionAnalysis
 {
 public:
-    PositionAnalysis() = delete;
-    PositionAnalysis(const Position& position_);
+	PositionAnalysis() = delete;
+	PositionAnalysis(const Position& position_);
 
-    bool king_in_check() const;
+	bool king_in_check() const;
 
 private:
-    const Position position;
+	const Position position;
 };
 
-#endif // POSITION_POSITIONANALYSIS_HPP
+#endif  // POSITION_POSITIONANALYSIS_HPP
