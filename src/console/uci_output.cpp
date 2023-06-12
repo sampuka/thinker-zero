@@ -22,10 +22,10 @@ void uci_bestmove(const Move& move)
 	Square to = move.get_to_square();
 
 	std::string str;
-	str += from.get_file() + 'a' - 1;
-	str += from.get_rank() + '0';
-	str += to.get_file() + 'a' - 1;
-	str += to.get_rank() + '0';
+	str += static_cast<char>(from.get_file() + 'a' - 1);
+	str += static_cast<char>(from.get_rank() + '0');
+	str += static_cast<char>(to.get_file() + 'a' - 1);
+	str += static_cast<char>(to.get_rank() + '0');
 
 	switch (move.get_type())
 	{

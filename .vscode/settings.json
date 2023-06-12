@@ -8,5 +8,6 @@
     "editor.formatOnSave": true,
     "clangd.arguments": [
         "--query-driver=C:\\msys64\\mingw64\\bin\\g++.exe"
-    ]
+    ],
+    "editor.inlayHints.enabled": "offUnlessPressed"
 }

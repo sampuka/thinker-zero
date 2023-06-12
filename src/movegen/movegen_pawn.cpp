@@ -63,12 +63,3 @@ void generate_move<Piece::Pawn>(const Position& position, Square from_square, Mo
 		}
 	}
 }
-
-template <Piece piece>
-MoveList generate_moves(const Position& position, MoveList& moves)
-{
-	(void)position;
-	static_assert(false, "Movegen not implemented for this piece type");
-
-	return {};
-}
