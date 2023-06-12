@@ -27,22 +27,7 @@ void Engine::new_game()
 
 void Engine::go()
 {
-	MoveList pseudolegal_moves = generate_moves(position);
-
-	// Filter illegal moves by trying and seeing if king is in check
-	MoveList legal_moves;
-	for (const Move& move : pseudolegal_moves)
-	{
-		Position new_pos = position;
-		new_pos.make_move(move);
-
-		PositionAnalysis analysis(new_pos);
-
-		if (!analysis.king_in_check())
-		{
-			legal_moves.push_back(move);
-		}
-	}
+	MoveList legal_moves = generate_legal_moves(position);
 
 	if (legal_moves.size() == 0)
 	{

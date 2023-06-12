@@ -10,7 +10,7 @@ bool PositionAnalysis::king_in_check() const
 {
 	Color enemy_color = get_other_color(position.get_player());
 
-	MoveList pseudolegal_moves = generate_moves(position);
+	MoveList pseudolegal_moves = generate_pseudolegal_moves(position);
 
 	for (uint8_t i = 0; i < 64; i++)
 	{

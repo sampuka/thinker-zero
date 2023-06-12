@@ -8,7 +8,9 @@
 
 using MoveList = std::vector<Move>;  // Inefficient
 
-MoveList generate_moves(const Position& position);
+MoveList generate_pseudolegal_moves(const Position& position);
+
+MoveList generate_legal_moves(const Position& position);
 
 template <Piece piece>
 void generate_move(const Position& position, Square from_square, MoveList& moves);
