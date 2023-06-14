@@ -11,3 +11,8 @@ CompileFlags:
     --driver-mode=*,
     -resource-dir=*
     ]
+
+InlayHints:
+  Enabled: No
+  ParameterNames: No
+  DeducedTypes: No
