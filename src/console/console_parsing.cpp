@@ -50,6 +50,10 @@ void parse_uci_command(const std::string& command, const std::vector<std::string
 	{
 		uci_go(args);
 	}
+	else if (command == "setoption")
+	{
+		uci_setoption(args);
+	}
 	else
 	{
 		std::printf("Unknown command: '%s'\n", command.c_str());
