@@ -1,8 +1,6 @@
 #ifndef SEARCH_SEARCH_HPP
 #define SEARCH_SEARCH_HPP
 
-#include "util/converting.hpp"
-#pragma once
 #include "movegen/movegen.hpp"
 #include "position/Position.hpp"
 
@@ -27,8 +25,6 @@ private:  // Methods.
 	// Dumme method for now.
 	float max_float(const float f1, const float f2);
 	float min_float(const float f1, const float f2);
-
-	const std::string print_movelist(const MoveList& moves);
 };
 
 #endif  // SEARCH_SEARCH_HPP

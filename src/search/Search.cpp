@@ -27,7 +27,7 @@ float Search::minimaxi(const Position& position, float alpha, float beta, unsign
 	// If we are at our max search depth then evaluate position and return it.
 	if (depth == 0)
 	{
-		return evaluation::evaluate_board(position);
+		return evaluate_board(position);
 	}
 
 	if (position.get_player() == Color::White)  // player is white
@@ -112,15 +112,4 @@ float Search::max_float(const float f1, const float f2)
 float Search::min_float(const float f1, const float f2)
 {
 	return (f1 < f2) ? f1 : f2;
-}
-
-const std::string Search::print_movelist(const MoveList& moves)
-{
-	std::string str = "[";
-	for (const Move& move : moves)
-	{
-		str += " " + converting::convert_move_to_string(move);
-	}
-	str += "]";
-	return str;
 }

@@ -1,8 +1,6 @@
 #include "uci_output.hpp"
 
 #include "engine/Settings.hpp"
-#include "util/converting.hpp"
-
 
 void uci_readyok()
 {
@@ -23,6 +21,6 @@ void uci_uciok()
 
 void uci_bestmove(const Move& move)
 {
-	std::string str = converting::convert_move_to_string(move);
+	std::string str = move.get_string();
 	std::printf("bestmove %s\n", str.c_str());
 }

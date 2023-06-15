@@ -1,7 +1,5 @@
 #include "evaluation.hpp"
 
-namespace evaluation
-{
 int get_piece_value(const Piece& piece)
 {
 	switch (piece)
@@ -55,4 +53,3 @@ float evaluate_board(const Position& position)
 	}
 	return score;
 }
-}  // namespace evaluation
