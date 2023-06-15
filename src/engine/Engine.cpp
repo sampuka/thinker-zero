@@ -1,11 +1,13 @@
 #include "Engine.hpp"
 
 #include "console/uci_output.hpp"
-#include "evaluation/evaluation.hpp"
 #include "movegen/movegen.hpp"
 #include "position/PositionAnalysis.hpp"
+#include "search/Search.hpp"
+#include "util/converting.hpp"
 
 #include <iostream>
+#include <string>
 
 Engine::Engine() : rng(rd())
 {
@@ -32,18 +34,19 @@ void Engine::go()
 {
 	MoveList legal_moves = generate_legal_moves(position);
 
-	const float board_evaluation = evaluation::evaluate_board(position);
-	std::cout << "Board evaluation: " << board_evaluation << std::endl;
-
 	if (legal_moves.size() == 0)
 	{
 		uci_bestmove(Move("0000"));
 	}
 	else
 	{
-		std::uniform_int_distribution<uint8_t> uid(0, legal_moves.size() - 1);
-
-		uci_bestmove(legal_moves.at(uid(rng)));
+		Search search;
+		const std::vector<unsigned int> indices_for_move = search.search_for_best_move(position, legal_moves, 4);
+		std::uniform_int_distribution<uint8_t> uid(0, indices_for_move.size() - 1);
+		const unsigned int index_for_move = uid(rng);
+		const Move move = legal_moves.at(index_for_move);
+		std::cout << "Index of move: " << std::to_string(index_for_move) << " (" << converting::convert_move_to_string(move) << ")" << std::endl;
+		uci_bestmove(move);
 	}
 }
 

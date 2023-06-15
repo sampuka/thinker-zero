@@ -23,4 +23,4 @@ Bitboard generate_orthogonal_rays(const Position& position, Square from_square);
 
 Bitboard generate_diagonal_rays(const Position& position, Square from_square);
 
-#endif  // MOVEGEN_MOVEGEN_HPP
+#endif // MOVEGEN_MOVEGEN_HPP
