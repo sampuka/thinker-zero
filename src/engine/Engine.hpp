@@ -6,7 +6,6 @@
 
 #include <random>
 
-
 class Engine
 {
 public:
@@ -21,6 +20,8 @@ public:
 
 	void go();
 
+	void perft(uint8_t depth);
+
 	// Chess stuff
 	void set_position(Position new_position);
 	Position& get_position();
@@ -34,6 +35,7 @@ private:
 	std::mt19937 rng;
 
 	// Engine stuff
+	uint64_t perft_layer(const Position& perft_position, uint8_t depth);
 
 	// Chess stuff
 	Position position;

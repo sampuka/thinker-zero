@@ -42,9 +42,20 @@ void uci_position(const std::vector<std::string>& args)
 
 void uci_go(const std::vector<std::string>& args)
 {
-	(void)args;
+	if (args.size() >= 1 && args.at(0) == "perft")
+	{
+		if (args.size() != 2)
+		{
+			std::printf("Usage: 'go perft <depth>'\n");
+			return;
+		}
 
-	engine.go();
+		engine.perft(std::stoi(args.at(1)));
+	}
+	else
+	{
+		engine.go();
+	}
 }
 
 void uci_setoption(const std::vector<std::string>& args)
@@ -56,7 +67,7 @@ void uci_setoption(const std::vector<std::string>& args)
 	{
 		case SettingID::RandomMovesOnly:
 		{
-			const std::string& value_string = args.at(1);
+			const std::string& value_string = args.at(3);
 
 			if (string_compare(value_string, "true"))
 			{
@@ -71,7 +82,7 @@ void uci_setoption(const std::vector<std::string>& args)
 
 		default:
 		{
-			std::printf("Unhandled settings!\n");
+			std::printf("Unhandled setting (%s)!\n", id_string.c_str());
 			break;
 		}
 	}
