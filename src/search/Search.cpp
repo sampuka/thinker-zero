@@ -93,7 +93,6 @@ std::vector<unsigned int> Search::find_index_with_best_evaluation(const std::vec
 
 	// Checking if more moves has same evaluation
 	std::vector<unsigned int> best_indices;
-	std::cout << "best evaluation: " << best_evaluation << std::endl;
 	for (unsigned int i = 0; i < evaluations.size(); i++)
 	{
 		if (evaluations[i] == best_evaluation)
