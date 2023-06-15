@@ -29,7 +29,7 @@ int get_piece_value(const Piece& piece)
 		case Piece::King:
 		{
 			// This should properly not be used.
-			return 9999999;
+			return 200;
 		}
 		default:
 		{
@@ -47,11 +47,6 @@ float evaluate_board(const Position& position)
 	{
 		Square square(i);
 		Piece piece_on_square = position.get_piece(square);
-		if (piece_on_square == Piece::King)
-		{
-			// We don't care about the king.
-			continue;
-		}
 
 		// Checking if color is white and setting the sign to positive. If not white assumed it is black and sign is set to negative. If the color is empty then it does not matter what the sign is
 		// since piece value will be zero.

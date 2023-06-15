@@ -49,11 +49,10 @@ void Engine::go()
 	else
 	{
 		Search search;
-		const std::vector<unsigned int> indices_for_move = search.search_for_best_move(position, legal_moves, 2);
+		const std::vector<unsigned int> indices_for_move = search.search_for_best_move(position, legal_moves, 3);
 		std::uniform_int_distribution<uint8_t> uid(0, indices_for_move.size() - 1);
 		const unsigned int index_for_move = uid(rng);
-		const Move move = legal_moves.at(index_for_move);
-		std::cout << "Index of move: " << std::to_string(index_for_move) << " (" << converting::convert_move_to_string(move) << ")" << std::endl;
+		const Move move = legal_moves.at(indices_for_move[index_for_move]);
 		uci_bestmove(move);
 	}
 }
