@@ -2,7 +2,10 @@
 
 #include "console/uci_output.hpp"
 #include "engine/Engine.hpp"
+#include "engine/Settings.hpp"
+#include "engine/UCISetting.hpp"
 #include "position/PositionString.hpp"
+#include "util/string_utils.hpp"
 
 #include <cstdio>
 
@@ -42,4 +45,34 @@ void uci_go(const std::vector<std::string>& args)
 	(void)args;
 
 	engine.go();
+}
+
+void uci_setoption(const std::vector<std::string>& args)
+{
+	const std::string& id_string = args.at(1);
+	SettingID id = engine_settings.find_id_by_name(id_string);
+
+	switch (id)
+	{
+		case SettingID::RandomMovesOnly:
+		{
+			const std::string& value_string = args.at(1);
+
+			if (string_compare(value_string, "true"))
+			{
+				engine_settings.set_random_moves_only(true);
+			}
+			else if (string_compare(value_string, "false"))
+			{
+				engine_settings.set_random_moves_only(false);
+			}
+			break;
+		}
+
+		default:
+		{
+			std::printf("Unhandled settings!\n");
+			break;
+		}
+	}
 }

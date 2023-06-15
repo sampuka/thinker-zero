@@ -14,4 +14,6 @@ void uci_position(const std::vector<std::string>& args);
 
 void uci_go(const std::vector<std::string>& args);
 
+void uci_setoption(const std::vector<std::string>& args);
+
 #endif  // CONSOLE_UCI_INPUT_HPP
