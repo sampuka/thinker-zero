@@ -85,4 +85,4 @@ private:
 	uint16_t encoded_move = 0;
 };
 
-#endif // TYPES_MOVE_HPP
+#endif  // TYPES_MOVE_HPP
