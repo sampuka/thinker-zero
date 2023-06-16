@@ -1,6 +1,7 @@
 #ifndef TYPES_MOVE_HPP
 #define TYPES_MOVE_HPP
 
+#include "types/Piece.hpp"
 #include "types/Square.hpp"
 #include "util/bit_operations.hpp"
 
@@ -32,17 +33,7 @@ class Move
 public:
 	Move() = default;
 
-	Move(const std::string& move_string)  // Construct the move on an empty board from a move string. "e7e8q", for instance
-	{
-		if (move_string != "0000")
-		{
-			Square from_square(move_string.at(0) - 'a' + 1, move_string.at(1) - '0');
-			Square to_square(move_string.at(2) - 'a' + 1, move_string.at(3) - '0');
-
-			set_from_square(from_square);
-			set_to_square(to_square);
-		}
-	}
+	Move(const std::string& move_string);  // Construct the move on an empty board from a move string. "e7e8q", for instance
 
 	Move(Square from, Square to, MoveType type = MoveType::Quiet)
 	{

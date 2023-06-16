@@ -1,6 +1,7 @@
 #include "Position.hpp"
 
 #include "logging/logging.hpp"
+#include "types/conversions.hpp"
 
 Position::Position()
 {
@@ -73,8 +74,13 @@ void Position::make_move(const Move& move)
 	bitboard_by_piece.clear_all_by_square(to_square);
 
 	// Place piece at to square
+	Piece to_piece = convert_promo_to_piece(move.get_type());
+	if (to_piece == Piece::Empty)
+	{
+		to_piece = piece;
+	}
 	bitboard_by_color[color].set_by_square(to_square);
-	bitboard_by_piece[piece].set_by_square(to_square);
+	bitboard_by_piece[to_piece].set_by_square(to_square);
 
 	player = get_other_color(player);
 }

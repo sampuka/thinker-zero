@@ -1,51 +1,8 @@
 #include "position_printer.hpp"
 
+#include "types/conversions.hpp"
+
 #include <cstdio>
-
-char get_piece_as_char(Piece piece)
-{
-	char c;
-
-	switch (piece)
-	{
-		case Piece::Pawn:
-		{
-			c = 'P';
-			break;
-		}
-		case Piece::Knight:
-		{
-			c = 'N';
-			break;
-		}
-		case Piece::Bishop:
-		{
-			c = 'B';
-			break;
-		}
-		case Piece::Rook:
-		{
-			c = 'R';
-			break;
-		}
-		case Piece::Queen:
-		{
-			c = 'Q';
-			break;
-		}
-		case Piece::King:
-		{
-			c = 'K';
-			break;
-		}
-		default:
-		{
-			c = '.';
-		}
-	}
-
-	return c;
-}
 
 std::string format_position_to_string(const Position& position)
 {
@@ -63,7 +20,7 @@ std::string format_position_to_string(const Position& position)
 			Piece piece = position.get_piece(sq);
 			Color color = position.get_color(sq);
 
-			char c = get_piece_as_char(piece);
+			char c = convert_piece_to_char(piece);
 
 			if (color == Color::Black)
 			{
