@@ -6,9 +6,11 @@
 
 constexpr UCISetting setting_Hash(SettingID::Hash, "Hash", 1, 1, 128);
 
-constexpr UCISetting setting_RandomMovesOnly(SettingID::RandomMovesOnly, "RandomMovesOnly", false);
+constexpr UCISetting setting_RandomMovesOnly(SettingID::RandomMovesOnly, "Random Moves", false);
 
-constexpr std::array<UCISetting, 2> supported_settings = {setting_Hash, setting_RandomMovesOnly};
+constexpr UCISetting setting_MaxSearchDepth(SettingID::MaxSearchDepth, "Search Depth", 4, 1, 6);
+
+constexpr std::array<UCISetting, 3> supported_settings = {setting_Hash, setting_RandomMovesOnly, setting_MaxSearchDepth};
 
 std::string Settings::get_uci_string() const
 {
@@ -43,4 +45,14 @@ bool Settings::get_random_moves_only() const
 void Settings::set_random_moves_only(bool value)
 {
 	random_moves_only = value;
+}
+
+uint8_t Settings::get_max_search_depth() const
+{
+	return max_search_depth;
+}
+
+void Settings::set_max_search_depth(uint8_t depth)
+{
+	max_search_depth = depth;
 }

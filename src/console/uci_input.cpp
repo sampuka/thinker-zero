@@ -60,15 +60,35 @@ void uci_go(const std::vector<std::string>& args)
 
 void uci_setoption(const std::vector<std::string>& args)
 {
-	const std::string& id_string = args.at(1);
+	std::string id_string = args.at(1);
+
+	size_t value_string_index = 2;
+
+	for (; value_string_index < args.size() && args.at(value_string_index) != "value"; value_string_index++)
+	{
+		id_string += " " + args.at(value_string_index);
+	}
+
 	SettingID id = engine_settings.find_id_by_name(id_string);
+
+	std::string value_string;
+
+	if (value_string_index != args.size() - 1)
+	{
+		value_string_index++;
+		value_string += args.at(value_string_index);
+		value_string_index++;
+	}
+
+	for (; value_string_index < args.size(); value_string_index++)
+	{
+		value_string += " " + args.at(value_string_index);
+	}
 
 	switch (id)
 	{
 		case SettingID::RandomMovesOnly:
 		{
-			const std::string& value_string = args.at(3);
-
 			if (string_compare(value_string, "true"))
 			{
 				engine_settings.set_random_moves_only(true);
@@ -77,6 +97,12 @@ void uci_setoption(const std::vector<std::string>& args)
 			{
 				engine_settings.set_random_moves_only(false);
 			}
+			break;
+		}
+
+		case SettingID::MaxSearchDepth:
+		{
+			engine_settings.set_max_search_depth(std::stoi(value_string));
 			break;
 		}
 

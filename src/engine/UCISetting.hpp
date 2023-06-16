@@ -21,7 +21,8 @@ enum class SettingID
 {
 	Unknown,
 	Hash,
-	RandomMovesOnly
+	RandomMovesOnly,
+	MaxSearchDepth
 };
 
 class UCISetting

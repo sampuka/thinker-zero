@@ -48,7 +48,7 @@ void Engine::go()
 	else
 	{
 		Search search;
-		const std::vector<unsigned int> indices_for_move = search.search_for_best_move(position, legal_moves, 5);
+		const std::vector<unsigned int> indices_for_move = search.search_for_best_move(position, legal_moves, engine_settings.get_max_search_depth());
 		std::uniform_int_distribution<uint8_t> uid(0, indices_for_move.size() - 1);
 		const unsigned int index_for_move = uid(rng);
 		const Move move = legal_moves.at(indices_for_move[index_for_move]);
