@@ -14,7 +14,7 @@ public:
 	Position get_position() const;
 
 private:
-	Position position;
+	Position m_position;
 };
 
 #endif  // POSITION_POSITIONSTRING_HPP

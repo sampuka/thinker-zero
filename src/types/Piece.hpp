@@ -15,4 +15,5 @@ enum class Piece : uint8_t
 	King = 5,
 	Empty = 6
 };
+
 #endif  // TYPES_PIECE_HPP

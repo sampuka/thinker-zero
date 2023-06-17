@@ -30,9 +30,9 @@ public:
 	Bitboard get_bitboard(Piece piece) const;
 
 private:
-	Color player = Color::White;
-	BitboardByPiece bitboard_by_piece;
-	BitboardByColor bitboard_by_color;
+	Color m_player = Color::White;
+	BitboardByPiece m_bitboard_by_piece;
+	BitboardByColor m_bitboard_by_color;
 };
 
 #endif  // POSITION_POSITION_HPP

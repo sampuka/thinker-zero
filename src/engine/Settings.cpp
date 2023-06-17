@@ -41,20 +41,20 @@ SettingID Settings::find_id_by_name(const std::string& name) const
 
 bool Settings::get_random_moves_only() const
 {
-	return random_moves_only;
+	return m_random_moves_only;
 }
 
 void Settings::set_random_moves_only(bool value)
 {
-	random_moves_only = value;
+	m_random_moves_only = value;
 }
 
 uint8_t Settings::get_max_search_depth() const
 {
-	return max_search_depth;
+	return m_max_search_depth;
 }
 
 void Settings::set_max_search_depth(uint8_t depth)
 {
-	max_search_depth = depth;
+	m_max_search_depth = depth;
 }

@@ -44,32 +44,32 @@ public:
 
 	void set_to_square(Square to_square)
 	{
-		set_bits<uint16_t, 0, 6>(encoded_move, to_square.get_data());
+		set_bits<uint16_t, 0, 6>(m_encoded_move, to_square.get_data());
 	}
 
 	Square get_to_square() const
 	{
-		return Square(get_bits<uint16_t, 0, 6>(encoded_move));
+		return Square(get_bits<uint16_t, 0, 6>(m_encoded_move));
 	}
 
 	void set_from_square(Square from_square)
 	{
-		set_bits<uint16_t, 6, 6>(encoded_move, from_square.get_data());
+		set_bits<uint16_t, 6, 6>(m_encoded_move, from_square.get_data());
 	}
 
 	Square get_from_square() const
 	{
-		return Square(get_bits<uint16_t, 6, 6>(encoded_move));
+		return Square(get_bits<uint16_t, 6, 6>(m_encoded_move));
 	}
 
 	void set_type(MoveType type)
 	{
-		set_bits<uint16_t, 12, 4>(encoded_move, static_cast<uint8_t>(type));
+		set_bits<uint16_t, 12, 4>(m_encoded_move, static_cast<uint8_t>(type));
 	}
 
 	MoveType get_type() const
 	{
-		return static_cast<MoveType>(get_bits<uint16_t, 12, 4>(encoded_move));
+		return static_cast<MoveType>(get_bits<uint16_t, 12, 4>(m_encoded_move));
 	}
 
 	std::string get_string() const
@@ -116,7 +116,7 @@ public:
 	}
 
 private:
-	uint16_t encoded_move = 0;
+	uint16_t m_encoded_move = 0;
 };
 
 #endif  // TYPES_MOVE_HPP

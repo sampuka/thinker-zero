@@ -2,21 +2,21 @@
 
 #include "movegen/movegen.hpp"
 
-PositionAnalysis::PositionAnalysis(const Position& position_) : position(position_)
+PositionAnalysis::PositionAnalysis(const Position& position) : m_position(position)
 {
 }
 
 bool PositionAnalysis::king_in_check() const
 {
-	Color enemy_color = get_other_color(position.get_player());
+	Color enemy_color = get_other_color(m_position.get_player());
 
-	MoveList pseudolegal_moves = generate_pseudolegal_moves(position);
+	MoveList pseudolegal_moves = generate_pseudolegal_moves(m_position);
 
 	for (uint8_t i = 0; i < 64; i++)
 	{
 		Square square(i);
 
-		if (position.get_color(square) == enemy_color && position.get_piece(square) == Piece::King)
+		if (m_position.get_color(square) == enemy_color && m_position.get_piece(square) == Piece::King)
 		{
 			for (const Move& move : pseudolegal_moves)
 			{

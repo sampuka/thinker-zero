@@ -9,8 +9,8 @@ Position::Position()
 
 void Position::reset()
 {
-	bitboard_by_piece = BitboardByPiece();
-	bitboard_by_color = BitboardByColor();
+	m_bitboard_by_piece = BitboardByPiece();
+	m_bitboard_by_color = BitboardByColor();
 }
 
 void Position::setup_standard_position()
@@ -56,8 +56,8 @@ void Position::make_move(const Move& move)
 	Square from_square = move.get_from_square();
 	Square to_square = move.get_to_square();
 
-	Color color = bitboard_by_color.find_on_square(from_square);
-	Piece piece = bitboard_by_piece.find_on_square(from_square);
+	Color color = m_bitboard_by_color.find_on_square(from_square);
+	Piece piece = m_bitboard_by_piece.find_on_square(from_square);
 
 	if (color != get_player() || piece == Piece::Empty)
 	{
@@ -66,12 +66,12 @@ void Position::make_move(const Move& move)
 	}
 
 	// Remove piece from from square
-	bitboard_by_color.clear_all_by_square(from_square);
-	bitboard_by_piece.clear_all_by_square(from_square);
+	m_bitboard_by_color.clear_all_by_square(from_square);
+	m_bitboard_by_piece.clear_all_by_square(from_square);
 
 	// Remove piece about to be taken (if any)
-	bitboard_by_color.clear_all_by_square(to_square);
-	bitboard_by_piece.clear_all_by_square(to_square);
+	m_bitboard_by_color.clear_all_by_square(to_square);
+	m_bitboard_by_piece.clear_all_by_square(to_square);
 
 	// Place piece at to square
 	Piece to_piece = convert_promo_to_piece(move.get_type());
@@ -79,10 +79,10 @@ void Position::make_move(const Move& move)
 	{
 		to_piece = piece;
 	}
-	bitboard_by_color[color].set_by_square(to_square);
-	bitboard_by_piece[to_piece].set_by_square(to_square);
+	m_bitboard_by_color[color].set_by_square(to_square);
+	m_bitboard_by_piece[to_piece].set_by_square(to_square);
 
-	player = get_other_color(player);
+	m_player = get_other_color(m_player);
 }
 
 void Position::unmake_move(const Move& move)
@@ -92,36 +92,36 @@ void Position::unmake_move(const Move& move)
 
 Piece Position::get_piece(Square square) const
 {
-	return bitboard_by_piece.find_on_square(square);
+	return m_bitboard_by_piece.find_on_square(square);
 }
 
 Color Position::get_color(Square square) const
 {
-	return bitboard_by_color.find_on_square(square);
+	return m_bitboard_by_color.find_on_square(square);
 }
 
 void Position::set_square(Square square, Color color, Piece piece)
 {
-	bitboard_by_piece[piece].set_by_square(square);
-	bitboard_by_color[color].set_by_square(square);
+	m_bitboard_by_piece[piece].set_by_square(square);
+	m_bitboard_by_color[color].set_by_square(square);
 }
 
 Color Position::get_player() const
 {
-	return player;
+	return m_player;
 }
 
 void Position::set_player(Color new_color)
 {
-	player = new_color;
+	m_player = new_color;
 }
 
 Bitboard Position::get_bitboard(Color color) const
 {
-	return bitboard_by_color[color];
+	return m_bitboard_by_color[color];
 }
 
 Bitboard Position::get_bitboard(Piece piece) const
 {
-	return bitboard_by_piece[piece];
+	return m_bitboard_by_piece[piece];
 }

@@ -1,7 +1,16 @@
-Checks: 'bugprone-*,-bugprone-easily-swappable-parameters'
+Checks: 'bugprone-*,-bugprone-easily-swappable-parameters,readability-identifier-naming'
 CheckOptions:
     - key: bugprone-argument-comment.StrictMode
       value: 1
     - key: bugprone-exception-escape.FunctionsThatShouldNotThrow
       value: WinMain,SDL_main
 FormatStyle: 'file'
+
+CheckOptions:
+  - { key: readability-identifier-naming.NamespaceCase,       value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,           value: CamelCase  }
+  - { key: readability-identifier-naming.PrivateMemberPrefix, value: m_         }
+  - { key: readability-identifier-naming.StructCase,          value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,        value: lower_case }
+  - { key: readability-identifier-naming.VariableCase,        value: lower_case }
+  - { key: readability-identifier-naming.GlobalConstantCase,  value: aNy_CasE } # Don't enforce constants as of now

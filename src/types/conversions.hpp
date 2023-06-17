@@ -43,7 +43,7 @@ inline char convert_piece_to_char(Piece piece)
 
 inline Piece convert_char_to_piece(char c_)
 {
-	char c = std::tolower(c_);
+	char c = static_cast<char>(std::tolower(c_));
 
 	switch (c)
 	{

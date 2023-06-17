@@ -7,12 +7,12 @@ class PositionAnalysis
 {
 public:
 	PositionAnalysis() = delete;
-	PositionAnalysis(const Position& position_);
+	PositionAnalysis(const Position& position);
 
 	bool king_in_check() const;
 
 private:
-	const Position position;
+	const Position m_position;
 };
 
 #endif  // POSITION_POSITIONANALYSIS_HPP

@@ -32,24 +32,24 @@ public:
 	UCISetting() = delete;
 
 	// Check constructor
-	constexpr UCISetting(SettingID id_, const char* name_, bool check_default_) : id(id_), type(UCISettingType::Check), name(name_), check_default(check_default_)
+	constexpr UCISetting(SettingID id, const char* name, bool check_default) : m_id(id), m_type(UCISettingType::Check), m_name(name), m_check_default(check_default)
 	{
 	}
 
 	// Spin constructor
-	constexpr UCISetting(SettingID id_, const char* name_, int32_t spin_default_, int32_t spin_min_, int32_t spin_max_)
-		: id(id_), type(UCISettingType::Spin), name(name_), spin_default(spin_default_), spin_min(spin_min_), spin_max(spin_max_)
+	constexpr UCISetting(SettingID id, const char* name, int32_t spin_default, int32_t spin_min, int32_t spin_max)
+		: m_id(id), m_type(UCISettingType::Spin), m_name(name), m_spin_default(spin_default), m_spin_min(spin_min), m_spin_max(spin_max)
 	{
 	}
 
 	// Combo constructor
-	constexpr UCISetting(SettingID id_, const char* name_, const char* combo_default_, std::vector<std::string> combo_values_)
-		: id(id_), type(UCISettingType::Combo), name(name_), combo_default(combo_default_), combo_values(combo_values_)
+	constexpr UCISetting(SettingID id, const char* name, const char* combo_default, std::vector<std::string> combo_values)
+		: m_id(id), m_type(UCISettingType::Combo), m_name(name), m_combo_default(combo_default), m_combo_values(combo_values)
 	{
 	}
 
 	// String constructor
-	constexpr UCISetting(SettingID id_, const char* name_, const char* string_default_) : id(id_), type(UCISettingType::String), name(name_), string_default(string_default_)
+	constexpr UCISetting(SettingID id, const char* name, const char* string_default) : m_id(id), m_type(UCISettingType::String), m_name(name), m_string_default(string_default)
 	{
 	}
 
@@ -57,15 +57,15 @@ public:
 	{
 		std::string string;
 
-		string += "option name " + name + " type ";
+		string += "option name " + m_name + " type ";
 
-		switch (type)
+		switch (m_type)
 		{
 			case UCISettingType::Check:
 			{
 				string += "check default ";
 
-				if (check_default)
+				if (m_check_default)
 				{
 					string += "true";
 				}
@@ -78,15 +78,15 @@ public:
 
 			case UCISettingType::Spin:
 			{
-				string += "spin default " + std::to_string(spin_default) + " min " + std::to_string(spin_min) + " max " + std::to_string(spin_max);
+				string += "spin default " + std::to_string(m_spin_default) + " min " + std::to_string(m_spin_min) + " max " + std::to_string(m_spin_max);
 				break;
 			}
 
 			case UCISettingType::Combo:
 			{
-				string += "combo default " + combo_default;
+				string += "combo default " + m_combo_default;
 
-				for (const std::string& var : combo_values)
+				for (const std::string& var : m_combo_values)
 				{
 					string += " var " + var;
 				}
@@ -101,7 +101,7 @@ public:
 
 			case UCISettingType::String:
 			{
-				string += "string default " + string_default;
+				string += "string default " + m_string_default;
 				break;
 			}
 		}
@@ -111,33 +111,33 @@ public:
 
 	SettingID get_id() const
 	{
-		return id;
+		return m_id;
 	}
 
 	bool match(const std::string& other_name) const
 	{
-		return string_compare(name, other_name);
+		return string_compare(m_name, other_name);
 	}
 
 private:
-	const SettingID id;
-	const UCISettingType type;
-	const std::string name;
+	const SettingID m_id;
+	const UCISettingType m_type;
+	const std::string m_name;
 
 	// If Check type
-	bool check_default = false;
+	bool m_check_default = false;
 
 	// If Spin type
-	int32_t spin_default = 0;
-	int32_t spin_min = 0;
-	int32_t spin_max = 0;
+	int32_t m_spin_default = 0;
+	int32_t m_spin_min = 0;
+	int32_t m_spin_max = 0;
 
 	// If Combo type
-	std::string combo_default = "<empty>";
-	std::vector<std::string> combo_values = {};
+	std::string m_combo_default = "<empty>";
+	std::vector<std::string> m_combo_values = {};
 
 	// If String type
-	std::string string_default = "<empty>";
+	std::string m_string_default = "<empty>";
 
 	// No state for Button type
 };

@@ -30,15 +30,15 @@ public:
 
 private:
 	// Practical stuff
-	bool engine_running = true;
-	std::random_device rd;
-	std::mt19937 rng;
+	bool m_engine_running = true;
+	std::random_device m_random_device;
+	std::mt19937 m_rng;
 
 	// Engine stuff
 	uint64_t perft_layer(const Position& perft_position, uint8_t depth);
 
 	// Chess stuff
-	Position position;
+	Position m_position;
 };
 
 inline Engine engine;
