@@ -22,7 +22,7 @@ public:
 private:
 	// Settings
 	bool random_moves_only = false;
-	uint8_t max_search_depth = 4;
+	uint8_t max_search_depth = 1;
 };
 
 inline Settings engine_settings;
