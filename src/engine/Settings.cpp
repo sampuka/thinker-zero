@@ -6,11 +6,13 @@
 
 constexpr UCISetting setting_Hash(SettingID::Hash, "Hash", 1, 1, 128);
 
-constexpr UCISetting setting_RandomMovesOnly(SettingID::RandomMovesOnly, "Random Moves", false);
+constexpr UCISetting setting_RandomMovesOnly(SettingID::RandomMovesOnly, "Random moves", false);
 
-constexpr UCISetting setting_MaxSearchDepth(SettingID::MaxSearchDepth, "Search Depth", 4, 1, 6);
+constexpr UCISetting setting_MaxSearchDepth(SettingID::MaxSearchDepth, "Search depth", 4, 1, 6);
 
-constexpr std::array<UCISetting, 3> supported_settings = {setting_Hash, setting_RandomMovesOnly, setting_MaxSearchDepth};
+constexpr UCISetting setting_Logfile(SettingID::LogFilepath, "Log filepath", "");
+
+constexpr std::array<UCISetting, 4> supported_settings = {setting_Hash, setting_RandomMovesOnly, setting_MaxSearchDepth, setting_Logfile};
 
 std::string Settings::get_uci_string() const
 {

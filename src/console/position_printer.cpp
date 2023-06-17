@@ -22,9 +22,9 @@ std::string format_position_to_string(const Position& position)
 
 			char c = convert_piece_to_char(piece);
 
-			if (color == Color::Black)
+			if (color == Color::White)
 			{
-				c -= 'A' - 'a';  // Display black pieces as lowercase
+				c += 'A' - 'a';  // Display black pieces as lowercase
 			}
 
 			str += c;

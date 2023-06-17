@@ -22,7 +22,8 @@ enum class SettingID
 	Unknown,
 	Hash,
 	RandomMovesOnly,
-	MaxSearchDepth
+	MaxSearchDepth,
+	LogFilepath
 };
 
 class UCISetting

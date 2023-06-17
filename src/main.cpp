@@ -4,7 +4,7 @@
 
 int main()
 {
-	set_log_filepath("thinker-zero-log.txt");
+	// set_log_filepath("thinker-zero-log.txt");
 
 	start_console_interface_thread();
 

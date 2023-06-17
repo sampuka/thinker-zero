@@ -4,6 +4,7 @@
 #include "engine/Engine.hpp"
 #include "engine/Settings.hpp"
 #include "engine/UCISetting.hpp"
+#include "logging/logging.hpp"
 #include "position/PositionString.hpp"
 #include "util/string_utils.hpp"
 
@@ -60,6 +61,8 @@ void uci_go(const std::vector<std::string>& args)
 
 void uci_setoption(const std::vector<std::string>& args)
 {
+	// This parsing is kind of ass
+
 	std::string id_string = args.at(1);
 
 	size_t value_string_index = 2;
@@ -73,7 +76,7 @@ void uci_setoption(const std::vector<std::string>& args)
 
 	std::string value_string;
 
-	if (value_string_index != args.size() - 1)
+	if (value_string_index < args.size() - 1)
 	{
 		value_string_index++;
 		value_string += args.at(value_string_index);
@@ -103,6 +106,18 @@ void uci_setoption(const std::vector<std::string>& args)
 		case SettingID::MaxSearchDepth:
 		{
 			engine_settings.set_max_search_depth(std::stoi(value_string));
+			break;
+		}
+
+		case SettingID::LogFilepath:
+		{
+			set_log_filepath(value_string);
+			break;
+		}
+
+		case SettingID::Hash:
+		{
+			// Not handling hash right now
 			break;
 		}
 
