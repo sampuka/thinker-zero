@@ -32,9 +32,9 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 {
 	std::array<std::array<Bitboard, 64>, 12> rays;
 
-	for (uint8_t _r = 0; _r < 12; _r++)
+	for (uint8_t r = 0; r < 12; r++)
 	{
-		const Ray ray = static_cast<Ray>(_r);
+		const Ray ray = static_cast<Ray>(r);
 
 		for (uint8_t index = 0; index < 64; index++)
 		{
@@ -52,7 +52,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 				{
 					Square to_square(new_file, new_rank);
 
-					rays[_r][index].set_by_square(to_square);
+					rays[r][index].set_by_square(to_square);
 
 					new_file += file_dir;
 					new_rank += rank_dir;
@@ -116,12 +116,12 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 						if (file != FILE_A)
 						{
 							Square to_square(file - 1, rank + 1);
-							rays[_r][index].set_by_square(to_square);
+							rays[r][index].set_by_square(to_square);
 						}
 						if (file != FILE_H)
 						{
 							Square to_square(file + 1, rank + 1);
-							rays[_r][index].set_by_square(to_square);
+							rays[r][index].set_by_square(to_square);
 						}
 					}
 					break;
@@ -134,12 +134,12 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 						if (file != FILE_A)
 						{
 							Square to_square(file - 1, rank - 1);
-							rays[_r][index].set_by_square(to_square);
+							rays[r][index].set_by_square(to_square);
 						}
 						if (file != FILE_H)
 						{
 							Square to_square(file + 1, rank - 1);
-							rays[_r][index].set_by_square(to_square);
+							rays[r][index].set_by_square(to_square);
 						}
 					}
 					break;
@@ -163,7 +163,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 
 							if (distance == 3)
 							{
-								rays[_r][index].set_by_square(to_square);
+								rays[r][index].set_by_square(to_square);
 							}
 						}
 					}
@@ -186,7 +186,7 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 
 							if (from_square.get_data() != to_square.get_data())
 							{
-								rays[_r][index].set_by_square(to_square);
+								rays[r][index].set_by_square(to_square);
 							}
 						}
 					}
@@ -197,6 +197,84 @@ constexpr std::array<std::array<Bitboard, 64>, 12> movegen_rays = []()
 	}
 
 	return rays;
+}();
+
+constexpr Bitboard castle_ray_white_queen_clear = []()
+{
+	Bitboard bb;
+
+	bb.set_by_square(Square(FILE_B, RANK_1));
+	bb.set_by_square(Square(FILE_C, RANK_1));
+	bb.set_by_square(Square(FILE_D, RANK_1));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_white_queen_safe = []()
+{
+	Bitboard bb = castle_ray_white_queen_clear;
+
+	bb.set_by_square(Square(FILE_E, RANK_1));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_white_king_clear = []()
+{
+	Bitboard bb;
+
+	bb.set_by_square(Square(FILE_F, RANK_1));
+	bb.set_by_square(Square(FILE_G, RANK_1));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_white_king_safe = []()
+{
+	Bitboard bb = castle_ray_white_king_clear;
+
+	bb.set_by_square(Square(FILE_E, RANK_1));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_black_queen_clear = []()
+{
+	Bitboard bb;
+
+	bb.set_by_square(Square(FILE_B, RANK_8));
+	bb.set_by_square(Square(FILE_C, RANK_8));
+	bb.set_by_square(Square(FILE_D, RANK_8));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_black_queen_safe = []()
+{
+	Bitboard bb = castle_ray_black_queen_clear;
+
+	bb.set_by_square(Square(FILE_E, RANK_8));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_black_king_clear = []()
+{
+	Bitboard bb;
+
+	bb.set_by_square(Square(FILE_F, RANK_8));
+	bb.set_by_square(Square(FILE_G, RANK_8));
+
+	return bb;
+}();
+
+constexpr Bitboard castle_ray_black_king_safe = []()
+{
+	Bitboard bb = castle_ray_black_king_clear;
+
+	bb.set_by_square(Square(FILE_E, RANK_8));
+
+	return bb;
 }();
 
 #endif  // MOVEGEN_MOVEGEN_RAYS_HPP

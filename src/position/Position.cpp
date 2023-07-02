@@ -5,6 +5,7 @@
 
 Position::Position()
 {
+	setup_standard_position();
 }
 
 void Position::reset()
@@ -82,6 +83,64 @@ void Position::make_move(const Move& move)
 	m_bitboard_by_color[color].set_by_square(to_square);
 	m_bitboard_by_piece[to_piece].set_by_square(to_square);
 
+	MoveType type = move.get_type();
+
+	// Perform rook move if castling
+	if (type == MoveType::QueenCastle)
+	{
+		// Remove rook
+		Square rook_from_square(FILE_A, to_square.get_rank());
+		m_bitboard_by_color.clear_all_by_square(rook_from_square);
+		m_bitboard_by_piece.clear_all_by_square(rook_from_square);
+
+		// Place rook
+		Square rook_to_square(FILE_D, to_square.get_rank());
+		m_bitboard_by_color[color].set_by_square(rook_to_square);
+		m_bitboard_by_piece[Piece::Rook].set_by_square(rook_to_square);
+	}
+
+	if (type == MoveType::KingCastle)
+	{
+		// Remove rook
+		Square rook_from_square(FILE_H, to_square.get_rank());
+		m_bitboard_by_color.clear_all_by_square(rook_from_square);
+		m_bitboard_by_piece.clear_all_by_square(rook_from_square);
+
+		// Place rook
+		Square rook_to_square(FILE_F, to_square.get_rank());
+		m_bitboard_by_color[color].set_by_square(rook_to_square);
+		m_bitboard_by_piece[Piece::Rook].set_by_square(rook_to_square);
+	}
+
+	// Remove castling rights
+	if (piece == Piece::King)
+	{
+		m_queenside_castling[static_cast<uint8_t>(color)] = false;
+		m_kingside_castling[static_cast<uint8_t>(color)] = false;
+	}
+
+	constexpr Square queenside_white_rook(FILE_A, RANK_1);
+	constexpr Square kingside_white_rook(FILE_H, RANK_1);
+	constexpr Square queenside_black_rook(FILE_A, RANK_8);
+	constexpr Square kingside_black_rook(FILE_H, RANK_8);
+
+	if (to_square == queenside_white_rook || from_square == queenside_white_rook)
+	{
+		m_queenside_castling[static_cast<uint8_t>(Color::White)] = false;
+	}
+	if (to_square == kingside_white_rook || from_square == kingside_white_rook)
+	{
+		m_kingside_castling[static_cast<uint8_t>(Color::White)] = false;
+	}
+	if (to_square == queenside_black_rook || from_square == queenside_black_rook)
+	{
+		m_queenside_castling[static_cast<uint8_t>(Color::Black)] = false;
+	}
+	if (to_square == kingside_black_rook || from_square == kingside_black_rook)
+	{
+		m_kingside_castling[static_cast<uint8_t>(Color::Black)] = false;
+	}
+
 	m_player = get_other_color(m_player);
 }
 
@@ -109,6 +168,36 @@ void Position::set_square(Square square, Color color, Piece piece)
 Color Position::get_player() const
 {
 	return m_player;
+}
+
+bool Position::may_queenside_castle() const
+{
+	return m_queenside_castling[static_cast<uint8_t>(get_player())];
+}
+
+bool Position::may_kingside_castle() const
+{
+	return m_kingside_castling[static_cast<uint8_t>(get_player())];
+}
+
+bool Position::may_white_queenside_castle() const
+{
+	return m_queenside_castling[static_cast<uint8_t>(Color::White)];
+}
+
+bool Position::may_white_kingside_castle() const
+{
+	return m_kingside_castling[static_cast<uint8_t>(Color::White)];
+}
+
+bool Position::may_black_queenside_castle() const
+{
+	return m_queenside_castling[static_cast<uint8_t>(Color::Black)];
+}
+
+bool Position::may_black_kingside_castle() const
+{
+	return m_kingside_castling[static_cast<uint8_t>(Color::Black)];
 }
 
 void Position::set_player(Color new_color)

@@ -34,7 +34,41 @@ void uci_position(const std::vector<std::string>& args)
 	{
 		for (size_t i = 2; i < args.size(); i++)
 		{
-			position.make_move(Move(args.at(i)));
+			Move move(args.at(i));
+
+			// Decode move type (if not a promotion move that is encoded in the string)
+			// This will be needed elsewhere, so should be extracted
+			if (move.get_type() == MoveType::Quiet)
+			{
+				const Square from_square = move.get_from_square();
+				const Square to_square = move.get_to_square();
+				const Piece piece = position.get_piece(from_square);
+				const Color to_color = position.get_color(to_square);
+				const uint8_t from_file = from_square.get_file();
+				const uint8_t to_file = to_square.get_file();
+				const uint8_t file_diff = (from_file > to_file) ? (from_file - to_file) : (to_file - from_file);
+
+				// Castling
+				if (piece == Piece::King && file_diff > 1)
+				{
+					if (from_file > to_file)
+					{
+						move.set_type(MoveType::QueenCastle);
+					}
+					if (from_file < to_file)
+					{
+						move.set_type(MoveType::KingCastle);
+					}
+				}
+
+				// En Passant
+				if (piece == Piece::Pawn && file_diff == 1 && to_color == Color::Empty)
+				{
+					move.set_type(MoveType::EnPassant);
+				}
+			}
+
+			position.make_move(move);
 		}
 	}
 

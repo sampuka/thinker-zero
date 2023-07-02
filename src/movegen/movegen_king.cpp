@@ -1,5 +1,6 @@
 #include "movegen.hpp"
 #include "movegen/movegen_rays.hpp"
+#include "types/Color.hpp"
 
 template <>
 void generate_move<Piece::King>(const Position& position, Square from_square, MoveList& moves)

@@ -35,6 +35,27 @@ std::string format_position_to_string(const Position& position)
 
 	str += "╚════════╝\n";
 
+	str += "Castling rights: ";
+
+	if (position.may_white_queenside_castle())
+	{
+		str += "Q";
+	}
+	if (position.may_white_kingside_castle())
+	{
+		str += "K";
+	}
+	if (position.may_black_queenside_castle())
+	{
+		str += "q";
+	}
+	if (position.may_black_kingside_castle())
+	{
+		str += "k";
+	}
+
+	str += "\n";
+
 	if (position.get_player() == Color::White)
 	{
 		str += "White";

@@ -32,3 +32,17 @@ bool PositionAnalysis::king_in_check() const
 
 	return false;
 }
+
+Bitboard PositionAnalysis::threatened_squares() const
+{
+	MoveList pseudolegal_moves = generate_pseudolegal_moves(m_position);
+
+	Bitboard result;
+
+	for (const Move& move : pseudolegal_moves)
+	{
+		result.set_by_square(move.get_to_square());
+	}
+
+	return result;
+}

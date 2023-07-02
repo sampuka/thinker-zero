@@ -9,31 +9,36 @@ public:
 	Square() = delete;
 
 	// Move(3, 2) for c2
-	constexpr Square(uint8_t file, uint8_t rank) : encoded_square((rank - 1) * 8 + (file - 1))
+	constexpr Square(uint8_t file, uint8_t rank) : m_encoded_square((rank - 1) * 8 + (file - 1))
 	{
 	}
 
-	constexpr Square(uint8_t encoded_data) : encoded_square(encoded_data)
+	constexpr Square(uint8_t encoded_data) : m_encoded_square(encoded_data)
 	{
+	}
+
+	constexpr bool operator==(const Square& rhs) const
+	{
+		return m_encoded_square == rhs.m_encoded_square;
 	}
 
 	constexpr uint8_t get_data() const
 	{
-		return encoded_square;
+		return m_encoded_square;
 	}
 
 	constexpr uint8_t get_file() const
 	{
-		return (encoded_square % 8) + 1;
+		return (m_encoded_square % 8) + 1;
 	}
 
 	constexpr uint8_t get_rank() const
 	{
-		return (encoded_square / 8) + 1;
+		return (m_encoded_square / 8) + 1;
 	}
 
 private:
-	uint8_t encoded_square;
+	uint8_t m_encoded_square;
 };
 
 constexpr uint8_t FILE_A = 1;

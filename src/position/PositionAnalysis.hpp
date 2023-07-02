@@ -10,6 +10,7 @@ public:
 	PositionAnalysis(const Position& position);
 
 	bool king_in_check() const;
+	Bitboard threatened_squares() const;
 
 private:
 	const Position m_position;

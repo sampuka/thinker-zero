@@ -58,6 +58,11 @@ public:
 		return res;
 	}
 
+	bool empty() const
+	{
+		return m_board == 0;
+	}
+
 	constexpr Bitboard operator|(const Bitboard& rhs)
 	{
 		return Bitboard(m_board | rhs.get_data());

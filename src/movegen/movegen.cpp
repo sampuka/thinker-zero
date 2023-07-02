@@ -22,6 +22,8 @@ MoveList generate_legal_moves(const Position& position)
 		}
 	}
 
+	generate_castling_move(position, legal_moves);
+
 	return legal_moves;
 }
 
